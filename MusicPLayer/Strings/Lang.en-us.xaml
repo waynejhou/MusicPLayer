@@ -1,0 +1,15 @@
+﻿<wpf:ResourceDictionary xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns="clr-namespace:System;assembly=mscorlib">
+    <String x:Key="Menu_File">_File</String>
+    <String x:Key="Menu_File_Open">_Open Audio File</String>
+    <String x:Key="Menu_File_Add">_Add Audio File</String>
+    <String x:Key="Menu_File_Exit">_Close MusicPLayer</String>
+    
+    <String x:Key="Dialog_OpenAudioFile">Open Audio File</String>
+    <String x:Key="Filter_AudioFile">Audio File|*.mp3;*.flac</String>
+
+    <String x:Key="ToolTip_AlbumArt">Album Art</String>
+    <String x:Key="ToolTip_Lyric">Lyric</String>
+    <String x:Key="ToolTip_NowPlaying">Now Playing</String>
+</wpf:ResourceDictionary>

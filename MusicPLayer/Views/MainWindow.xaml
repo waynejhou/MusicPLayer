@@ -1,0 +1,206 @@
+﻿<Window x:Name="MainWin"
+        x:Class="MusicPLayer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicPLayer.Views"
+        xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        md:DialogServiceViews.IsRegistered="True"
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle}" Height="482" Width="628"
+        Background="{DynamicResource BackGroundColor}"
+        Icon="/MusicPLayer;component/Resources/Ellipses.png" MinWidth="600" MinHeight="200" LocationChanged="MainWin_LocationChanged">
+    <Window.Resources>
+        <ResourceDictionary Source="../Styles/MainStyle.xaml" />
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding OpenCmd}" Gesture="Ctrl+O" />
+        <KeyBinding Command="{Binding ExitCmd}" Gesture="Alt+F4" />
+    </Window.InputBindings>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo>
+            <TaskbarItemInfo.ThumbButtonInfos>
+                <ThumbButtonInfo
+                    ImageSource="/MusicPLayer;component/Resources/last.png">
+                </ThumbButtonInfo>
+                <ThumbButtonInfo x:Name="TaskBarThumbBtn"
+                                 Click="TaskBarThumbBtn_Click"
+                                 Command="{Binding PlayPauseCmd}"
+                                 ImageSource="/MusicPLayer;component/Resources/play.png">
+                </ThumbButtonInfo>
+                <ThumbButtonInfo
+                    ImageSource="/MusicPLayer;component/Resources/next.png">
+                </ThumbButtonInfo>
+            </TaskbarItemInfo.ThumbButtonInfos>
+        </TaskbarItemInfo>
+    </Window.TaskbarItemInfo>
+    <Grid>
+        <Image x:Name="BackImage2" Opacity="0.2" Stretch="UniformToFill" VerticalAlignment="Center"
+               Source="{Binding MusicPicture}"
+               Visibility="Collapsed">
+            <Image.Effect>
+                <BlurEffect Radius="15"/>
+            </Image.Effect>
+        </Image>
+        <Border x:Name="BackImageBack" Background="{DynamicResource BackGroundColor}" HorizontalAlignment="Right">
+            <Image x:Name="BackImage" Opacity="0.4" Stretch="Uniform" HorizontalAlignment="Right"
+                   Source="{Binding MusicPicture}"
+                   Visibility="Collapsed"/>
+        </Border>
+        <Border x:Name="BackBorder"  CornerRadius="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Menu x:Name="MainMenu"
+              Grid.Row="0" Style="{DynamicResource MenuStyle}">
+                    <MenuItem x:Name="menuItem" Header="{DynamicResource Menu_File}"
+                      Template="{DynamicResource MenuItemControlTemplate}">
+                        <MenuItem Header="{DynamicResource Menu_File_Open}"
+                                  Command="{Binding OpenFileDialogCmd}"
+                                  CommandParameter="Open"
+                                  InputGestureText="Ctrl+O"/>
+                        <MenuItem Header="{DynamicResource Menu_File_Add}"
+                                  Command="{Binding AddCmd}"
+                                  CommandParameter="Add"
+                                  InputGestureText="Ctrl+P"/>
+                        <MenuItem Header="ChangeToEn"
+                          Command="{Binding ChangeToEnCmd}"
+                          CommandParameter="en-us"/>
+                        <MenuItem Header="ChangeToCn"
+                          Command="{Binding ChangeToCnCmd}"/>
+                        <Separator BorderBrush="{StaticResource BackGroundColorLL}"
+                           Background="{StaticResource BackGroundColorLL}"/>
+                        <MenuItem Header="{DynamicResource Menu_File_Exit}"
+                          Command="{Binding ExitCmd}"
+                          InputGestureText="Alt+F4">
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="TabBorder" Style="{DynamicResource Main_CardBorderStyle}">
+                        <StackPanel Grid.Column="0">
+                            <RadioButton x:Name="AlbumArtTab"
+                                 Content="&#xf03e;" Style="{DynamicResource Menu_RadioButtonStyle}" IsChecked="True"
+                                 ToolTip="{DynamicResource ToolTip_AlbumArt}"
+                                 Checked="RadioButton_Checked"
+                                 />
+                            <RadioButton x:Name="LyricTab"
+                                 Content="&#xf037;" Style="{DynamicResource Menu_RadioButtonStyle}"
+                                 ToolTip="{DynamicResource ToolTip_Lyric}"
+                                 Checked="RadioButton_Checked"/>
+                            <RadioButton x:Name="NowPLayingTab"
+                                 Content="&#xf0ca;" Style="{DynamicResource Menu_RadioButtonStyle}"
+                                 ToolTip="{DynamicResource ToolTip_NowPlaying}"
+                                 Checked="RadioButton_Checked"/>
+                        </StackPanel>
+                    </Border>
+                    <TabControl x:Name="TagCtrl" Grid.Column="1"
+                        Background="{x:Null}"
+                        ItemContainerStyle="{DynamicResource Main_TabItemStyle}"
+                        Padding="0"
+                        BorderThickness="0" TabStripPlacement="Left"
+                        >
+                        <TabItem>
+                            <Border  Style="{DynamicResource Main_CardBorderStyle}">
+                                <Image x:Name="AlbumImage" Margin="10"
+                                   Source="{Binding MusicPicture}"
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                            </Border>
+                        </TabItem>
+                        <TabItem>
+                            <Border  Style="{DynamicResource Main_CardBorderStyle}">
+                                <local:LyricPage x:Name="LyricP"
+                                         FileName="{Binding MusicPath}"
+                                         Now="{Binding MusicPosition}"/>
+                            </Border>
+                        </TabItem>
+                        <TabItem>
+                            <Border Style="{DynamicResource Main_CardBorderStyle}">
+                                <ListView x:Name="NowPlayingListView"
+                                          Style="{DynamicResource NowPlayingListViewStyle}"
+                                          ItemTemplate="{DynamicResource MusicDataTemplate}"
+                                          ItemsSource="{Binding NowPlayingList}"
+                                          IsSynchronizedWithCurrentItem="True"
+                                          MouseDoubleClick="NowPlayingListView_MouseDoubleClick">
+                                </ListView>
+                            </Border>
+                        </TabItem>
+                    </TabControl>
+
+                </Grid>
+
+                <Border Grid.Row="2" Style="{DynamicResource Main_CardBorderStyle}" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="50"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel x:Name="InfoSP" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" FlowDirection="LeftToRight" Orientation="Vertical" MouseLeftButtonDown="MainWin_MouseLeftButtonDown">
+                            <Label x:Name="TitleLabel" Style="{DynamicResource Main_LabelStyle}">
+                                <AccessText TextWrapping="WrapWithOverflow" Text="{Binding MusicTitle}"/>
+                            </Label>
+                            <Label x:Name="AlbumArtistLabel" 
+                           Style="{DynamicResource Main_LabelStyle}">
+                                <AccessText TextWrapping="WrapWithOverflow" Text="{Binding MusicArtistAlbum}"/>
+                            </Label>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="0" FlowDirection="LeftToRight" Orientation="Horizontal">
+                            <Button Content="{Binding PlayBackState}" Command="{Binding PlayPauseCmd}"
+                        Style="{DynamicResource Main_CircleButtonStyle}"/>
+                            <Button Content="stop" Command="{Binding StopCmd}"
+                        Style="{DynamicResource Main_CircleButtonStyle}"/>
+                            <Button x:Name="volumeBtn" Content="&#xf028;"
+                            Style="{DynamicResource Main_CircleButtonStyle}"
+                            Click="volumeBtn_Click"/>
+                            <Popup x:Name="VolumePopup" AllowsTransparency="True" PopupAnimation="Fade" Placement="Right" HorizontalOffset="-30" StaysOpen="False" VerticalOffset="-80"
+                           >
+                                <Border Style="{DynamicResource Main_CardBorderStyle}" Height="100">
+                                    <Border.Effect>
+                                        <DropShadowEffect ShadowDepth="1"/>
+                                    </Border.Effect>
+                                    <Slider Maximum="0.99999" Value="{Binding MusicVolume, Mode=OneWayToSource, FallbackValue=0.5}"
+                                    LargeChange="0.05" TickFrequency="0.05" Orientation="Vertical"
+                                    MouseWheel="Slider_MouseWheel"/>
+                                </Border>
+                            </Popup>
+                        </StackPanel>
+                        <CheckBox Grid.Column="2" Content="{Binding MinWindowsArrow, ElementName=MainWin}" Style="{DynamicResource CircleCheckBoxStyle}" IsChecked="{Binding IsMinTheWin, ElementName=MainWin}"/>
+                        <local:TimeSlider Grid.Row="1" Grid.Column="1"
+                                  Max="{Binding MusicLength}"
+                                  Now="{Binding MusicPosition, Mode=TwoWay}" 
+                                  ValueHandChanged="TimeSlider_ValueChanged"
+                                  Style="{DynamicResource Main_TimeSliderStyle}" Grid.ColumnSpan="2"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+        <Button x:Name="MinCloseButton" Content="&#xf410;" Height="30" Style="{DynamicResource Main_CircleButtonStyle}"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Command="{Binding ExitCmd}"
+                Visibility="Collapsed"/>
+    </Grid>
+
+
+</Window>
