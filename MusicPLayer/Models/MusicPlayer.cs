@@ -126,7 +126,7 @@ namespace MusicPLayer.Models
                 TimeSpan last = TimeSpan.Zero;
                 while (IsLoadded)
                 {
-                    while (_soundOut.PlaybackState != PlaybackState.Playing) { }
+                    while (_soundOut.PlaybackState == PlaybackState.Paused) { Thread.Sleep(1); }
                     var newone = _waveSource.GetPosition();
                     if (newone != last)
                         WavePositionChangedEvent?.Invoke(this, newone);
