@@ -16,7 +16,7 @@
         <ResourceDictionary Source="../Styles/MainStyle.xaml" />
     </Window.Resources>
     <Window.InputBindings>
-        <KeyBinding Command="{Binding OpenCmd}" Gesture="Ctrl+O" />
+        <KeyBinding Command="{Binding OpenFileDialogCmd}" Gesture="Ctrl+O" />
         <KeyBinding Command="{Binding ExitCmd}" Gesture="Alt+F4" />
     </Window.InputBindings>
     <Window.TaskbarItemInfo>
