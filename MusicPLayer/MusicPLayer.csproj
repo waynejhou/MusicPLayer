@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>MusicPLayer.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AngleSharp, Version=0.9.9.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
@@ -61,6 +61,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -85,16 +86,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </ApplicationDefinition>
+    </Page>
     <Compile Include="Models\LRCParser.cs" />
     <Compile Include="Models\MusicList.cs" />
     <Compile Include="Models\SettingManager.cs" />
     <Compile Include="Styles\ColorConverter.cs" />
     <Compile Include="Utils\MusicUtils.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
+    <Compile Include="Utils\SingleInstance.cs" />
     <Compile Include="ViewModels\LyricViewModel.cs" />
     <Compile Include="Views\LyricPage.xaml.cs">
       <DependentUpon>LyricPage.xaml</DependentUpon>

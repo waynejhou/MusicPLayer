@@ -44,7 +44,7 @@
                                             TextAlignment="Center"/>
                                 </Label>
                                 <Label x:Name="LyricLabel"
-                               Foreground="White" FontFamily="SetoFont" FontSize="20"
+                               Foreground="White" FontFamily="Microsoft JhengHei" FontSize="20"
                                    >
                                     <Label.Effect>
                                         <DropShadowEffect BlurRadius="1.5" Color="Black" ShadowDepth="1.5"/>

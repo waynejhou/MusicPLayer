@@ -2,13 +2,15 @@
 using MusicPLayer.ViewModels;
 using System;
 using System.Windows;
+using Microsoft.Shell;
+using System.Collections.Generic;
 
 namespace MusicPLayer
 {
     /// <summary>
     /// App.xaml 的互動邏輯
     /// </summary>
-    public partial class App : Application
+    public partial class App : Application ,ISingleInstanceApp
     {
         #region 內部變數
         static MainWindow _mainWin;
@@ -24,6 +26,19 @@ namespace MusicPLayer
         public static MainWindow MainWin => _mainWin;
         public static MusicList NowPlayingList => _musicList;
         internal static MainViewModel MainWinViewModel => _mainWinViewModel;
+
+        public bool SignalExternalCommandLineArgs(IList<string> args)
+        {
+            args.RemoveAt(0);
+            if (args.Count > 0)
+            {
+                string[] a = new string[args.Count];
+                args.CopyTo(a,0);
+                MainWinViewModel.OpenFileCmd.Execute(a);
+                MainWinViewModel.PlayCmd.Execute(null);
+            }
+            return true;
+        }
         #endregion
 
         #region 成員函式
@@ -39,6 +54,22 @@ namespace MusicPLayer
             _mainWin.DataContext = context;
             _mainWin.Language = System.Windows.Markup.XmlLanguage.GetLanguage(Settings.Langurage);
             _mainWin.Show();
+        }
+
+        private const string Unique = "My_Unique_Application_String";
+        [STAThread]
+        private static void Main(string[] args)
+        {
+            if (SingleInstance<App>.InitializeAsFirstInstance(Unique))
+            {
+                var application = new App();
+
+                application.InitializeComponent();
+                application.Run();
+
+                // Allow single instance code to perform cleanup operations
+                SingleInstance<App>.Cleanup();
+            }
         }
         #endregion
     }

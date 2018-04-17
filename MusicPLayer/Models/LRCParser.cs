@@ -25,7 +25,6 @@ namespace MusicPLayer.Models
         {
             get => _fileName; set
             {
-                Console.WriteLine($"{value} {File.Exists(value)}");
                 if (File.Exists(value))
                     IsLoaded = true;
                 else
@@ -47,53 +46,53 @@ namespace MusicPLayer.Models
                     {
                         var sss = (ss as Match).Value.Trim("[]".ToCharArray());
                         if (TimeSpan.TryParseExact(sss, @"mm\:ss\.f", null, out TimeSpan result))
-                            _lyrics.Add(new LyricWithTime() { Time = result, Lyric = sr });
+                            AddLyric(result, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:ss\.ff", null, out TimeSpan result1))
-                            _lyrics.Add(new LyricWithTime() { Time = result1, Lyric = sr });
+                            AddLyric(result1, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:ss\.fff", null, out TimeSpan result2))
-                            _lyrics.Add(new LyricWithTime() { Time = result2, Lyric = sr });
+                            AddLyric(result2, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:ss\.fffff", null, out TimeSpan result3))
-                            _lyrics.Add(new LyricWithTime() { Time = result3, Lyric = sr });
+                            AddLyric(result3, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:ss\.ffffff", null, out TimeSpan result4))
-                            _lyrics.Add(new LyricWithTime() { Time = result4, Lyric = sr });
+                            AddLyric(result4, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:ss\.fffffff", null, out TimeSpan result5))
-                            _lyrics.Add(new LyricWithTime() { Time = result4, Lyric = sr });
+                            AddLyric(result5, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:ss\.f", null, out TimeSpan result7))
-                            _lyrics.Add(new LyricWithTime() { Time = result, Lyric = sr });
+                            AddLyric(result7, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:ss\.ff", null, out TimeSpan result8))
-                            _lyrics.Add(new LyricWithTime() { Time = result1, Lyric = sr });
+                            AddLyric(result8, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:ss\.fff", null, out TimeSpan result9))
-                            _lyrics.Add(new LyricWithTime() { Time = result2, Lyric = sr });
+                            AddLyric(result9, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:ss\.fffff", null, out TimeSpan result10))
-                            _lyrics.Add(new LyricWithTime() { Time = result3, Lyric = sr });
+                            AddLyric(result10, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:ss\.ffffff", null, out TimeSpan result11))
-                            _lyrics.Add(new LyricWithTime() { Time = result4, Lyric = sr });
+                            AddLyric(result11, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:ss\.fffffff", null, out TimeSpan result12))
-                            _lyrics.Add(new LyricWithTime() { Time = result4, Lyric = sr });
+                            AddLyric(result12, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:s\.f", null, out TimeSpan result13))
-                            _lyrics.Add(new LyricWithTime() { Time = result, Lyric = sr });
+                            AddLyric(result13, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:s\.ff", null, out TimeSpan result14))
-                            _lyrics.Add(new LyricWithTime() { Time = result1, Lyric = sr });
+                            AddLyric(result14, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:s\.fff", null, out TimeSpan result15))
-                            _lyrics.Add(new LyricWithTime() { Time = result2, Lyric = sr });
+                            AddLyric(result15, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:s\.fffff", null, out TimeSpan result16))
-                            _lyrics.Add(new LyricWithTime() { Time = result3, Lyric = sr });
+                            AddLyric(result16, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:s\.ffffff", null, out TimeSpan result17))
-                            _lyrics.Add(new LyricWithTime() { Time = result4, Lyric = sr });
+                            AddLyric(result17, sr);
                         else if (TimeSpan.TryParseExact(sss, @"mm\:s\.fffffff", null, out TimeSpan result18))
-                            _lyrics.Add(new LyricWithTime() { Time = result4, Lyric = sr });
+                            AddLyric(result18, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:s\.f", null, out TimeSpan result19))
-                            _lyrics.Add(new LyricWithTime() { Time = result, Lyric = sr });
+                            AddLyric(result19, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:s\.ff", null, out TimeSpan result20))
-                            _lyrics.Add(new LyricWithTime() { Time = result1, Lyric = sr });
+                            AddLyric(result10, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:s\.fff", null, out TimeSpan result21))
-                            _lyrics.Add(new LyricWithTime() { Time = result2, Lyric = sr });
+                            AddLyric(result21, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:s\.fffff", null, out TimeSpan result22))
-                            _lyrics.Add(new LyricWithTime() { Time = result3, Lyric = sr });
+                            AddLyric(result22, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:s\.ffffff", null, out TimeSpan result23))
-                            _lyrics.Add(new LyricWithTime() { Time = result4, Lyric = sr });
+                            AddLyric(result23, sr);
                         else if (TimeSpan.TryParseExact(sss, @"m\:s\.fffffff", null, out TimeSpan result24))
-                            _lyrics.Add(new LyricWithTime() { Time = result4, Lyric = sr });
+                            AddLyric(result24, sr);
 
                         else
                             throw new FormatException("...");
@@ -105,6 +104,17 @@ namespace MusicPLayer.Models
 
             }
             
+        }
+
+        void AddLyric(TimeSpan time, string lyric)
+        {
+            if (_lyrics.Select(x => x.Time).Contains(time)) {
+                var lt = _lyrics[_lyrics.FindIndex(x => x.Time == time)];
+                _lyrics[_lyrics.FindIndex(x => x.Time == time)] =
+                    new LyricWithTime() { Time = lt.Time, Lyric = lt.Lyric + "\n" + lyric };
+            }
+            else
+                _lyrics.Add(new LyricWithTime() { Time = time, Lyric = lyric });
         }
 
         internal object SearchLyricFromTime(TimeSpan timeSpan)
@@ -124,7 +134,7 @@ namespace MusicPLayer.Models
         {
             var idx = GetLyricIdxFromTime(timeSpan);
             if (idx < Lyrics.Count())
-                return Lyrics.ToList()[idx];
+                return Lyrics[idx];
             else
                 return new LyricWithTime();
         }
@@ -132,7 +142,7 @@ namespace MusicPLayer.Models
         {
             var idx = GetLyricIdxFromTime(timeSpan);
             if (idx+1 < Lyrics.Count())
-                return Lyrics.ToList()[idx+1];
+                return Lyrics[idx+1];
             else
                 return new LyricWithTime();
         }

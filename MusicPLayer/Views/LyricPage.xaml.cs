@@ -58,7 +58,17 @@ namespace MusicPLayer.Views
         string LrcPath { set
             {
                 _lyricParser.FileName = value;
-                LyricListView.ItemsSource = _lyricParser.Lyrics;
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    LyricListView.ItemsSource = null;
+                    _linesHeight?.Clear();
+                }
+                else
+                {
+
+                    LyricListView.ItemsSource = _lyricParser.Lyrics;
+                }
+
             }
         }
 
@@ -231,6 +241,8 @@ namespace MusicPLayer.Views
         private void canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SizeChanged = true;
+            if (IsLoaded)
+                ReSetColor();
         }
     }
 }

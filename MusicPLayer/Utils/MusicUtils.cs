@@ -184,7 +184,6 @@ namespace MusicPLayer.Utils
         }
         public void NotifyMusicItem()
         {
-            Console.WriteLine($"{Path}   {IsNowPlaying}");
             NotifyPropertyChanged(nameof(IsNowPlaying));
         }
         #endregion

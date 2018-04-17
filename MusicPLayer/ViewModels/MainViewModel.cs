@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MusicPLayer.ViewModels
 {
@@ -21,8 +22,11 @@ namespace MusicPLayer.ViewModels
         #region 建構式
         public MainViewModel()
         {
-            PlayerModel.StoppedEvent += (object sender, CSCore.SoundOut.PlaybackStoppedEventArgs e) =>
+            PlayerModel.StoppedEvent += (object sender) =>
             {
+                if (!PlayerModel.ManualStop)
+                    NextCmd.Execute(null);
+                PlayerModel.ManualStop = false;
             };
             PlayerModel.WavePositionChangedEvent += (object sender, TimeSpan position) =>
             {
@@ -102,6 +106,27 @@ namespace MusicPLayer.ViewModels
         public bool HasImage => NowPlayingItem.Picture != null;
 
         /// <summary>
+        /// 下一首
+        /// </summary>
+        public string NextMusicMode
+        {
+            get
+            {
+                switch (App.NowPlayingList.NextModeType)
+                {
+                    case NextOneMode.Random:
+                        return "random";
+                    case NextOneMode.RepeatList:
+                        return "redo";
+                    case NextOneMode.RepeatOne:
+                        return "redo1";
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        /// <summary>
         /// 視窗標題
         /// </summary>
         public string WindowTitle => PlayerModel.IsLoadded ? $"{NowPlayingItem.Title} - {PlayerModel.PlaybackState}" : "MusicPLayer";
@@ -120,6 +145,9 @@ namespace MusicPLayer.ViewModels
         public ICommand StopCmd { get { return new RelayCommand(OnStop, () => true); } }
         public ICommand ChangeToCnCmd { get { return new RelayCommand(OnChangeToCn, () => true); } }
         public ICommand ChangeToEnCmd { get { return new RelayCommand(OnChangeToEn, () => true); } }
+        public ICommand ChangeNextModeCmd { get { return new RelayCommand(OnChangeNextMode, () => true); } }
+        public ICommand NextCmd { get { return new RelayCommand(OnPlayNext, () => App.NowPlayingList.CanGetNext); } }
+        public ICommand LastCmd { get { return new RelayCommand(OnPlayLast, () => App.NowPlayingList.CanGetLast); } }
         #endregion
 
         #region 私有成員函式
@@ -154,10 +182,11 @@ namespace MusicPLayer.ViewModels
                 Title = (string)(App.Current.Resources["Dialog_OpenAudioFile"]),
                 Filter = (string)(App.Current.Resources["Filter_AudioFile"]),
                 CheckFileExists = true,
-                Multiselect = true
+                Multiselect = true,
             };
-
-            bool? success = DialogService.ShowOpenFileDialog(this, settings);
+            if (PlayerModel.IsLoadded)
+                settings.InitialDirectory = new FileInfo(NowPlayingItem.Path).Directory.FullName;
+            bool ? success = DialogService.ShowOpenFileDialog(this, settings);
             if (success == true)
             {
                 if (parameter == "Open")
@@ -221,9 +250,38 @@ namespace MusicPLayer.ViewModels
             App.Current.Resources.Source =
                 new Uri($@"Strings\Lang.{App.Settings.Langurage}.xaml", UriKind.Relative);
         }
-
+        private void OnChangeNextMode()
+        {
+            switch (App.NowPlayingList.NextModeType)
+            {
+                case NextOneMode.Random:
+                    App.NowPlayingList.NextModeType = NextOneMode.RepeatList;
+                    break;
+                case NextOneMode.RepeatList:
+                    App.NowPlayingList.NextModeType = NextOneMode.RepeatOne;
+                    break;
+                case NextOneMode.RepeatOne:
+                    App.NowPlayingList.NextModeType = NextOneMode.Random;
+                    break;
+                default:
+                    break;
+            }
+            NotifyAllPropotery();
+        }
+        private void OnPlayNext()
+        {
+            LoadCmd.Execute(App.NowPlayingList.GetNextMusic());
+            PlayCmd.Execute(null);
+        }
+        private void OnPlayLast()
+        {
+            LoadCmd.Execute(App.NowPlayingList.GetLastMusic());
+            PlayCmd.Execute(null);
+        }
         private void OnLoadFile(string fileName)
         {
+            if (PlayerModel.IsLoadded)
+                PlayerModel.ManualStop = true;
             PlayerModel.Load(fileName);
             NotifyAllPropotery();
         }
@@ -244,10 +302,14 @@ namespace MusicPLayer.ViewModels
             NotifyPropertyChanged(nameof(MusicPath));
             NotifyPropertyChanged(nameof(MusicPicture));
             NotifyPropertyChanged(nameof(WindowTitle));
+            NotifyPropertyChanged(nameof(NextMusicMode));
             for (int i = 0; i < NowPlayingList.Count; i++)
             {
                 if (NowPlayingList[i].Path == NowPlayingItem.Path)
+                {
+                    App.NowPlayingList.NowPlayIndex = i;
                     NowPlayingList[i].IsNowPlaying = true;
+                }
                 else
                     NowPlayingList[i].IsNowPlaying = false;
             }

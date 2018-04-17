@@ -23,7 +23,8 @@
         <TaskbarItemInfo>
             <TaskbarItemInfo.ThumbButtonInfos>
                 <ThumbButtonInfo
-                    ImageSource="/MusicPLayer;component/Resources/last.png">
+                    ImageSource="/MusicPLayer;component/Resources/last.png"
+                    Command="{Binding LastCmd}">
                 </ThumbButtonInfo>
                 <ThumbButtonInfo x:Name="TaskBarThumbBtn"
                                  Click="TaskBarThumbBtn_Click"
@@ -31,7 +32,8 @@
                                  ImageSource="/MusicPLayer;component/Resources/play.png">
                 </ThumbButtonInfo>
                 <ThumbButtonInfo
-                    ImageSource="/MusicPLayer;component/Resources/next.png">
+                    ImageSource="/MusicPLayer;component/Resources/next.png"
+                    Command="{Binding NextCmd}">
                 </ThumbButtonInfo>
             </TaskbarItemInfo.ThumbButtonInfos>
         </TaskbarItemInfo>
@@ -164,13 +166,24 @@
                             </Label>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="0" FlowDirection="LeftToRight" Orientation="Horizontal">
-                            <Button Content="{Binding PlayBackState}" Command="{Binding PlayPauseCmd}"
-                        Style="{DynamicResource Main_CircleButtonStyle}"/>
-                            <Button Content="stop" Command="{Binding StopCmd}"
-                        Style="{DynamicResource Main_CircleButtonStyle}"/>
+                            <Button Content="{Binding NextMusicMode, FallbackValue=redo}"
+                                    Command="{Binding ChangeNextModeCmd}"
+                                    Style="{DynamicResource Main_CircleButtonStyle}"
+                                    Height="25" FontSize="15" VerticalAlignment="Bottom"/>
+                            <Button Content="&#xf048;" Command="{Binding LastCmd}"
+                                    Style="{DynamicResource Main_CircleButtonStyle}"
+                                    Height="30" VerticalAlignment="Bottom"/>
+                            <Button Content="{Binding PlayBackState, FallbackValue=play}"
+                                    Command="{Binding PlayPauseCmd}"
+                                    Style="{DynamicResource Main_CircleButtonStyle}">
+                            </Button>
+                            <Button Content="&#xf051;" Command="{Binding NextCmd}"
+                                    Style="{DynamicResource Main_CircleButtonStyle}"
+                                    Height="30" VerticalAlignment="Bottom"/>
                             <Button x:Name="volumeBtn" Content="&#xf028;"
-                            Style="{DynamicResource Main_CircleButtonStyle}"
-                            Click="volumeBtn_Click"/>
+                                    Style="{DynamicResource Main_CircleButtonStyle}"
+                                    Click="volumeBtn_Click"
+                                    Height="25"  FontSize="15" VerticalAlignment="Bottom"/>
                             <Popup x:Name="VolumePopup" AllowsTransparency="True" PopupAnimation="Fade" Placement="Right" HorizontalOffset="-30" StaysOpen="False" VerticalOffset="-80"
                            >
                                 <Border Style="{DynamicResource Main_CardBorderStyle}" Height="100">

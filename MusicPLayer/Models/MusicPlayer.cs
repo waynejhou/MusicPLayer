@@ -23,7 +23,7 @@ namespace MusicPLayer.Models
         float _volume = 0f;
         TimeSpan _position = TimeSpan.Zero;
         Thread _wavePostionUpdThd;
-
+        bool _manualStop = false;
         #endregion
 
         #region 屬性
@@ -79,6 +79,11 @@ namespace MusicPLayer.Models
         /// </summary>
         public PlaybackState PlaybackState => _soundOut != null ? _soundOut.PlaybackState : PlaybackState.Stopped;
 
+        /// <summary>
+        /// 人工中止
+        /// </summary>
+        public bool ManualStop { get => _manualStop; set => _manualStop = value; }
+
         #endregion
 
         #region 函式
@@ -101,7 +106,13 @@ namespace MusicPLayer.Models
         /// <summary>
         /// 停止音樂
         /// </summary>
-        public void Stop() => _soundOut?.Stop();
+        public void Stop() {
+            if (_soundOut != null)
+            {
+                _manualStop = true;
+                _soundOut.Stop();
+            }
+        } 
 
         /// <summary>
         /// 讀取音樂檔案
@@ -118,7 +129,7 @@ namespace MusicPLayer.Models
             _soundOut = new WasapiOut() { Latency = 100 };
             _soundOut.Initialize(_waveSource);
             _soundOut.Volume = _volume;
-            _soundOut.Stopped += (object sender, PlaybackStoppedEventArgs e) => StoppedEvent?.Invoke(this, e);
+            _soundOut.Stopped += (object sender, PlaybackStoppedEventArgs e) => { StoppedEvent?.Invoke(this); };
             LoaddedEvent?.Invoke(this);
             Position = TimeSpan.Zero;
             _wavePostionUpdThd = new Thread(() =>
@@ -169,8 +180,8 @@ namespace MusicPLayer.Models
         /// 停止事件委派處理
         /// </summary>
         /// <param name="sender">事件當事者</param>
-        /// <param name="e">事件參數</param>
-        public delegate void StoppedEventHandler(object sender, PlaybackStoppedEventArgs e);
+        /// <param name="e">是否人工中止/param>
+        public delegate void StoppedEventHandler(object sender);
 
         /// <summary>
         /// 當音樂停止時觸發
