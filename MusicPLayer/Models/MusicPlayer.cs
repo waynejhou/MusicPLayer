@@ -109,7 +109,8 @@ namespace MusicPLayer.Models
         public void Stop() {
             if (_soundOut != null)
             {
-                _manualStop = true;
+                if (PlaybackState != PlaybackState.Stopped)
+                    _manualStop = true;
                 _soundOut.Stop();
             }
         } 
@@ -139,11 +140,11 @@ namespace MusicPLayer.Models
                 TimeSpan last = TimeSpan.Zero;
                 while (IsLoadded)
                 {
-                    if(PlaybackState==PlaybackState.Stopped) StoppedEvent?.Invoke(this);
-                    while (_soundOut.PlaybackState != PlaybackState.Playing) { Thread.Sleep(1); }
+                    //if(PlaybackState==PlaybackState.Stopped) StoppedEvent?.Invoke(this);
                     var newone = _waveSource.GetPosition();
                     if (newone != last)
                         WavePositionChangedEvent?.Invoke(this, newone);
+                    while (_soundOut.PlaybackState != PlaybackState.Playing) { Thread.Sleep(1); }
                     Thread.Sleep(1);
                 }
             });

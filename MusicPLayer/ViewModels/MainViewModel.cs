@@ -23,15 +23,17 @@ namespace MusicPLayer.ViewModels
         #region 建構式
         public MainViewModel()
         {
-            PlayerModel.StoppedEvent += (object sender) =>
+            /*PlayerModel.StoppedEvent += (object sender) =>
             {
+                Console.WriteLine($"{DateTime.Now}__{PlayerModel.ManualStop}");
                 if (!PlayerModel.ManualStop)
                     NextCmd.Execute(null);
                 PlayerModel.ManualStop = false;
-            };
+            };*/
             PlayerModel.WavePositionChangedEvent += (object sender, TimeSpan position) =>
             {
                 NotifyPropertyChanged(nameof(MusicPosition));
+                NotifyPropertyChanged(nameof(WindowTitle));
             };
             NowPlayingList.CollectionChanged += (object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) =>
             {
@@ -63,7 +65,20 @@ namespace MusicPLayer.ViewModels
         /// <summary>
         /// 音樂撥放位置
         /// </summary>
-        public TimeSpan MusicPosition { get => PlayerModel.Position; set => PlayerModel.Position = value; }
+        public TimeSpan MusicPosition
+        {
+            get
+            {
+                if (PlayerModel.IsLoadded&&PlayerModel.PlaybackState == CSCore.SoundOut.PlaybackState.Stopped)
+                {
+                    if (!PlayerModel.ManualStop)
+                        NextCmd.Execute(null);
+                    PlayerModel.ManualStop = false;
+                }
+                return PlayerModel.Position;
+            }
+            set => PlayerModel.Position = value;
+        }
 
         /// <summary>
         /// 音樂標題
@@ -308,7 +323,6 @@ namespace MusicPLayer.ViewModels
             NotifyPropertyChanged(nameof(MusicArtistAlbum));
             NotifyPropertyChanged(nameof(MusicPath));
             NotifyPropertyChanged(nameof(MusicPicture));
-            NotifyPropertyChanged(nameof(WindowTitle));
             NotifyPropertyChanged(nameof(NextMusicMode));
             for (int i = 0; i < NowPlayingList.Count; i++)
             {
