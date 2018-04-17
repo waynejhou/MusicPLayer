@@ -120,6 +120,7 @@ namespace MusicPLayer.Models
         /// <param name="fileName">檔案路徑</param>
         public void Load(string fileName)
         {
+            Stop();
             Dispose();
             NowPlayingItem = MusicItem.CreatFromFile(fileName);
             _waveSource = CodecFactory.Instance.GetCodec(fileName)
@@ -129,15 +130,17 @@ namespace MusicPLayer.Models
             _soundOut = new WasapiOut() { Latency = 100 };
             _soundOut.Initialize(_waveSource);
             _soundOut.Volume = _volume;
-            _soundOut.Stopped += (object sender, PlaybackStoppedEventArgs e) => { StoppedEvent?.Invoke(this); };
+            //_soundOut.Stopped += (object sender, PlaybackStoppedEventArgs e) => { StoppedEvent?.Invoke(this); };
             LoaddedEvent?.Invoke(this);
             Position = TimeSpan.Zero;
+            Play();
             _wavePostionUpdThd = new Thread(() =>
             {
                 TimeSpan last = TimeSpan.Zero;
                 while (IsLoadded)
                 {
-                    while (_soundOut.PlaybackState == PlaybackState.Paused) { Thread.Sleep(1); }
+                    if(PlaybackState==PlaybackState.Stopped) StoppedEvent?.Invoke(this);
+                    while (_soundOut.PlaybackState != PlaybackState.Playing) { Thread.Sleep(1); }
                     var newone = _waveSource.GetPosition();
                     if (newone != last)
                         WavePositionChangedEvent?.Invoke(this, newone);

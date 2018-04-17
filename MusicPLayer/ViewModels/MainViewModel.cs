@@ -282,8 +282,9 @@ namespace MusicPLayer.ViewModels
         }
         private void OnLoadFile(string fileName)
         {
-            if (PlayerModel.IsLoadded)
-                PlayerModel.ManualStop = true;
+            //Console.WriteLine(PlayerModel.IsLoadded);
+            //if (PlayerModel.IsLoadded)
+                //PlayerModel.ManualStop = true;
             PlayerModel.Load(fileName);
             NotifyAllPropotery();
         }
