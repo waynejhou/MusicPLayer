@@ -2,9 +2,13 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns="clr-namespace:System;assembly=mscorlib">
     <String x:Key="Menu_File">檔案 (_F)</String>
-    <String x:Key="Menu_File_Open">開啟音訊檔案 (__O)</String>
-    <String x:Key="Menu_File_Add">加入音訊檔案 (__A)</String>
+    <String x:Key="Menu_File_Open">開啟音訊檔案 (_O)</String>
+    <String x:Key="Menu_File_Add">加入音訊檔案 (_A)</String>
     <String x:Key="Menu_File_Exit">關閉 MusicPLayer (_C)</String>
+    <String x:Key="Menu_Help">說明 (_H)</String>
+
+    <String x:Key="Menu_Edit">編輯 (_E)</String>
+    <String x:Key="Menu_Edit_OpenLrcEditor">開啟 Lrc 編輯器 (_L)</String>
 
     <String x:Key="Dialog_OpenAudioFile">開啟音訊檔案</String>
     <String x:Key="Filter_AudioFile">音訊檔案|*.mp3;*.flac</String>

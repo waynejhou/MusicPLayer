@@ -1,5 +1,6 @@
 ﻿using MusicPLayer.Models;
 using MusicPLayer.Utils;
+using MusicPLayer.View;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -148,6 +149,7 @@ namespace MusicPLayer.ViewModels
         public ICommand ChangeNextModeCmd { get { return new RelayCommand(OnChangeNextMode, () => true); } }
         public ICommand NextCmd { get { return new RelayCommand(OnPlayNext, () => App.NowPlayingList.CanGetNext); } }
         public ICommand LastCmd { get { return new RelayCommand(OnPlayLast, () => App.NowPlayingList.CanGetLast); } }
+        public ICommand OpenLrcEditorCmd { get { return new RelayCommand(OnOpenLrcEditor, () => true); } }
         #endregion
 
         #region 私有成員函式
@@ -284,6 +286,10 @@ namespace MusicPLayer.ViewModels
                 PlayerModel.ManualStop = true;
             PlayerModel.Load(fileName);
             NotifyAllPropotery();
+        }
+        private void OnOpenLrcEditor()
+        {
+            new LrcEditorWindow().Show();
         }
         #endregion
 

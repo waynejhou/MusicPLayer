@@ -63,7 +63,7 @@
                 </Grid.RowDefinitions>
                 <Menu x:Name="MainMenu"
               Grid.Row="0" Style="{DynamicResource MenuStyle}">
-                    <MenuItem x:Name="menuItem" Header="{DynamicResource Menu_File}"
+                    <MenuItem x:Name="menuItemFile" Header="{DynamicResource Menu_File}"
                       Template="{DynamicResource MenuItemControlTemplate}">
                         <MenuItem Header="{DynamicResource Menu_File_Open}"
                                   Command="{Binding OpenFileDialogCmd}"
@@ -84,6 +84,15 @@
                           Command="{Binding ExitCmd}"
                           InputGestureText="Alt+F4">
                         </MenuItem>
+                    </MenuItem>
+                    <MenuItem x:Name="mmenuItemEdit" Header="{DynamicResource Menu_Edit}"
+                      Template="{DynamicResource MenuItemControlTemplate}">
+                        <MenuItem Header="{DynamicResource Menu_Edit_OpenLrcEditor}"
+                          Command="{Binding OpenLrcEditorCmd}">
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem x:Name="mmenuItemHelp" Header="{DynamicResource Menu_Help}"
+                      Template="{DynamicResource MenuItemControlTemplate}">
                     </MenuItem>
                 </Menu>
                 <Grid Grid.Row="1">
