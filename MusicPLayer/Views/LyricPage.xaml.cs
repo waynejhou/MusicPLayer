@@ -61,7 +61,7 @@ namespace MusicPLayer.Views
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     LyricListView.ItemsSource = null;
-                    _linesHeight?.Clear();
+                    _linesHeight = null;
                 }
                 else
                 {
@@ -106,22 +106,35 @@ namespace MusicPLayer.Views
                 (DependencyObject obj, DependencyPropertyChangedEventArgs args) =>
                 {
                     var t = (obj as LyricPage);
-                    if (!t._isShown||!t._lyricParser.IsLoaded)
+                    if (!t._isShown || !t._lyricParser.IsLoaded)
+                    {
                         return;
+                    }
+                    if(t.LyricListView.Items.Count == 0 || t.LyricListView.ItemContainerGenerator.Status != System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
+                    {
+                        var n = t.LinesHeight;
+                        return;
+                    }
                     var now = (TimeSpan)args.NewValue;
                     var _lyricParser = t._lyricParser;
                     var offset = t.GetOffset(now);
+                    if (offset == 0)
+                    {
+                        t.SizeChanged = true;
+                    }
                     var lidx = Math.Max(_lyricParser.GetLyricIdxFromTime(now), 0);
-                    var nll =
-                    VisualTreeHelper.GetChild(
-                        VisualTreeHelper.GetChild(
-                            VisualTreeHelper.GetChild(
-                                VisualTreeHelper.GetChild(
-                                    (t.LyricListView.ItemContainerGenerator.ContainerFromIndex(lidx) as ListViewItem),
-                                    0),
-                                0),
-                            0),
-                        1) as Label;
+                    var nlll = (t.LyricListView.ItemContainerGenerator.ContainerFromIndex(lidx) as ListViewItem);
+                    if (nlll == null)
+                    {
+                        Console.WriteLine($"{t.LyricListView.ItemContainerGenerator.Status}   {t.LyricListView.ItemContainerGenerator.Items.Count}\n" +
+                            $"{VisualTreeHelper.GetChildrenCount(t.LyricListView)}");
+                        return;
+                    }
+                    var nll1 = VisualTreeHelper.GetChild(nlll, 0);
+                    nll1 = VisualTreeHelper.GetChild(nll1, 0);
+                    nll1 = VisualTreeHelper.GetChild(nll1, 0);
+                    nll1 = VisualTreeHelper.GetChild(nll1, 1);
+                    var nll = nll1 as Label;
                     if (lidx != 0)
                     {
                         var lll = VisualTreeHelper.GetChild(
@@ -132,7 +145,6 @@ namespace MusicPLayer.Views
                         lll.Foreground = NormalColor;
                     }
                     nll.Foreground = HighlightColor;
-
                     Canvas.SetTop(t.LyricListView, t.CenterPosi - offset);
 
 
@@ -177,9 +189,10 @@ namespace MusicPLayer.Views
                 _linesHeight = new List<double>();
                 for (int i = 0; i < _lyricParser.Lyrics.Count(); i++)
                 {
-                    var Do = VisualTreeHelper.GetChild(
-                        LyricListView.ItemContainerGenerator.ContainerFromIndex(i),
-                        0) as Border;
+                    var Do2 = LyricListView.ItemContainerGenerator.ContainerFromIndex(i);
+                    if (Do2 == null)
+                        return _linesHeight;
+                    var Do = VisualTreeHelper.GetChild(Do2,0) as Border;
                     _linesHeight.Add(Do.ActualHeight);
 
                 }
@@ -244,5 +257,6 @@ namespace MusicPLayer.Views
             if (IsLoaded)
                 ReSetColor();
         }
+
     }
 }
