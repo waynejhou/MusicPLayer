@@ -124,6 +124,8 @@ namespace MusicPLayer.Views
                     if (LyricListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
                     {
                         var c = LyricListView.ItemContainerGenerator.ContainerFromIndex(nowTimeLyricIdx);
+                        if (c == null)
+                            goto End;
                         c = VisualTreeHelper.GetChild(c, 0);
                         c = VisualTreeHelper.GetChild(c, 0);
                         var l = VisualTreeHelper.GetChild(c, 0) as Label;
@@ -152,6 +154,7 @@ namespace MusicPLayer.Views
                     }
                     lastIndex = nowTimeLyricIdx;
                 }
+                End:
                 return (canvas.ActualHeight / 2) - (offsetPastLineHeight + offsetNowLineHeight) + ForeFontSize;
             }
         }

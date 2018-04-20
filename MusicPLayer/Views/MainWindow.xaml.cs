@@ -122,7 +122,7 @@ namespace MusicPLayer
                         BackImageBack.Background = (SolidColorBrush)Resources["BackGroundColor"];
                     else
                         BackImageBack.Background = null;
-                    MinCloseButton.Visibility = Visibility.Visible;
+                    MinControlBorder.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -139,7 +139,7 @@ namespace MusicPLayer
                     AlbumImage.Visibility = Visibility.Visible;
                     BackImage2.Visibility = Visibility.Collapsed;
                     BackImage.Visibility = Visibility.Collapsed;
-                    MinCloseButton.Visibility = Visibility.Collapsed;
+                    MinControlBorder.Visibility = Visibility.Collapsed;
                 }
                 NotifyPropertyChanged(nameof(MinWindowsArrow));
             }

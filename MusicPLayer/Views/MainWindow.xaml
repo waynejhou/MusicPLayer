@@ -99,7 +99,8 @@
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <Border x:Name="TabBorder" Style="{DynamicResource Main_CardBorderStyle}">
                         <StackPanel Grid.Column="0">
@@ -118,7 +119,7 @@
                                  Checked="RadioButton_Checked"/>
                         </StackPanel>
                     </Border>
-                    <TabControl x:Name="TagCtrl" Grid.Column="1"
+                    <TabControl x:Name="TagCtrl" Grid.Column="1" Grid.ColumnSpan="2"
                         Background="{x:Null}"
                         ItemContainerStyle="{DynamicResource Main_TabItemStyle}"
                         Padding="0"
@@ -151,7 +152,26 @@
                             </Border>
                         </TabItem>
                     </TabControl>
-
+                    <Border x:Name="MinControlBorder" Grid.Column="2" Style="{DynamicResource Main_CardBorderStyle}" Visibility="Collapsed">
+                        <StackPanel Orientation="Vertical">
+                            <Button Content="&#xf410;"
+                                Height="20" Style="{DynamicResource Main_CircleButtonStyle}"
+                                Margin="0"
+                                Padding="0"
+                                FontSize="12"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Command="{Binding ExitCmd}"/>
+                            <Button Content="&#xf2d1;"
+                                Height="20" Style="{DynamicResource Main_CircleButtonStyle}"
+                                Margin="0"
+                                Padding="0"
+                                FontSize="12"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Command="{Binding MinAppCmd}"/>
+                        </StackPanel>
+                    </Border>
                 </Grid>
 
                 <Border Grid.Row="2" Style="{DynamicResource Main_CardBorderStyle}" >
@@ -215,13 +235,7 @@
                 </Border>
             </Grid>
         </Border>
-        <Button x:Name="MinCloseButton" Content="&#xf410;" Height="30" Style="{DynamicResource Main_CircleButtonStyle}"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Command="{Binding ExitCmd}"
-                Visibility="Collapsed"/>
+
     </Grid>
 
 

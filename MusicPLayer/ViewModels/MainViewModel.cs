@@ -165,6 +165,7 @@ namespace MusicPLayer.ViewModels
         public ICommand NextCmd { get { return new RelayCommand(OnPlayNext, () => App.NowPlayingList.CanGetNext); } }
         public ICommand LastCmd { get { return new RelayCommand(OnPlayLast, () => App.NowPlayingList.CanGetLast); } }
         public ICommand OpenLrcEditorCmd { get { return new RelayCommand(OnOpenLrcEditor, () => true); } }
+        public ICommand MinAppCmd { get { return new RelayCommand(OnMinApp, () => true); } }
         #endregion
 
         #region 私有成員函式
@@ -249,6 +250,10 @@ namespace MusicPLayer.ViewModels
         private void OnExitApp()
         {
             System.Windows.Application.Current.MainWindow.Close();
+        }
+        private void OnMinApp()
+        {
+            System.Windows.Application.Current.MainWindow.WindowState = WindowState.Minimized;
         }
         private void OnStop()
         {

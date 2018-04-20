@@ -464,7 +464,7 @@
         <Setter Property="ForeColor" Value="{DynamicResource ForeGroundColor}"/>
         <Setter Property="ForeHighlightColor" Value="{DynamicResource DymanicColor}"/>
         <Setter Property="ForeFont" Value="{DynamicResource ForeFontFamily}"/>
-        <Setter Property="ForeFontSize" Value="25"/>
+        <Setter Property="ForeFontSize" Value="15"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type v:LyricPage}">
