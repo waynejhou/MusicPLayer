@@ -262,4 +262,17 @@ namespace MusicPLayer.Utils
 
         #endregion
     }
+    public struct LyricWithTime
+    {
+        TimeSpan _time;
+        string _lyric;
+
+        public string Lyric { get => _lyric; set => _lyric = value; }
+        public TimeSpan Time { get => _time; set => _time = value; }
+
+        public override string ToString()
+        {
+            return _lyric;
+        }
+    }
 }

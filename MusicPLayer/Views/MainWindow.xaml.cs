@@ -50,16 +50,13 @@ namespace MusicPLayer
                 if ((sender as RadioButton) == AlbumArtTab)
                 {
                     TagCtrl.SelectedIndex = 0;
-                    LyricP.IsShown = false;
                 }
                 else if ((sender as RadioButton) == LyricTab){
                     TagCtrl.SelectedIndex = 1;
-                    LyricP.IsShown = true;
                 }
                 else if ((sender as RadioButton) == NowPLayingTab)
                 {
                     TagCtrl.SelectedIndex = 2;
-                    LyricP.IsShown = false;
                 }
             }
 
@@ -81,8 +78,7 @@ namespace MusicPLayer
 
         private void TimeSlider_ValueChanged(object sender, TimeSpan time)
         {
-            if (LyricP != null)
-                LyricP.ReSetColor();
+
         }
 
         private void TaskBarThumbBtn_Click(object sender, EventArgs e)
@@ -318,6 +314,15 @@ namespace MusicPLayer
         {
             App.MainWinViewModel.LoadCmd.Execute(((sender as ListView).SelectedItem as MusicItem).Path);
             App.MainWinViewModel.PlayCmd.Execute(null);
+        }
+
+        private void MainWin_Loaded(object sender, RoutedEventArgs e)
+        {
+            for (var tabIndex = TagCtrl.Items.Count; tabIndex >= 0; tabIndex--)
+            {
+                TagCtrl.SelectedIndex = tabIndex;
+                TagCtrl.UpdateLayout();
+            }
         }
     }
 }

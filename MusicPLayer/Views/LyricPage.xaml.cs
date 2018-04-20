@@ -1,9 +1,12 @@
 ﻿using MusicPLayer.Models;
+using MusicPLayer.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,247 +19,171 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Controls.Primitives;
 
 namespace MusicPLayer.Views
 {
     /// <summary>
     /// LyricPage.xaml 的互動邏輯
     /// </summary>
-    public partial class LyricPage : UserControl
+    public partial class LyricPage : UserControl, INotifyPropertyChanged
     {
         public LyricPage()
         {
             InitializeComponent();
         }
 
-        private void LyricListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        LRCParser parser = new LRCParser();
+        bool sizeChanging = false;
+
+        public string FilePath
         {
-
-        }
-        public string FileName
-        {
-            get => (string)GetValue(FileNameProperty);
-            set {
-                SetValue(FileNameProperty, value);
-            }
-        }
-        static public readonly DependencyProperty FileNameProperty = DependencyProperty.Register(
-            nameof(FileName), typeof(string), typeof(LyricPage),
-            new FrameworkPropertyMetadata(null,
-                (DependencyObject obj, DependencyPropertyChangedEventArgs args) =>
-                {
-                    if(File.Exists((obj as LyricPage).FileName))
-                    {
-                        var file = new FileInfo((obj as LyricPage).FileName);
-                        var l = file.DirectoryName + @"\" + file.Name.Replace(file.Extension, "") + ".lrc";
-                        if (File.Exists(l))
-                            (obj as LyricPage).LrcPath = l;
-                        else
-                            (obj as LyricPage).LrcPath = "";
-                    }
-                }));
-        string LrcPath { set
-            {
-                _lyricParser.FileName = value;
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    LyricListView.ItemsSource = null;
-                    _linesHeight = null;
-                }
-                else
-                {
-
-                    LyricListView.ItemsSource = _lyricParser.Lyrics;
-                }
-
-            }
-        }
-
-        public BitmapImage BackgroundImg
-        {
+            get => parser.FileName;
             set
             {
-                //BgImg.Source = value;
+                parser.FileName = value;
+                if (parser.IsLoaded)
+                    Lyrics = parser.Lyrics;
+                else
+                    Lyrics = LRCParser.NoLyricMessage;
+                NotifyPropertyChanged(nameof(Lyrics));
             }
-
         }
 
-        public TimeSpan Max
+        public List<LyricWithTime> Lyrics { get; set; }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            get => (TimeSpan)GetValue(MaxProperty);
-            set=>SetValue(MaxProperty,value);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        static public readonly DependencyProperty MaxProperty = DependencyProperty.Register(
-            nameof(Max), typeof(TimeSpan), typeof(LyricPage),
-            new PropertyMetadata(TimeSpan.MaxValue));
 
-        public TimeSpan Min => TimeSpan.Zero;
+        public SolidColorBrush BackColor { get => (SolidColorBrush)GetValue(BackColorProperty); set => SetValue(BackColorProperty, value); }
+        public static readonly DependencyProperty BackColorProperty = DependencyProperty.Register(nameof(BackColor), typeof(SolidColorBrush), typeof(LyricPage),
+            new FrameworkPropertyMetadata(Brushes.Black));
 
-        public TimeSpan Now
+        public SolidColorBrush ForeColor { get => (SolidColorBrush)GetValue(ForeColorProperty); set => SetValue(ForeColorProperty, value); }
+        public static readonly DependencyProperty ForeColorProperty = DependencyProperty.Register(nameof(ForeColor), typeof(SolidColorBrush), typeof(LyricPage),
+            new FrameworkPropertyMetadata(Brushes.White));
+
+        public SolidColorBrush ForeHighlightColor { get => (SolidColorBrush)GetValue(ForeHighlightColorProperty); set => SetValue(ForeHighlightColorProperty, value); }
+        public static readonly DependencyProperty ForeHighlightColorProperty = DependencyProperty.Register(nameof(ForeHighlightColor), typeof(SolidColorBrush), typeof(LyricPage),
+            new FrameworkPropertyMetadata(Brushes.Lime));
+
+        public FontFamily ForeFont { get => (FontFamily)GetValue(ForeFontProperty); set => SetValue(ForeFontProperty, value); }
+        public static readonly DependencyProperty ForeFontProperty = DependencyProperty.Register(nameof(ForeFont), typeof(FontFamily), typeof(LyricPage),
+            new FrameworkPropertyMetadata(new FontFamily("Microsoft JhengHei")));
+
+        public double ForeFontSize { get => (double)GetValue(ForeFontSizeProperty); set => SetValue(ForeFontSizeProperty, value); }
+        public static readonly DependencyProperty ForeFontSizeProperty = DependencyProperty.Register(nameof(ForeFontSize), typeof(double), typeof(LyricPage),
+            new FrameworkPropertyMetadata(20d));
+
+        public TimeSpan NowValue
         {
-            get => (TimeSpan)GetValue(NowProperty);
-            set => SetValue(NowProperty, value);
-        }
-        public static SolidColorBrush HighlightColor => Brushes.Lime;
-        public static SolidColorBrush NormalColor => Brushes.White;
-        double CenterPosi => canvas.ActualHeight / 2;
-        static public readonly DependencyProperty NowProperty = DependencyProperty.Register(
-            nameof(Now), typeof(TimeSpan), typeof(LyricPage),
-            new FrameworkPropertyMetadata(TimeSpan.Zero, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                (DependencyObject obj, DependencyPropertyChangedEventArgs args) =>
-                {
-                    var t = (obj as LyricPage);
-                    if (!t._isShown || !t._lyricParser.IsLoaded)
-                    {
-                        return;
-                    }
-                    if(t.LyricListView.Items.Count == 0 || t.LyricListView.ItemContainerGenerator.Status != System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
-                    {
-                        var n = t.LinesHeight;
-                        return;
-                    }
-                    var now = (TimeSpan)args.NewValue;
-                    var _lyricParser = t._lyricParser;
-                    var offset = t.GetOffset(now);
-                    if (offset == 0)
-                    {
-                        t.SizeChanged = true;
-                    }
-                    var lidx = Math.Max(_lyricParser.GetLyricIdxFromTime(now), 0);
-                    var nlll = (t.LyricListView.ItemContainerGenerator.ContainerFromIndex(lidx) as ListViewItem);
-                    if (nlll == null)
-                    {
-                        Console.WriteLine($"{t.LyricListView.ItemContainerGenerator.Status}   {t.LyricListView.ItemContainerGenerator.Items.Count}\n" +
-                            $"{VisualTreeHelper.GetChildrenCount(t.LyricListView)}");
-                        return;
-                    }
-                    var nll1 = VisualTreeHelper.GetChild(nlll, 0);
-                    nll1 = VisualTreeHelper.GetChild(nll1, 0);
-                    nll1 = VisualTreeHelper.GetChild(nll1, 0);
-                    nll1 = VisualTreeHelper.GetChild(nll1, 1);
-                    var nll = nll1 as Label;
-                    if (lidx != 0)
-                    {
-                        var lll = VisualTreeHelper.GetChild(
-                        VisualTreeHelper.GetChild(
-                            VisualTreeHelper.GetChild(
-                                VisualTreeHelper.GetChild(
-                                    (t.LyricListView.ItemContainerGenerator.ContainerFromIndex(lidx - 1) as ListViewItem), 0), 0), 0), 1) as Label;
-                        lll.Foreground = NormalColor;
-                    }
-                    nll.Foreground = HighlightColor;
-                    Canvas.SetTop(t.LyricListView, t.CenterPosi - offset);
-
-
-                }));
-
-
-        LRCParser _lyricParser = new LRCParser();
-        bool SizeChanged = false;
-        double[] Zeros(int count)
-        {
-            if (count <= 0)
-                return null;
-            var d = new double[count];
-            for(int i = 0; i < count; i++)
+            get => (TimeSpan)GetValue(NowValueProperty); set
             {
-                d[i] = 0;
+                SetValue(NowValueProperty, value);
             }
-            return d;
         }
-        List<double> _linesHeight = null;
-        List<double> LinesHeight
+        public static readonly DependencyProperty NowValueProperty = DependencyProperty.Register(nameof(NowValue), typeof(TimeSpan), typeof(LyricPage),
+            new FrameworkPropertyMetadata(TimeSpan.Zero,(DependencyObject obj, DependencyPropertyChangedEventArgs args)=>
+            {
+                if(Mouse.LeftButton==MouseButtonState.Released)
+                    (obj as LyricPage).sizeChanging = false;
+                if (!(obj as LyricPage).sizeChanging)
+                    if ((obj as LyricPage).parser.IsLoaded)
+                        (obj as LyricPage).NotifyPropertyChanged("ListViewCTop");
+            }));
+
+        int lastIndex = -1;
+        public double ListViewCTop
         {
             get
             {
-                if (_linesHeight != null)
-                {
-                    if (SizeChanged)
-                    {
-                        if (_linesHeight.Count < _lyricParser.Lyrics.Count())
-                            _linesHeight.AddRange(Zeros(_lyricParser.Lyrics.Count()-_linesHeight.Count));
-                        for (int i = 0; i < _lyricParser.Lyrics.Count(); i++)
-                        {
-                            var Do = VisualTreeHelper.GetChild(LyricListView.ItemContainerGenerator.ContainerFromIndex(i), 0) as Border;
-                            if (i < _linesHeight.Count)
-                                _linesHeight[i] = Do.ActualHeight;
-                        }
-                    }
-
-                    SizeChanged = false;
-                    return _linesHeight;
-                }
-                _linesHeight = new List<double>();
-                for (int i = 0; i < _lyricParser.Lyrics.Count(); i++)
-                {
-                    var Do2 = LyricListView.ItemContainerGenerator.ContainerFromIndex(i);
-                    if (Do2 == null)
-                        return _linesHeight;
-                    var Do = VisualTreeHelper.GetChild(Do2,0) as Border;
-                    _linesHeight.Add(Do.ActualHeight);
-
-                }
-                return _linesHeight;
-            }
-        }
-        private double GetOffset(TimeSpan p)
-        {
-            var NowLyricTime = _lyricParser.GetLyricFromTime(p).Time;
-            var NextLyricTime = _lyricParser.GetNextLyricFromTime(p).Time;
-            var NowLyricIdx = _lyricParser.GetLyricIdxFromTime(p);
-            var offset1 = 0d;
-            for (int i = 0; i < NowLyricIdx ; i++)
-            {
+                var nowTimeLyricIdx = parser.GetLyricIdxFromTime(NowValue);
+                if (nowTimeLyricIdx == -1)
+                    return (canvas.ActualHeight / 2);
                 if (LinesHeight.Count > 0)
-                    offset1 += LinesHeight[i];
+                    if (LinesHeight[nowTimeLyricIdx] ==0)
+                        if (LyricListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+                            ResetLinesHeight(LyricListView.ItemContainerGenerator);
+                var nowTimeLyricTime = parser.Lyrics[nowTimeLyricIdx].Time;
+                var nextTimeLyricTime = parser.Lyrics[nowTimeLyricIdx + 1].Time;
+                var offsetPastLineHeight = 0d;
+                if (LinesHeight.Count > 0)
+                    for (int i = 0; i < nowTimeLyricIdx; i++)
+                        offsetPastLineHeight += LinesHeight[i];
+                var offsetNowLineHeight = 0d;
+                if (LinesHeight.Count > 0)
+                {
+                    offsetNowLineHeight = (NowValue - nowTimeLyricTime).TotalMilliseconds / (nextTimeLyricTime - nowTimeLyricTime).TotalMilliseconds * LinesHeight[nowTimeLyricIdx];
+                }
+                if (nowTimeLyricIdx != lastIndex)
+                {
+                    if (LyricListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+                    {
+                        var c = LyricListView.ItemContainerGenerator.ContainerFromIndex(nowTimeLyricIdx);
+                        c = VisualTreeHelper.GetChild(c, 0);
+                        c = VisualTreeHelper.GetChild(c, 0);
+                        var l = VisualTreeHelper.GetChild(c, 0) as Label;
+                        l.Foreground = new SolidColorBrush(ForeColor.Color);
+                        l.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation()
+                        {
+                            From = ForeColor.Color,
+                            To = ForeHighlightColor.Color,
+                            Duration = TimeSpan.FromMilliseconds(250)
+                        });
+                        if (lastIndex >= 0)
+                        {
+                            var cc = LyricListView.ItemContainerGenerator.ContainerFromIndex(lastIndex);
+                            cc = VisualTreeHelper.GetChild(cc, 0);
+                            cc = VisualTreeHelper.GetChild(cc, 0);
+                            var ll = VisualTreeHelper.GetChild(cc, 0) as Label;
+                            ll.Foreground = new SolidColorBrush(ForeHighlightColor.Color);
+                            ll.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation()
+                            {
+                                From = ForeHighlightColor.Color,
+                                To = ForeColor.Color,
+                                Duration = TimeSpan.FromMilliseconds(250)
+                            });
+                        }
+
+                    }
+                    lastIndex = nowTimeLyricIdx;
+                }
+                return (canvas.ActualHeight / 2) - (offsetPastLineHeight + offsetNowLineHeight) + ForeFontSize;
             }
-            var offset2 = 0d;
-            if (LinesHeight.Count > 0)
+        }
+
+        private void userControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            sizeChanging = true;
+            ResetLinesHeight(LyricListView.ItemContainerGenerator);
+        }
+
+        List<double> _linesHeight = new List<double>();
+        public List<double> LinesHeight => _linesHeight;
+
+        private void LyricListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            (sender as ListView).ItemContainerGenerator.StatusChanged += (object esender, EventArgs ee)=>
             {
-                offset2 = (p.TotalMilliseconds-NowLyricTime.TotalMilliseconds) / (NextLyricTime - NowLyricTime).TotalMilliseconds * LinesHeight[NowLyricIdx];
-            }
-            return offset1 + offset2;
+                var icg = (esender as ItemContainerGenerator);
+                var status = icg.Status;
+                if (status == GeneratorStatus.ContainersGenerated)
+                    ResetLinesHeight(icg);
+            };
         }
-
-        bool _isShown = false;
-        public bool IsShown { get => _isShown; set => _isShown = value; }
-
-        public void ReSetColor()
+        private void ResetLinesHeight(ItemContainerGenerator icg)
         {
-            if (!IsShown||!_lyricParser.IsLoaded)
-                return;
-            for (int i = 0; i < LyricListView.Items.Count; i++)
+            _linesHeight.Clear();
+            _linesHeight.AddRange(Enumerable.Repeat(0d, icg.Items.Count));
+            for (int i = 0; i < icg.Items.Count; i++)
             {
-                var lll =
-                    VisualTreeHelper.GetChild(
-                    VisualTreeHelper.GetChild(
-                    VisualTreeHelper.GetChild(
-                        VisualTreeHelper.GetChild(
-                            (LyricListView.ItemContainerGenerator.ContainerFromIndex(i) as ListViewItem), 0), 0), 0), 1) as Label;
-                lll.Foreground = NormalColor;
+                var border = VisualTreeHelper.GetChild(LyricListView.ItemContainerGenerator.ContainerFromIndex(i), 0) as Border;
+                _linesHeight[i] = border.ActualHeight;
             }
         }
-        public void MoveTo(ListView target, double? newTop)
-        {
-            var top = Canvas.GetTop(target);
-            var left = Canvas.GetLeft(target);
-            Storyboard story = new Storyboard();
-            DoubleAnimation AniTop = new DoubleAnimation();
-            AniTop.From = top;
-            AniTop.To = newTop;
-            AniTop.Duration = new Duration(TimeSpan.FromMilliseconds(50));
-            story.Children.Add(AniTop);
-            Storyboard.SetTargetName(AniTop, target.Name);
-            Storyboard.SetTargetProperty(AniTop, new PropertyPath(Canvas.TopProperty));
-            story.Begin(this);
-        }
-
-        private void canvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            SizeChanged = true;
-            if (IsLoaded)
-                ReSetColor();
-        }
-
     }
 }

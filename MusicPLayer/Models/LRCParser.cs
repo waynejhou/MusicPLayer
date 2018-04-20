@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using MusicPLayer.Utils;
 
 namespace MusicPLayer.Models
 {
@@ -41,7 +42,7 @@ namespace MusicPLayer.Models
                 {
                     var ms = timeTag.Matches(s);
                     var sr = timeTag.Replace(s, "");
-                    
+                    sr = sr.Replace("【", "\n【").Replace("〖", "\n〖");
                     foreach (var ss in ms)
                     {
                         var sss = (ss as Match).Value.Trim("[]".ToCharArray());
@@ -100,11 +101,10 @@ namespace MusicPLayer.Models
 
                     _lyrics.Add(new LyricWithTime() { Time = TimeSpan.MaxValue, Lyric = "" });
                 }
-                _lyrics = _lyrics.OrderBy(x => x.Time, new TimespanCompare()).ToList();
-
+                _lyrics = _lyrics.OrderBy(x => x.Time).ToList();
             }
-            
         }
+
 
         void AddLyric(TimeSpan time, string lyric)
         {
@@ -115,19 +115,6 @@ namespace MusicPLayer.Models
             }
             else
                 _lyrics.Add(new LyricWithTime() { Time = time, Lyric = lyric });
-        }
-
-        internal object SearchLyricFromTime(TimeSpan timeSpan)
-        {
-            throw new NotImplementedException();
-        }
-
-        class TimespanCompare : IComparer<TimeSpan>
-        {
-            public int Compare(TimeSpan x, TimeSpan y)
-            {
-                return TimeSpan.Compare(x, y);
-            }
         }
 
         public LyricWithTime GetLyricFromTime(TimeSpan timeSpan)
@@ -148,22 +135,19 @@ namespace MusicPLayer.Models
         }
         public int GetLyricIdxFromTime(TimeSpan timeSpan)
         {
-            for(int i = 0; i <= Lyrics.Count(); i++)
+            for(int i = 0; i < Lyrics.Count(); i++)
                 if (timeSpan <= Lyrics[i].Time)
                     return Math.Max(i-1,0);
-            return 0;
+            return -1;
         }
-    }
-    struct LyricWithTime
-    {
-        TimeSpan _time;
-        string _lyric;
 
-        public string Lyric { get => _lyric; set => _lyric = value; }
-        public TimeSpan Time { get => _time; set => _time = value; }
-        public override string ToString()
+        static List<LyricWithTime> _noLyricMessage = new List<LyricWithTime>()
         {
-            return _lyric;
-        }
+            new LyricWithTime{ Time=TimeSpan.Zero, Lyric="No Lyric Found!"},
+            new LyricWithTime{ Time=TimeSpan.MaxValue, Lyric=""}
+        };
+        public static List<LyricWithTime> NoLyricMessage { get => _noLyricMessage; }
+
     }
+
 }

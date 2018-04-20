@@ -297,10 +297,8 @@ namespace MusicPLayer.ViewModels
         }
         private void OnLoadFile(string fileName)
         {
-            //Console.WriteLine(PlayerModel.IsLoadded);
-            //if (PlayerModel.IsLoadded)
-                //PlayerModel.ManualStop = true;
             PlayerModel.Load(fileName);
+            App.MainWin.LyricP.FilePath = fileName.Replace(new FileInfo(fileName).Extension, ".lrc");
             NotifyAllPropotery();
         }
         private void OnOpenLrcEditor()

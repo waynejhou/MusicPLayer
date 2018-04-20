@@ -112,7 +112,6 @@
     <Compile Include="Utils\MusicUtils.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
     <Compile Include="Utils\SingleInstance.cs" />
-    <Compile Include="ViewModels\LyricViewModel.cs" />
     <Compile Include="Views\LrcEditorWindow.xaml.cs">
       <DependentUpon>LrcEditorWindow.xaml</DependentUpon>
     </Compile>
@@ -191,7 +190,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Resource Include="Resources\SETOFONT.TTF" />
     <Resource Include="Resources\Font Awesome 5 Brands-Regular-400.otf" />
     <Resource Include="Resources\Font Awesome 5 Free-Regular-400.otf" />
     <Resource Include="Resources\Font Awesome 5 Free-Solid-900.otf" />

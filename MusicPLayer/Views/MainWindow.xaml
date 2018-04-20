@@ -5,15 +5,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicPLayer.Views"
+        xmlns:vm="clr-namespace:MusicPLayer.ViewModels"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         md:DialogServiceViews.IsRegistered="True"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}" Height="482" Width="628"
         Background="{DynamicResource BackGroundColor}"
-        Icon="/MusicPLayer;component/Resources/Ellipses.png" MinWidth="600" MinHeight="200" LocationChanged="MainWin_LocationChanged">
+        Icon="/MusicPLayer;component/Resources/Ellipses.png" MinWidth="600" MinHeight="200" LocationChanged="MainWin_LocationChanged" Loaded="MainWin_Loaded">
     <Window.Resources>
-        <ResourceDictionary Source="../Styles/MainStyle.xaml" />
+        <ResourceDictionary Source="../Styles/MainStyle.xaml"/>
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Command="{Binding OpenFileDialogCmd}" Gesture="Ctrl+O" />
@@ -135,8 +136,7 @@
                         <TabItem>
                             <Border  Style="{DynamicResource Main_CardBorderStyle}">
                                 <local:LyricPage x:Name="LyricP"
-                                         FileName="{Binding MusicPath}"
-                                         Now="{Binding MusicPosition}"/>
+                                                 NowValue="{Binding MusicPosition}" Style="{DynamicResource MainLyricPageStyle}"/>
                             </Border>
                         </TabItem>
                         <TabItem>
