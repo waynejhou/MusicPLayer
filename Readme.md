@@ -1,4 +1,4 @@
-#Introducting MusicPLayer
+# Introducting MusicPLayer
 
 Just a normal music player with LRC display function.
 
