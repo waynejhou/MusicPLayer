@@ -49,3 +49,10 @@ Check List  Complete 12 /27
     - [ ] Change Theme
   - [ ] Music Library
     - [ ] Basic Music Library
+
+Bug Check List
+
+- [x] Sometime crash the player when playing lrc
+- [ ] Unable to show not unicode music tag
+- [ ] Sometime the lyric time sync will out of position
+
