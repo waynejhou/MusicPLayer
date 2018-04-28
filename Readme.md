@@ -8,11 +8,11 @@ Here's the picture
 
 ![pic](https://waynejhou.github.io/Img/LotOfMusicPLayer2.png)
 
-Check List  Complete 12 /27
+Check List  Complete 13 /27
 
 - [ ] MusicPLayer
   - [x] Check List
-  - [ ] Play Music
+  - [x] Play Music
     - [x] Play Music by Open FIle Dialog
     - [x] Play Music by Open in File Explorer
     - [x] Player Only Open One Each time
