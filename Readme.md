@@ -16,7 +16,7 @@ Check List  Complete 12 /27
     - [x] Play Music by Open FIle Dialog
     - [x] Play Music by Open in File Explorer
     - [x] Player Only Open One Each time
-    - [ ] Play Music by Drag and Drop
+    - [x] Play Music by Drag and Drop
   - [ ] UI
     - [x] Basic UI
     - [x] MinMode

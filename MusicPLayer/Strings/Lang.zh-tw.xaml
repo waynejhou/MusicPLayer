@@ -11,7 +11,8 @@
     <String x:Key="Menu_Edit_OpenLrcEditor">開啟 Lrc 編輯器 (_L)</String>
 
     <String x:Key="Dialog_OpenAudioFile">開啟音訊檔案</String>
-    <String x:Key="Filter_AudioFile">音訊檔案|*.mp3;*.flac</String>
+    <String x:Key="Filter_AudioFile">音訊檔案|*.mp3;*.mpeg3;*.wav;*.wave;*.flac;*.fla;*.aiff;*.aif;*.aifc;*.aac;*.adt;*.adts;*.m2ts;*.mp2;*.3g2;*.3gp2;*.3gp;*.3gpp;*.m4a;*.m4v;*.mp4v;*.mp4;*.mov;*.asf;*.wm;*.wmv;*.wma;*.mp1;*.avi;*.ac3;*.ec3</String>
+    <String x:Key="Filter_AllFile">所有檔案|*</String>
 
     <String x:Key="ToolTip_AlbumArt">專輯封面</String>
     <String x:Key="ToolTip_Lyric">歌詞</String>

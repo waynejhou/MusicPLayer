@@ -151,9 +151,10 @@ namespace MusicPLayer.ViewModels
 
         #region 指令
         public ICommand OpenFileDialogCmd { get { return new RelayCommand<string>(OnOpenFileDialog, (string s) => true); } }
-        public ICommand OpenFileCmd { get { return new RelayCommand<string[]>(OnOpenFile, (string[] s) => true); } }
-        public ICommand AddFileCmd { get { return new RelayCommand<string[]>(OnAddFile, (string[] s) => true); } }
+        public ICommand OpenFilesCmd { get { return new RelayCommand<string[]>(OnOpenFiles, (string[] s) => true); } }
+        public ICommand AddFilesCmd { get { return new RelayCommand<string[]>(OnAddFiles, (string[] s) => true); } }
         public ICommand AddCmd { get { return new RelayCommand<string>(OnOpenFileDialog, (string s) => true); } }
+        public ICommand AddFileCmd { get { return new RelayCommand<string>(OnAddFile, (string s) => true); } }
         public ICommand PlayPauseCmd { get { return new RelayCommand(OnPlayPause, () => PlayerModel.IsLoadded); } }
         public ICommand PlayCmd { get { return new RelayCommand(OnPlay, () => PlayerModel.IsLoadded); } }
         public ICommand LoadCmd { get { return new RelayCommand<string>(OnLoadFile, (string s) => true); } }
@@ -198,7 +199,7 @@ namespace MusicPLayer.ViewModels
             var settings = new MvvmDialogs.FrameworkDialogs.OpenFile.OpenFileDialogSettings
             {
                 Title = (string)(App.Current.Resources["Dialog_OpenAudioFile"]),
-                Filter = (string)(App.Current.Resources["Filter_AudioFile"]),
+                Filter = $"{(App.Current.Resources["Filter_AudioFile"])}|{(App.Current.Resources["Filter_AllFile"])}",
                 CheckFileExists = true,
                 Multiselect = true,
             };
@@ -209,17 +210,17 @@ namespace MusicPLayer.ViewModels
             {
                 if (parameter == "Open")
                 {
-                    OpenFileCmd.Execute(settings.FileNames);
+                    OpenFilesCmd.Execute(settings.FileNames);
                     PlayCmd.Execute(null);
                 }
                 if (parameter == "Add")
                 {
-                    AddFileCmd.Execute(settings.FileNames);
+                    AddFilesCmd.Execute(settings.FileNames);
                 }
             }
             NotifyAllPropotery();
         }
-        private void OnOpenFile(string[] fileNames)
+        private void OnOpenFiles(string[] fileNames)
         {
             for (int i = 0; i < fileNames.Count(); i++)
             {
@@ -227,25 +228,24 @@ namespace MusicPLayer.ViewModels
                 {
                     LoadCmd.Execute(fileNames[i]);
                     PlayPauseCmd.Execute(null);
-                    if (!NowPlayingList.Contains(NowPlayingItem))
-                        NowPlayingList.Add(NowPlayingItem);
                 }
-                else
-                {
-                    MusicItem newone;
-                    if (!NowPlayingList.Contains(newone = MusicItem.CreatFromFile(fileNames[i], false)))
-                        NowPlayingList.Add(newone);
-                }
+                AddFileCmd.Execute(fileNames[i]);
             }
         }
-        private void OnAddFile(string[] fileNames)
+        private void OnAddFiles(string[] fileNames)
         {
             for (int i = 0; i < fileNames.Count(); i++)
             {
-                MusicItem newone;
-                if (!NowPlayingList.Contains(newone = MusicItem.CreatFromFile(fileNames[i])))
-                    NowPlayingList.Add(newone);
+                AddFileCmd.Execute(fileNames[i]);
             }
+        }
+        private void OnAddFile(string fileName)
+        {
+            if (!MusicPlayer.SupportCheck(fileName))
+                return;
+            MusicItem newone;
+            if (!NowPlayingList.Contains(newone = MusicItem.CreatFromFile(fileName)))
+                NowPlayingList.Add(newone);
         }
         private void OnExitApp()
         {
@@ -302,6 +302,8 @@ namespace MusicPLayer.ViewModels
         }
         private void OnLoadFile(string fileName)
         {
+            if (!MusicPlayer.SupportCheck(fileName))
+                return;
             PlayerModel.Load(fileName);
             App.MainWin.LyricP.FilePath = fileName.Replace(new FileInfo(fileName).Extension, ".lrc");
             NotifyAllPropotery();

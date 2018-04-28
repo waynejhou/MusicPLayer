@@ -35,7 +35,7 @@ namespace MusicPLayer
             {
                 string[] a = new string[args.Count];
                 args.CopyTo(a,0);
-                MainWinViewModel.OpenFileCmd.Execute(a);
+                MainWinViewModel.OpenFilesCmd.Execute(a);
                 MainWinViewModel.PlayCmd.Execute(null);
             }
             return true;
@@ -49,7 +49,7 @@ namespace MusicPLayer
             var context = (_mainWinViewModel = new MainViewModel());
             if (e.Args.Length > 0)
             {
-                MainWinViewModel.OpenFileCmd.Execute(e.Args);
+                MainWinViewModel.OpenFilesCmd.Execute(e.Args);
                 MainWinViewModel.PlayCmd.Execute(null);
             }
             _mainWin.DataContext = context;

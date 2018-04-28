@@ -167,6 +167,19 @@ namespace MusicPLayer.Models
 
         #endregion
 
+        #region 靜態函式
+        static public bool SupportCheck(string fileName)
+        {
+            var str = ((string)App.Current.Resources["Filter_AudioFile"]).Split('|')[1].Split(';');
+            foreach(var s in str)
+            {
+                if (fileName.EndsWith(s.Remove(0, 1)))
+                    return true;
+            }
+            return false;
+        }
+        #endregion
+
         #region 事件
 
         /// <summary>

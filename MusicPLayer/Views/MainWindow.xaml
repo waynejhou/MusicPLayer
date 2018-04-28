@@ -12,7 +12,9 @@
         mc:Ignorable="d"
         Title="{Binding WindowTitle}" Height="482" Width="628"
         Background="{DynamicResource BackGroundColor}"
-        Icon="/MusicPLayer;component/Resources/Ellipses.png" MinWidth="600" MinHeight="200" LocationChanged="MainWin_LocationChanged" Loaded="MainWin_Loaded">
+        Icon="/MusicPLayer;component/Resources/Ellipses.png" MinWidth="600" MinHeight="200" LocationChanged="MainWin_LocationChanged" Loaded="MainWin_Loaded"
+        Drop="MainWin_Drop"
+        AllowDrop="True">
     <Window.Resources>
         <ResourceDictionary Source="../Styles/MainStyle.xaml"/>
     </Window.Resources>

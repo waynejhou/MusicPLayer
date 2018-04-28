@@ -324,5 +324,22 @@ namespace MusicPLayer
                 TagCtrl.UpdateLayout();
             }
         }
+
+        private void MainWin_Drop(object sender, DragEventArgs e)
+        {
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var lrcFiles = files.Where(x => x.EndsWith(".lrc")).ToArray();
+            var filesL = files.ToList();
+            filesL.RemoveAll(x => lrcFiles.Contains(x));
+            if (filesL.Count > 0)
+            {
+                App.MainWinViewModel.OpenFilesCmd.Execute(filesL.ToArray());
+                App.MainWinViewModel.PlayCmd.Execute(null);
+            }
+            if (lrcFiles.Count() > 0)
+            {
+                LyricP.FilePath = lrcFiles[0];
+            }
+        }
     }
 }
