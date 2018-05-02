@@ -310,7 +310,8 @@ namespace MusicPLayer.ViewModels
         }
         private void OnOpenLrcEditor()
         {
-            new LrcEditorWindow().Show();
+            var lew = new LrcEditorWindow();
+            lew.Show();
         }
         #endregion
 

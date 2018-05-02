@@ -13,11 +13,14 @@ namespace MusicPLayer.Models
         public double _version = 0.0001d;
         public double Version { get => _version; set => value = _version; }
         public string Info { get => $"Version: {Version}(debug)"; }
-        public static void SaveSettingAsSXml(SettingManager settings, string fileName)
+        public void SaveSettingAsXml()
+        {
+            SaveSettingAsXml(this, SaveFilePath);
+        }
+        public static void SaveSettingAsXml(SettingManager settings, string fileName)
         {
             try
             {
-
                 XmlDocument xmlDocument = new XmlDocument();
                 XmlSerializer serializer = new XmlSerializer(settings.GetType());
                 using (MemoryStream stream = new MemoryStream())
@@ -36,8 +39,7 @@ namespace MusicPLayer.Models
         }
         public static SettingManager LoadSettingFromXml(string fileName)
         {
-            if (string.IsNullOrEmpty(fileName)) { throw new FileNotFoundException("NotFound"); }
-
+            if (string.IsNullOrEmpty(fileName)) { throw new ArgumentNullException("NameNull"); }
             SettingManager Setting = new SettingManager();
             try
             {

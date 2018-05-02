@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MusicPLayer.ViewModels;
 
 namespace MusicPLayer.View
 {
@@ -27,6 +28,11 @@ namespace MusicPLayer.View
 
         private void Window_Closed(object sender, EventArgs e)
         {
+        }
+
+        private void Window_LayoutUpdated(object sender, EventArgs e)
+        {
+            (DataContext as LrcEditorViewModel).NotifyAllProperty();
         }
     }
 }

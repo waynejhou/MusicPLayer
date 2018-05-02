@@ -112,6 +112,7 @@
     <Compile Include="Utils\MusicUtils.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
     <Compile Include="Utils\SingleInstance.cs" />
+    <Compile Include="ViewModels\LrcEditorViewModel.cs" />
     <Compile Include="Views\LrcEditorWindow.xaml.cs">
       <DependentUpon>LrcEditorWindow.xaml</DependentUpon>
     </Compile>

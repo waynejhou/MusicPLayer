@@ -4,6 +4,7 @@
     <String x:Key="Menu_File">_File</String>
     <String x:Key="Menu_File_Open">_Open Audio File</String>
     <String x:Key="Menu_File_Add">_Add Audio File</String>
+    <String x:Key="Menu_File_OpenLyric">_Open Lyric File</String>
     <String x:Key="Menu_File_Exit">_Close MusicPLayer</String>
     <String x:Key="Menu_Help">_Help</String>
 
@@ -17,4 +18,8 @@
     <String x:Key="ToolTip_AlbumArt">Album Art</String>
     <String x:Key="ToolTip_Lyric">Lyric</String>
     <String x:Key="ToolTip_NowPlaying">Now Playing</String>
+
+    <String x:Key="LrcEditor_InsertTimeTag">Insert Time Tag</String>
+    <String x:Key="LrcEditor_ReplaceTimeTag">Replace Time Tag</String>
+    <String x:Key="LrcEditor_NewLineTimeTag">New Line With Time Tag</String>
 </wpf:ResourceDictionary>

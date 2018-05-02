@@ -46,13 +46,12 @@ namespace MusicPLayer
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             _mainWin = new MainWindow();
-            var context = (_mainWinViewModel = new MainViewModel());
             if (e.Args.Length > 0)
             {
                 MainWinViewModel.OpenFilesCmd.Execute(e.Args);
                 MainWinViewModel.PlayCmd.Execute(null);
             }
-            _mainWin.DataContext = context;
+            _mainWinViewModel = (MainWin.DataContext as MainViewModel);
             _mainWin.Language = System.Windows.Markup.XmlLanguage.GetLanguage(Settings.Langurage);
             _mainWin.Show();
         }
