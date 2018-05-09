@@ -52,6 +52,7 @@ namespace MusicPLayer
                     TagCtrl.SelectedIndex = 0;
                 }
                 else if ((sender as RadioButton) == LyricTab){
+                    LyricP.ResetLinesHeight();
                     TagCtrl.SelectedIndex = 1;
                 }
                 else if ((sender as RadioButton) == NowPLayingTab)

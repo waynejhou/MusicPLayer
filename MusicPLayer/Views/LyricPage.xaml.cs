@@ -155,13 +155,14 @@ namespace MusicPLayer.Views
                     lastIndex = nowTimeLyricIdx;
                 }
                 End:
-                return (canvas.ActualHeight / 2) - (offsetPastLineHeight + offsetNowLineHeight) + ForeFontSize;
+                return (canvas.ActualHeight / 2) - (offsetPastLineHeight + offsetNowLineHeight) /*+ ForeFontSize*/;
             }
         }
 
         private void userControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             sizeChanging = true;
+            Console.WriteLine("SizeChanged");
             ResetLinesHeight(LyricListView.ItemContainerGenerator);
         }
 
@@ -178,6 +179,10 @@ namespace MusicPLayer.Views
                     ResetLinesHeight(icg);
             };
         }
+        public void ResetLinesHeight()
+        {
+            ResetLinesHeight(LyricListView.ItemContainerGenerator);
+        }
         private void ResetLinesHeight(ItemContainerGenerator icg)
         {
             _linesHeight.Clear();
@@ -188,5 +193,6 @@ namespace MusicPLayer.Views
                 _linesHeight[i] = border.ActualHeight;
             }
         }
+
     }
 }
