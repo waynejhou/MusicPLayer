@@ -51,7 +51,7 @@ namespace MusicPLayer
                 MainWinViewModel.OpenFilesCmd.Execute(e.Args);
                 MainWinViewModel.PlayCmd.Execute(null);
             }
-            _mainWinViewModel = (MainWin.DataContext as MainViewModel);
+            _mainWin.DataContext= _mainWinViewModel = new MainViewModel();
             _mainWin.Language = System.Windows.Markup.XmlLanguage.GetLanguage(Settings.Langurage);
             _mainWin.Show();
         }
