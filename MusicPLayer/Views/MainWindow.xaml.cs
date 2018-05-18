@@ -342,5 +342,44 @@ namespace MusicPLayer
                 LyricP.FilePath = lrcFiles[0];
             }
         }
+
+        private void SelectionCheck_CheckedChange(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < NowPlayingListView.Items.Count; i++)
+            {
+                var lvi = NowPlayingListView.ItemContainerGenerator.ContainerFromIndex(i);
+                var lvi_c = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(lvi, 0),0),0),0) as CheckBox;
+                if (lvi_c.IsChecked.Value)
+                    break;
+                if (i == NowPlayingListView.Items.Count - 1)
+                {
+                    SetAllCheckBoxVisiblie(Visibility.Collapsed);
+                    return;
+                }
+
+            }
+            SetAllCheckBoxVisiblie(Visibility.Visible);
+        }
+        void SetAllCheckBoxVisiblie(Visibility visibility)
+        {
+            for (int j = 0; j < NowPlayingListView.Items.Count; j++)
+            {
+                var lvii = NowPlayingListView.ItemContainerGenerator.ContainerFromIndex(j);
+                var lvi_cc = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(lvii, 0), 0), 0), 0) as CheckBox;
+                lvi_cc.Visibility = visibility;
+            }
+        }
+
+        private void ListItemGrid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var cb = (VisualTreeHelper.GetChild((sender as Grid), 0) as CheckBox);
+            cb.Visibility = Visibility.Visible;
+        }
+
+        private void ListItemGrid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var cb = (VisualTreeHelper.GetChild((sender as Grid), 0) as CheckBox);
+            cb.Visibility = Visibility.Collapsed;
+        }
     }
 }

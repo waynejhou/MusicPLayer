@@ -41,8 +41,7 @@
                     <Label x:Name="lyricLabel"
                            Foreground="{Binding ForeColor, ElementName=userControl, FallbackValue=White}"
                            FontFamily="{Binding ForeFont, ElementName=userControl, FallbackValue='Microsoft JhengHei'}"
-                           FontSize="{Binding ForeFontSize, ElementName=userControl, FallbackValue=20}"
-                           Background="#3FA9A9A9">
+                           FontSize="{Binding ForeFontSize, ElementName=userControl, FallbackValue=20}">
                         <Label.Effect>
                             <DropShadowEffect BlurRadius="1.5" Color="Black" ShadowDepth="1.5"/>
                         </Label.Effect>

@@ -244,7 +244,7 @@ namespace MusicPLayer.ViewModels
             if (!MusicPlayer.SupportCheck(fileName))
                 return;
             MusicItem newone;
-            if (!NowPlayingList.Contains(newone = MusicItem.CreatFromFile(fileName)))
+            if (!NowPlayingList.Contains(newone = MusicItem.CreatFromFile(fileName,false)))
                 NowPlayingList.Add(newone);
         }
         private void OnExitApp()
@@ -314,8 +314,6 @@ namespace MusicPLayer.ViewModels
             lew.Show();
         }
         #endregion
-
-
 
 
         #region 成員函式

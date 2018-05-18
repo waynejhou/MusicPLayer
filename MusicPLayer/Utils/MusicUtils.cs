@@ -219,7 +219,8 @@ namespace MusicPLayer.Utils
         {
 
             MusicItem ret;
-            using (var t = TagLib.File.Create(fileName))
+            TagLib.ReadStyle rs = loadImage?TagLib.ReadStyle.Average:TagLib.ReadStyle.None;
+            using (var t = TagLib.File.Create(fileName,rs))
             {
                 var tag = t.Tag;
                 BitmapImage pic=null;

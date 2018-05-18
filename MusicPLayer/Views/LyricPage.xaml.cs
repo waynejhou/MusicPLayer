@@ -189,6 +189,8 @@ namespace MusicPLayer.Views
             _linesHeight.AddRange(Enumerable.Repeat(0d, icg.Items.Count));
             for (int i = 0; i < icg.Items.Count; i++)
             {
+                if (LyricListView.ItemContainerGenerator.ContainerFromIndex(i) == null)
+                    return;
                 var border = VisualTreeHelper.GetChild(LyricListView.ItemContainerGenerator.ContainerFromIndex(i), 0) as Border;
                 _linesHeight[i] = border.ActualHeight;
             }

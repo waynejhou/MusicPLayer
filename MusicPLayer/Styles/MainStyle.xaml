@@ -470,31 +470,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <DataTemplate x:Key="MusicDataTemplate" DataType="{x:Type mu:MusicItem}">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="100"/>
-            </Grid.ColumnDefinitions>
-            <Label x:Name="IsPlayingIcon" Grid.Column="0" Content="&#xf144;">
-                <Label.Style>
-                    <Style TargetType="Label">
-                        <Setter Property="Foreground" Value="{DynamicResource ForeGroundColor}"/>
-                        <Setter Property="Visibility" Value="Collapsed"/>
-                        <Setter Property="FontFamily" Value="/MusicPLayer;component/Resources/#Font Awesome 5 Free Solid"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsNowPlaying}" Value="true">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Label.Style>
-            </Label>
-            <Label Grid.Column="1" Content="{Binding Title}" Foreground="{DynamicResource ForeGroundColor}"/>
-            <Label Grid.Column="2" Content="{Binding LengthString}" Foreground="{DynamicResource ForeGroundColor}"/>
-        </Grid>
-    </DataTemplate>
+
 
 
     <Style x:Key="MainLyricPageStyle" TargetType="{x:Type v:LyricPage}">

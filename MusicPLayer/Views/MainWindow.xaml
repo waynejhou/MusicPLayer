@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicPLayer.Views"
         xmlns:vm="clr-namespace:MusicPLayer.ViewModels"
+        xmlns:mu="clr-namespace:MusicPLayer.Utils"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         md:DialogServiceViews.IsRegistered="True"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
@@ -146,10 +147,44 @@
                             <Border Style="{DynamicResource Main_CardBorderStyle}">
                                 <ListView x:Name="NowPlayingListView"
                                           Style="{DynamicResource NowPlayingListViewStyle}"
-                                          ItemTemplate="{DynamicResource MusicDataTemplate}"
                                           ItemsSource="{Binding NowPlayingList}"
                                           IsSynchronizedWithCurrentItem="True"
                                           MouseDoubleClick="NowPlayingListView_MouseDoubleClick">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type mu:MusicItem}">
+                                            <Grid x:Name="ListItemGrid" MouseEnter="ListItemGrid_MouseEnter" MouseLeave="ListItemGrid_MouseLeave">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50"/>
+                                                    <ColumnDefinition Width="auto"/>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="100"/>
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox x:Name="SelectionCheck" Visibility="Collapsed"
+                                                          Checked="SelectionCheck_CheckedChange" Unchecked="SelectionCheck_CheckedChange"/>
+                                                <Label x:Name="IsPlayingIcon" Grid.Column="1" Content="&#xf144;">
+                                                    <Label.Style>
+                                                        <Style TargetType="Label">
+                                                            <Setter Property="Foreground" Value="{DynamicResource ForeGroundColor}"/>
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Setter Property="FontFamily" Value="/MusicPLayer;component/Resources/#Font Awesome 5 Free Solid"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=IsNowPlaying}" Value="true">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Label.Style>
+                                                </Label>
+                                                <Label Grid.Column="2" Content="{Binding Title}" Foreground="{DynamicResource ForeGroundColor}"/>
+                                                <Label Grid.Column="3" Content="{Binding LengthString}" Foreground="{DynamicResource ForeGroundColor}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
                                 </ListView>
                             </Border>
                         </TabItem>
