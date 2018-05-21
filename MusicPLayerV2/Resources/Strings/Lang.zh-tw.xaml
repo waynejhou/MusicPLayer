@@ -1,0 +1,25 @@
+﻿<wpf:ResourceDictionary xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns="clr-namespace:System;assembly=mscorlib">
+    <String x:Key="Menu_File">檔案 (_F)</String>
+    <String x:Key="Menu_File_Open">開啟音訊檔案 (_O)</String>
+    <String x:Key="Menu_File_Add">加入音訊檔案 (_A)</String>
+    <String x:Key="Menu_File_OpenLyric">開啟歌詞檔案 (_O)</String>
+    <String x:Key="Menu_File_Exit">關閉 MusicPLayer (_C)</String>
+    <String x:Key="Menu_Help">說明 (_H)</String>
+
+    <String x:Key="Menu_Edit">編輯 (_E)</String>
+    <String x:Key="Menu_Edit_OpenLrcEditor">開啟 Lrc 編輯器 (_L)</String>
+
+    <String x:Key="Dialog_OpenAudioFile">開啟音訊檔案</String>
+    <String x:Key="Filter_AudioFile">音訊檔案|*.mp3;*.mpeg3;*.wav;*.wave;*.flac;*.fla;*.aiff;*.aif;*.aifc;*.aac;*.adt;*.adts;*.m2ts;*.mp2;*.3g2;*.3gp2;*.3gp;*.3gpp;*.m4a;*.m4v;*.mp4v;*.mp4;*.mov;*.asf;*.wm;*.wmv;*.wma;*.mp1;*.avi;*.ac3;*.ec3</String>
+    <String x:Key="Filter_AllFile">所有檔案|*</String>
+
+    <String x:Key="ToolTip_AlbumArt">專輯封面</String>
+    <String x:Key="ToolTip_Lyric">歌詞</String>
+    <String x:Key="ToolTip_NowPlaying">現正清單</String>
+
+    <String x:Key="LrcEditor_InsertTimeTag">插入時間標籤</String>
+    <String x:Key="LrcEditor_ReplaceTimeTag">取代時間標籤</String>
+    <String x:Key="LrcEditor_NewLineTimeTag">換行時間標籤</String>
+</wpf:ResourceDictionary>

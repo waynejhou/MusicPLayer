@@ -1,0 +1,238 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MusicPLayerV2.Views.UserControls"
+             xmlns:localv="clr-namespace:MusicPLayerV2.Views"
+             xmlns:localvm="clr-namespace:MusicPLayerV2.ViewModels"
+             xmlns:Views="clr-namespace:MusicPLayerV2.Views" x:Class="MusicPLayerV2.Views.UserControls.ControllerControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="800" Background="Transparent">
+    <UserControl.Resources>
+        <Style x:Key="CircleButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="{DynamicResource Color25}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Ellipse x:Name="border"  Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}"/>
+                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Fill" TargetName="border" Value="{DynamicResource SecondaryColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                            <SkewTransform/>
+                                            <RotateTransform/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Background" Value="{DynamicResource SecondaryColorL}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CircleButtonTriggerVisibleStyle" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="{DynamicResource Color25}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Ellipse x:Name="border"  Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}"/>
+                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Fill" TargetName="border" Value="{DynamicResource SecondaryColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                            <SkewTransform/>
+                                            <RotateTransform/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Background" Value="{DynamicResource SecondaryColorL}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding WindowMode,
+                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"
+                             Value="{x:Static localv:MainWindowMode.Mini}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="PositionControlStyle" TargetType="{x:Type local:PositionControl}">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Style.Triggers>
+                <Trigger Property="IsThumbMouseOver" Value="true">
+                    <Setter Property="Foreground" Value="{DynamicResource SecondaryColor}"/>
+                </Trigger>
+                <Trigger Property="IsThumbDragging" Value="true">
+                    <Setter Property="Foreground" Value="{DynamicResource SecondaryColorL}"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding WindowMode,
+                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"
+                             Value="{x:Static localv:MainWindowMode.Mini}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
+            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding WindowMode,
+                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"
+                             Value="{x:Static localv:MainWindowMode.Mini}">
+                    <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="LabelTriggerVisibleStyle" TargetType="{x:Type Label}">
+            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding WindowMode,
+                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"
+                             Value="{x:Static localv:MainWindowMode.Mini}">
+                    <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="StackPanelStyle" TargetType="StackPanel">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding WindowMode,
+                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"
+                             Value="{x:Static localv:MainWindowMode.Mini}">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <localvm:ControllerViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Style="{DynamicResource CardBorderStyle}">
+            <StackPanel>
+                <Label Style="{DynamicResource LabelStyle}">
+                    <Label.Effect>
+                        <DropShadowEffect ShadowDepth="3" BlurRadius ="3"/>
+                    </Label.Effect>
+                    <AccessText TextWrapping="WrapWithOverflow" TextAlignment="Center" Text="{Binding MusicTitle, FallbackValue=Title}"/>
+                </Label>
+
+                <Label Style="{DynamicResource LabelTriggerVisibleStyle}">
+                    <AccessText TextWrapping="WrapWithOverflow" Text="{Binding MusicArtistAlbum, FallbackValue=ArtistAlbum}"/>
+                    <Label.Effect>
+                        <DropShadowEffect ShadowDepth="3" BlurRadius ="3"/>
+                    </Label.Effect>
+                </Label>
+            </StackPanel>
+        </Border>
+        <Border Grid.Row="1" Style="{DynamicResource CardBorderStyle}">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Border HorizontalAlignment="Center" Margin="50 0 50 0">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Height="40" Content="{Binding NextMusicMode, FallbackValue={StaticResource SymbolCode_RepeatAll}}"
+                            Style="{StaticResource CircleButtonTriggerVisibleStyle}"
+                            Margin="1"/>
+                        <Button Height="50" Content="{DynamicResource SymbolCode_Previous}"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Margin="1"/>
+                        <Button Height="60" Content="{Binding MusicPlayPauseBtnStr, FallbackValue={StaticResource SymbolCode_Play}}" 
+                            Command="{Binding PlayPauseCmd}"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Margin="1"/>
+                        <Button Height="50" Content="{DynamicResource SymbolCode_Next}" 
+                            Style="{StaticResource CircleButtonStyle}"
+                            Margin="1"/>
+                        <Button Height="40" Content="{DynamicResource SymbolCode_Volume}"
+                            Style="{StaticResource CircleButtonTriggerVisibleStyle}"
+                            Margin="1"/>
+                    </StackPanel>
+                </Border>
+                <Border HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <Button Content="{DynamicResource SymbolCode_ToMini}"
+                                Height="30" FontSize="{DynamicResource SmallFontSize}"
+                                Command="{Binding ChangeMode}"
+                                Style="{DynamicResource CircleButtonStyle}"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="{Binding MusicPosition}" ContentStringFormat="{}{0:mm\:ss}"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource ForegroundColor}" FontSize="{DynamicResource SmallFontSize}"/>
+                        <Label Grid.Column="2" Content="{Binding MusicLength}" ContentStringFormat="{}{0:mm\:ss}"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource ForegroundColor}" FontSize="{DynamicResource SmallFontSize}"/>
+                        <local:PositionControl x:Name="PosiC" Grid.Column="1"
+                                       NowValue="{Binding MusicPositionDouble}"
+                                       Min="0"
+                                       Max="{Binding MusicLengthDouble}"
+                                       Style="{DynamicResource PositionControlStyle}"
+                                       />
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+
+    </Grid>
+</UserControl>

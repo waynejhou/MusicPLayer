@@ -1,11 +1,6 @@
-﻿using MusicPLayer.Utils;
-using MusicPLayer.ViewModels;
-using MusicPLayer.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,30 +12,44 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Reflection;
+using log4net;
+using MusicPLayerV2.Models;
+using MusicPLayerV2.Utils;
+using System.Windows.Shell;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-namespace MusicPLayer
+namespace MusicPLayerV2.Views
 {
     /// <summary>
-    /// MainWindow.xaml 的互動邏輯
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private static readonly ILog Log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private ResourceDictionary R => App.Current.Resources;
+        private MusicPlayer PM => App.PlayerModel;
+        private MusicItem NPI => App.PlayerModel.NowPlayingItem;
 
         public MainWindow()
         {
             InitializeComponent();
-            this.Closing += MainWindow_Closing;
+            this.Closing += MainView_Closing;
         }
 
-        private void volumeBtn_Click(object sender, RoutedEventArgs e)
+        private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            VolumePopup.IsOpen = !VolumePopup.IsOpen;
-        }
-
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            App.PlayerModel?.Dispose();
-            Environment.Exit(0);
+            /*
+                if (((MainViewModel)(this.DataContext)).Data.IsModified)
+                if (!((MainViewModel)(this.DataContext)).PromptSaveBeforeExit())
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            */
+            App.PlayerModel.Dispose();
+            Log.Info("Closing App");
         }
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
@@ -51,7 +60,8 @@ namespace MusicPLayer
                 {
                     TagCtrl.SelectedIndex = 0;
                 }
-                else if ((sender as RadioButton) == LyricTab){
+                else if ((sender as RadioButton) == LyricTab)
+                {
                     LyricP.ResetLinesHeight();
                     TagCtrl.SelectedIndex = 1;
                 }
@@ -60,106 +70,136 @@ namespace MusicPLayer
                     TagCtrl.SelectedIndex = 2;
                 }
             }
-
-
         }
 
-        private void Slider_MouseWheel(object sender, MouseWheelEventArgs e)
+
+        public MainWindowMode WindowMode
         {
-            if (e.Delta > 0)
-                (sender as Slider).Value += 0.05;
-            else if (e.Delta < 0)
-                (sender as Slider).Value -= 0.05;
+            get { return (MainWindowMode)GetValue(WindowModeProperty); }
+            set { SetValue(WindowModeProperty, value);NotifyPropertyChanged(nameof(WindowMode)); }
         }
 
-        private void LyricListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void TimeSlider_ValueChanged(object sender, TimeSpan time)
-        {
-
-        }
-
-        private void TaskBarThumbBtn_Click(object sender, EventArgs e)
-        {
-            var str = (DataContext as MainViewModel).PlayBackState;
-            if (str == "play")
-                TaskBarThumbBtn.ImageSource = (BitmapImage)Resources["pause"];
-            else
-                TaskBarThumbBtn.ImageSource = (BitmapImage)Resources["play"];
-        }
-
-        bool isMinTheWin = false;
-        public string MinWindowsArrow => isMinTheWin ? "\uf103" : "\uf102";
-        Size _originSize = new Size();
-        WindowState _originState = WindowState.Normal;
-        public bool IsMinTheWin
-        {
-            get => isMinTheWin;
-            set
-            {
-                isMinTheWin = value;
-                if (value == true)
-                {
-                    MainWin.WindowStyle = WindowStyle.None;
-                    MainWin.ResizeMode = ResizeMode.NoResize;
-                    _originState = MainWin.WindowState;
-                    _originSize.Width = MainWin.RestoreBounds.Width;
-                    _originSize.Height = MainWin.RestoreBounds.Height;
-                    MainWin.WindowState = WindowState.Normal;
-                    MainWin.MaxHeight = 300;
-                    MainWin.MaxWidth = 600;
-                    MainWin.Width = 600;
-                    MainWin.Height = 300;
-                    MainWin.Topmost = true;
-                    TabBorder.Visibility = Visibility.Collapsed;
-                    MainMenu.Visibility = Visibility.Collapsed;
-                    AlbumImage.Visibility = Visibility.Collapsed;
-                    BackImage2.Visibility = Visibility.Visible;
-                    BackImage.Visibility = Visibility.Visible;
-                    if ((DataContext as MainViewModel).HasImage)
-                        BackImageBack.Background = (SolidColorBrush)Resources["BackGroundColor"];
-                    else
-                        BackImageBack.Background = null;
-                    MinControlBorder.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    MainWin.WindowStyle = WindowStyle.SingleBorderWindow;
-                    MainWin.ResizeMode = ResizeMode.CanResize;
-                    MainWin.MaxHeight = double.PositiveInfinity;
-                    MainWin.MaxWidth = double.PositiveInfinity;
-                    MainWin.Height = _originSize.Height;
-                    MainWin.Width = _originSize.Width;
-                    MainWin.WindowState = _originState;
-                    MainWin.Topmost = false;
-                    TabBorder.Visibility = Visibility.Visible;
-                    MainMenu.Visibility = Visibility.Visible;
-                    AlbumImage.Visibility = Visibility.Visible;
-                    BackImage2.Visibility = Visibility.Collapsed;
-                    BackImage.Visibility = Visibility.Collapsed;
-                    MinControlBorder.Visibility = Visibility.Collapsed;
-                }
-                NotifyPropertyChanged(nameof(MinWindowsArrow));
-            }
-        }
-
-        private void MainWin_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { if (!isMinTheWin) return; DragMove(); }
-
+        // Using a DependencyProperty as the backing store for WindowMode.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty WindowModeProperty =
+            DependencyProperty.Register("WindowMode", typeof(MainWindowMode), typeof(MainWindow),
+                new FrameworkPropertyMetadata(MainWindowMode.Normal,
+                    (DependencyObject obj, DependencyPropertyChangedEventArgs args)=>
+                    {
+                        (obj as MainWindow).OnSetWindowMode((MainWindowMode)args.NewValue);
+                        (obj as MainWindow).NotifyPropertyChanged(nameof(WindowMode));
+                    }));
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void MainWin_LocationChanged(object sender, EventArgs e)
+        Size TSize = new Size();
+        WindowState TState = WindowState.Normal;
+        private void OnSetWindowMode(MainWindowMode value)
+        {
+            switch (value)
+            {
+                case MainWindowMode.Mini:
+                    WindowChrome.GetWindowChrome(this).GlassFrameThickness = new Thickness(0, 0, 0, 0);
+                    WindowChrome.GetWindowChrome(this).CaptionHeight = 0;
+                    (Template.FindName("titleText", this) as TextBlock).Visibility = Visibility.Collapsed;
+                    MainMenu.Visibility = Visibility.Collapsed;
+                    TabBtnBorder.Visibility = Visibility.Collapsed;
+                    ResizeMode = ResizeMode.NoResize;
+                    TSize = RestoreBounds.Size;
+                    TState = WindowState;
+                    WindowState = WindowState.Normal;
+                    Height = 400;
+                    Width = 300;
+                    BackImage.Visibility = Visibility.Visible;
+                    BackImage2.Visibility = Visibility.Visible;
+                    AlbumImage.Visibility = Visibility.Collapsed;
+                    Topmost = true;
+                    break;
+                case MainWindowMode.Normal:
+                    WindowChrome.GetWindowChrome(this).GlassFrameThickness = new Thickness(3, 30, 3, 3);
+                    WindowChrome.GetWindowChrome(this).CaptionHeight = 30;
+                    (Template.FindName("titleText", this) as TextBlock).Visibility = Visibility.Visible;
+                    MainMenu.Visibility = Visibility.Visible;
+                    TabBtnBorder.Visibility = Visibility.Visible;
+                    ResizeMode = ResizeMode.CanResize;
+                    Height = TSize.Height;
+                    Width = TSize.Width;
+                    WindowState = TState;
+                    BackImage.Visibility = Visibility.Collapsed;
+                    BackImage2.Visibility = Visibility.Collapsed;
+                    AlbumImage.Visibility = Visibility.Visible;
+                    Topmost = false;
+                    break;
+                case MainWindowMode.FullScreen:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void StateWinBtn_Click(object sender, RoutedEventArgs e)
+        {
+            switch (WindowState)
+            {
+                case WindowState.Normal:
+                    WindowState = WindowState.Maximized;
+                    break;
+                case WindowState.Minimized:
+                    break;
+                case WindowState.Maximized:
+                    WindowState = WindowState.Normal;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CloseWinBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void MiniWinBtn_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void MainWin_StateChanged(object sender, EventArgs e)
+        {
+            switch (WindowState)
+            {
+                case WindowState.Normal:
+                    (Template.FindName("StateWinBtn", this) as Button).Content = (string)R["SymbolCode_ChromeMaximize"];
+                    break;
+                case WindowState.Minimized:
+                    break;
+                case WindowState.Maximized:
+                    (Template.FindName("StateWinBtn", this) as Button).Content = (string)R["SymbolCode_ChromeRestore"];
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        private void DockPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
+        }
+
+
+    }
+    public enum MainWindowMode { Mini, Normal, FullScreen };
+    partial class MainWindow
+    {
+        private void Window_LocationChanged(object sender, EventArgs e)
         {
             var win = sender as MainWindow;
-            if (!isMinTheWin)
+            if (WindowMode != MainWindowMode.Mini)
                 return;
-            Point fp = new Point(win.Left,win.Top);
+            Point fp = new Point(win.Left, win.Top);
             foreach (var screen in System.Windows.Forms.Screen.AllScreens)
             {
                 var result = ScreenBoundaryCollisionDirection(win.RestoreBounds,
@@ -310,77 +350,5 @@ namespace MusicPLayer
             return rect;
         }
         static int stickyWindowPixel = 15;
-
-        private void NowPlayingListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            App.MainWinViewModel.LoadCmd.Execute(((sender as ListView).SelectedItem as MusicItem).Path);
-            App.MainWinViewModel.PlayCmd.Execute(null);
-        }
-
-        private void MainWin_Loaded(object sender, RoutedEventArgs e)
-        {
-            for (var tabIndex = TagCtrl.Items.Count; tabIndex >= 0; tabIndex--)
-            {
-                TagCtrl.SelectedIndex = tabIndex;
-                TagCtrl.UpdateLayout();
-            }
-        }
-
-        private void MainWin_Drop(object sender, DragEventArgs e)
-        {
-            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            var lrcFiles = files.Where(x => x.EndsWith(".lrc")).ToArray();
-            var filesL = files.ToList();
-            filesL.RemoveAll(x => lrcFiles.Contains(x));
-            if (filesL.Count > 0)
-            {
-                App.MainWinViewModel.OpenFilesCmd.Execute(filesL.ToArray());
-                App.MainWinViewModel.PlayCmd.Execute(null);
-            }
-            if (lrcFiles.Count() > 0)
-            {
-                LyricP.FilePath = lrcFiles[0];
-            }
-        }
-
-        private void SelectionCheck_CheckedChange(object sender, RoutedEventArgs e)
-        {
-            for (int i = 0; i < NowPlayingListView.Items.Count; i++)
-            {
-                var lvi = NowPlayingListView.ItemContainerGenerator.ContainerFromIndex(i);
-                var lvi_c = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(lvi, 0),0),0),0) as CheckBox;
-                if (lvi_c.IsChecked.Value)
-                    break;
-                if (i == NowPlayingListView.Items.Count - 1)
-                {
-                    SetAllCheckBoxVisiblie(Visibility.Collapsed);
-                    return;
-                }
-
-            }
-            SetAllCheckBoxVisiblie(Visibility.Visible);
-        }
-        void SetAllCheckBoxVisiblie(Visibility visibility)
-        {
-            for (int j = 0; j < NowPlayingListView.Items.Count; j++)
-            {
-                var lvii = NowPlayingListView.ItemContainerGenerator.ContainerFromIndex(j);
-                var lvi_cc = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(lvii, 0), 0), 0), 0) as CheckBox;
-                lvi_cc.Visibility = visibility;
-            }
-        }
-
-        private void ListItemGrid_MouseEnter(object sender, MouseEventArgs e)
-        {
-            var cb = (VisualTreeHelper.GetChild((sender as Grid), 0) as CheckBox);
-            cb.Visibility = Visibility.Visible;
-        }
-
-        private void ListItemGrid_MouseLeave(object sender, MouseEventArgs e)
-        {
-            var cb = (VisualTreeHelper.GetChild((sender as Grid), 0) as CheckBox);
-            cb.Visibility = Visibility.Collapsed;
-        }
-
     }
 }

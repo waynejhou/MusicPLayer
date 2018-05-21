@@ -1,0 +1,145 @@
+﻿using MvvmDialogs;
+using log4net;
+using MvvmDialogs.FrameworkDialogs.OpenFile;
+using MvvmDialogs.FrameworkDialogs.SaveFile;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Reflection;
+using System.Windows.Input;
+using System.Xml.Linq;
+using MusicPLayerV2.Views;
+using MusicPLayerV2.Utils;
+using MusicPLayerV2.Models;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+
+namespace MusicPLayerV2.ViewModels
+{
+    class MainViewModel : ViewModelBase
+    {
+        #region Parameters
+        private readonly IDialogService DialogService;
+        private  ResourceDictionary R => App.Current.Resources;
+        private MusicPlayer PM => App.PlayerModel;
+        private MusicItem NPI => App.PlayerModel.NowPlayingItem;
+
+        /// <summary>
+        /// Title of the application, as displayed in the top bar of the window
+        /// </summary>
+        public string Title => $"{NPI.Title} - MusicPLayer";
+        #endregion
+
+        #region Constructors
+        public MainViewModel()
+        {
+            // DialogService is used to handle dialogs
+            this.DialogService = new MvvmDialogs.DialogService();
+            PM.LoaddedEvent += PM_LoaddedEvent;
+            PM.WavePositionChangedEvent += PM_WavePositionChangedEvent;
+        }
+
+        #endregion
+
+        #region Methods
+
+        #endregion
+
+        #region Property
+        public BitmapImage MusicPicture => NPI.Picture ?? (BitmapImage)R["NoImage"];
+
+        public string LRCPath => (PM.IsLoadded) ? NPI.Path.Replace(new FileInfo(NPI.Path).Extension, ".lrc") : "";
+
+        public TimeSpan MusicPosition => PM.Position;
+        #endregion
+
+        #region Commands
+        public ICommand OpenFileDialogCmd => new RelayCommand<string>(OnOpenFileDialog, (s) => true);
+        public ICommand OpenFilesCmd => new RelayCommand<string[]>(OnOpenFiles, (string[] s) => true);
+        public ICommand LoadFileCmd => new RelayCommand<string>(OnLoadFile, (string s) => true);
+
+        public ICommand ShowAboutDialogCmd => new RelayCommand(OnShowAboutDialog, () => true);
+        public ICommand ExitCmd => new RelayCommand(OnExitApp, () => true);
+
+        public ICommand ChangeLang => new RelayCommand<string>((arg) => App.Settings.Language = arg, (arg) => true);
+
+        private void OnOpenFileDialog(string arg)
+        {
+            var settings = new OpenFileDialogSettings
+            {
+                Title = arg,
+                Filter = $"{R["Filter_AudioFile"]}|{R["Filter_AllFile"]}",
+                CheckFileExists = true,
+                Multiselect = true,
+            };
+            if (PM.IsLoadded)
+                settings.InitialDirectory = new FileInfo(PM.NowPlayingItem.Path).Directory.FullName;
+            bool? success = DialogService.ShowOpenFileDialog(this, settings);
+            if (success == true)
+            {
+                if (arg == "Open")
+                {
+                    OpenFilesCmd.Execute(settings.FileNames);
+                    //PlayCmd.Execute(null);
+                }
+                /*if (arg == "Add")
+                {
+                    AddFilesCmd.Execute(settings.FileNames);
+                }*/
+                Log.Info("Opening file: " + settings.FileName);
+            }
+        }
+        private void OnOpenFiles(string[] fileNames)
+        {
+            for (int i = 0; i < fileNames.Count(); i++)
+            {
+                if (i == 0)
+                {
+                    LoadFileCmd.Execute(fileNames[i]);
+                    //PlayPauseCmd.Execute(null);
+                }
+                //AddFileCmd.Execute(fileNames[i]);
+            }
+        }
+        private void OnLoadFile(string fileName)
+        {
+            if (!MusicPlayer.SupportCheck(fileName))
+                return;
+            PM.Load(fileName);
+            //App.MainWin.LyricP.FilePath = fileName.Replace(new FileInfo(fileName).Extension, ".lrc");
+            //NotifyAllPropotery();
+        }
+        private void OnShowAboutDialog()
+        {
+            Log.Info("Opening About dialog");
+            AboutViewModel dialog = new AboutViewModel();
+            var result = DialogService.ShowDialog<About>(this, dialog);
+        }
+        private void OnExitApp()
+        {
+            System.Windows.Application.Current.MainWindow.Close();
+        }
+        #endregion
+
+        #region Events
+
+        private void PM_LoaddedEvent(object sender)
+        {
+            NotifyPropertyChanged(nameof(LRCPath));
+            NotifyPropertyChanged(nameof(MusicPicture));
+            NotifyPropertyChanged(nameof(Title));
+        }
+
+
+        private void PM_WavePositionChangedEvent(object sender, TimeSpan position)
+        {
+            NotifyPropertyChanged(nameof(MusicPosition));
+        }
+        #endregion
+    }
+}

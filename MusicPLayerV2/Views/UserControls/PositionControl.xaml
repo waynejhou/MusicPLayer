@@ -1,0 +1,77 @@
+﻿<UserControl x:Name="uc" x:Class="MusicPLayerV2.Views.UserControls.PositionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MusicPLayerV2.Views.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="800"
+             MouseMove="uc_MouseMove"
+             PreviewMouseLeftButtonDown="LineBorder_PreviewMouseLeftButtonDown"
+             PreviewMouseMove="LineBorder_PreviewMouseMove"
+             Background="Transparent">
+    <UserControl.Resources>
+        <Style x:Name="DefaultStyle" TargetType="local:PositionControl">
+            <Style.Triggers>
+                <Trigger Property="IsThumbMouseOver" Value="true">
+                    <Setter Property="Foreground" Value="PaleVioletRed"/>
+                </Trigger>
+                <Trigger Property="IsThumbDragging" Value="true">
+                    <Setter Property="Foreground" Value="Pink"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Border x:Name="LineBorder" Background="LightGray" Height="5"
+            VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="20"
+            SizeChanged="LineBorder_SizeChanged"
+            MouseEnter="LineBorder_MouseEnter"
+            MouseLeave="LineBorder_MouseLeave"
+            >
+        <Grid>
+            <Border x:Name="AfterLineBorder"
+                    Background="{Binding ElementName=uc, Path=Foreground}"
+                    Width="{Binding ElementName=TheC, Path=(Canvas.Left),FallbackValue=0}"
+                    HorizontalAlignment="Left">
+                
+            </Border>
+            <Canvas Margin="-20 0 20 0">
+                <Thumb x:Name="TheC" Width="40" Height="40" Canvas.Top="-17.5"
+                   DragStarted="TheC_DragStarted"
+                   DragDelta="TheC_DragDelta"
+                   DragCompleted="TheC_DragCompleted"
+                   MouseEnter="TheC_MouseEnter"
+                   MouseLeave="TheC_MouseLeave"
+                   Background="{Binding ElementName=uc, Path=Background, FallbackValue=White}"
+                   Foreground="{Binding ElementName=uc, Path=Foreground}"
+                   >
+                    <Thumb.Template>
+                        <ControlTemplate TargetType="Thumb">
+                            <Grid>
+                                <Ellipse x:Name="BigC"
+                                     Fill="{DynamicResource Color25}"
+                                     Width="40" Height="40"/>
+                                <Ellipse x:Name="SmallC"
+                                     Stroke="{TemplateBinding Foreground}"
+                                     StrokeThickness="5" Width="30" Height="30"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+                <Popup x:Name="ValueTooltip" PopupAnimation="Fade"
+                   Placement="Relative"
+                   MouseEnter="ValueTooltip_MouseEnter" MouseLeave="ValueTooltip_MouseLeave" VerticalOffset="-30" >
+                    <Border BorderThickness="1" Padding="5"
+                        BorderBrush="{DynamicResource PrimaryColor}"
+                        Background="{DynamicResource Color25}">
+                        <TextBlock x:Name="ValueText" Text="0"
+                               Foreground="{DynamicResource ForegroundColor}"
+                               FontSize="{Binding ElementName=uc, Path=FontSize}"/>
+                    </Border>
+                </Popup>
+            </Canvas>
+        </Grid>
+
+    </Border>
+
+</UserControl>

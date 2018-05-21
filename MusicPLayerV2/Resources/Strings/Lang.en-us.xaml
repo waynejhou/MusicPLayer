@@ -1,0 +1,25 @@
+﻿<wpf:ResourceDictionary xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns="clr-namespace:System;assembly=mscorlib">
+    <String x:Key="Menu_File">_File</String>
+    <String x:Key="Menu_File_Open">_Open Audio File</String>
+    <String x:Key="Menu_File_Add">_Add Audio File</String>
+    <String x:Key="Menu_File_OpenLyric">_Open Lyric File</String>
+    <String x:Key="Menu_File_Exit">_Close MusicPLayer</String>
+    <String x:Key="Menu_Help">_Help</String>
+
+    <String x:Key="Menu_Edit">_Edit</String>
+    <String x:Key="Menu_Edit_OpenLrcEditor">Open _Lrc Editor</String>
+
+    <String x:Key="Dialog_OpenAudioFile">Open Audio File</String>
+    <String x:Key="Filter_AudioFile">Audio File|*.mp3;*.mpeg3;*.wav;*.wave;*.flac;*.fla;*.aiff;*.aif;*.aifc;*.aac;*.adt;*.adts;*.m2ts;*.mp2;*.3g2;*.3gp2;*.3gp;*.3gpp;*.m4a;*.m4v;*.mp4v;*.mp4;*.mov;*.asf;*.wm;*.wmv;*.wma;*.mp1;*.avi;*.ac3;*.ec3</String>
+    <String x:Key="Filter_AllFile">All File|*</String>
+    
+    <String x:Key="ToolTip_AlbumArt">Album Art</String>
+    <String x:Key="ToolTip_Lyric">Lyric</String>
+    <String x:Key="ToolTip_NowPlaying">Now Playing</String>
+
+    <String x:Key="LrcEditor_InsertTimeTag">Insert Time Tag</String>
+    <String x:Key="LrcEditor_ReplaceTimeTag">Replace Time Tag</String>
+    <String x:Key="LrcEditor_NewLineTimeTag">New Line With Time Tag</String>
+</wpf:ResourceDictionary>

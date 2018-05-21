@@ -262,7 +262,7 @@
                                 </Border>
                             </Popup>
                         </StackPanel>
-                        <CheckBox Grid.Column="2" Content="{Binding MinWindowsArrow, ElementName=MainWin}" Style="{DynamicResource CircleCheckBoxStyle}" IsChecked="{Binding IsMinTheWin, ElementName=MainWin}"/>
+                        <CheckBox Grid.Column="2" Content="{Binding MinWindowsArrow, ElementName=MainWin, FallbackValue=&#xf102;}" Style="{DynamicResource CircleCheckBoxStyle}" IsChecked="{Binding IsMinTheWin, ElementName=MainWin}"/>
                         <local:TimeSlider Grid.Row="1" Grid.Column="1"
                                   Max="{Binding MusicLength}"
                                   Now="{Binding MusicPosition, Mode=TwoWay}" 

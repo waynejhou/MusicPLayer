@@ -1,0 +1,285 @@
+﻿<Window x:Class="MusicPLayerV2.Views.MainWindow"
+        x:Name="MainWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicPLayerV2.Views"
+        xmlns:localuc="clr-namespace:MusicPLayerV2.Views.UserControls"
+        xmlns:localVMs="clr-namespace:MusicPLayerV2.ViewModels"
+        xmlns:localModels="clr-namespace:MusicPLayerV2.Models"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        md:DialogServiceViews.IsRegistered="True"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="700" Width="1000"
+        WindowState="Normal"
+        WindowStyle="None"
+        StateChanged="MainWin_StateChanged"
+        AllowsTransparency="True"
+        Background="Black"
+        LocationChanged="Window_LocationChanged">
+    <Window.Style>
+        <Style TargetType="{x:Type local:MainWindow}">
+            <Setter Property="WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <WindowChrome GlassFrameThickness="3,30,3,3" CaptionHeight="30" CornerRadius="20"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type local:MainWindow}">
+                        <Grid Background="Transparent">
+                            <Border Background="{DynamicResource PrimaryColor}"/>
+                            <Border Background="{TemplateBinding Background}"
+                                    Margin="{Binding RelativeSource={RelativeSource TemplatedParent},
+                                Path=(WindowChrome.WindowChrome).GlassFrameThickness}">
+                                <ContentPresenter Content="{TemplateBinding Content}" />
+                            </Border>
+                            <TextBlock x:Name="titleText" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title, FallbackValue=MainWin}" 
+                               VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="15" Foreground="White"
+                               Margin="0,6,0,0"/>
+                            <Border x:Name="iconBorder"
+                                    VerticalAlignment="Top" HorizontalAlignment="Left"
+                                    Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(WindowChrome.WindowChrome).ResizeBorderThickness}"
+                                    WindowChrome.IsHitTestVisibleInChrome="True">
+                                <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Icon}"
+                                       Width="{x:Static SystemParameters.SmallIconWidth}"/>
+                            </Border>
+
+                            <Border HorizontalAlignment="Right" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
+                                    Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(WindowChrome.WindowChrome).GlassFrameThickness.Top}">
+                                <StackPanel x:Name="BtnPanel" Orientation="Horizontal">
+                                    <Button x:Name="MiniWinBtn" Content="{DynamicResource SymbolCode_ChromeMinimize}"
+                                            Click="MiniWinBtn_Click" Style="{DynamicResource TitleBarBtn}"/>
+                                    <Button x:Name="StateWinBtn" Content="{StaticResource SymbolCode_ChromeMaximize}"
+                                            Click="StateWinBtn_Click" Style="{DynamicResource TitleBarBtn}"/>
+                                    <Button x:Name="CloseWinBtn" Content="{DynamicResource SymbolCode_ChromeClose}"
+                                            Click="CloseWinBtn_Click" Style="{DynamicResource TitleBarCloseBtn}"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="WindowState" Value="Maximized">
+                                <Setter TargetName="BtnPanel" Property="Margin" Value="0 8 0 0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Style>
+    <Window.DataContext>
+        <localVMs:MainViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <Style x:Key="RadioButtonStyle" TargetType="{x:Type RadioButton}">
+            <Setter Property="Background" Value="{DynamicResource Color25}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Border x:Name="radioButtonBorder"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            Margin="0" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            CornerRadius="5">
+                            <ContentPresenter x:Name="contentPresenter"
+                                              Grid.Column="1"
+                                              Focusable="False"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasContent" Value="true">
+
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource SecondaryColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource SecondaryColorL}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource SecondaryColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="{x:Null}">
+
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TabItemStyle" TargetType="{x:Type TabItem}">
+            <Setter Property="Visibility" Value="Hidden"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style x:Key="TitleBarBtn" TargetType="Button">
+            <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border"  Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{DynamicResource Color25}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource Color50}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TitleBarCloseBtn" TargetType="Button">
+            <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border"  Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="Red"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" Value="DarkRed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LyricStyle" TargetType="localuc:LyricDisplayControl">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="ForeHighlightColor" Value="{DynamicResource SecondaryColor}"/>
+            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=MainWin, Path=WindowMode}" Value="{x:Static local:MainWindowMode.Mini}">
+                    <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.InputBindings>
+        <!-- Example of Keyboard shortcuts -->
+        <KeyBinding Command="{Binding SaveCmd}" Key="S" Modifiers="Ctrl" />
+        <KeyBinding Command="{Binding SaveAsCmd}" Gesture="Ctrl+Shift+S" />
+        <KeyBinding Command="{Binding OpenCmd}" Gesture="Ctrl+O" />
+        <KeyBinding Command="{Binding NewCmd}" Gesture="Ctrl+N" />
+        <KeyBinding Command="{Binding ExitCmd}" Gesture="Alt+F4" />
+    </Window.InputBindings>
+
+    <Border CornerRadius="10" Background="{DynamicResource PrimaryColor}" ClipToBounds="True">
+        <Grid>
+            <Image x:Name="BackImage" Opacity="0.2" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center"
+               Source="{Binding MusicPicture}"
+               Visibility="Collapsed">
+                <Image.Effect>
+                    <BlurEffect Radius="15"/>
+                </Image.Effect>
+            </Image>
+            <Border x:Name="BackImageBack" Background="Transparent" HorizontalAlignment="Center"  VerticalAlignment="Top" >
+                <Image x:Name="BackImage2" Opacity="0.4" Stretch="Uniform" HorizontalAlignment="Right"
+                   Source="{Binding MusicPicture}"
+                   Visibility="Collapsed"/>
+            </Border>
+            <DockPanel  MouseLeftButtonDown="DockPanel_MouseLeftButtonDown">
+                <Menu x:Name="MainMenu" DockPanel.Dock="Top" Margin="0,0,0.4,0">
+                    <MenuItem Header="{DynamicResource Menu_File}">
+                        <MenuItem Header="{DynamicResource Menu_File_Open}" Command="{Binding OpenFileDialogCmd}" CommandParameter="Open" InputGestureText="Ctrl+O" />
+                        <Separator />
+                        <MenuItem Header="{DynamicResource Menu_File_Exit}" Command="{Binding ExitCmd}" InputGestureText="Alt+F4"/>
+                    </MenuItem>
+                    <MenuItem Header="{DynamicResource Menu_Help}" Command="{Binding ShowAboutDialogCmd}"/>
+                </Menu>
+                <DockPanel>
+                    <Border x:Name="InfoBorder" DockPanel.Dock="Bottom">
+                        <localuc:ControllerControl Width="auto"/>
+                    </Border>
+                    <Border DockPanel.Dock="Top" MinWidth="300">
+                        <DockPanel>
+                            <Border x:Name="TabBtnBorder" Style="{DynamicResource CardBorderStyle}" DockPanel.Dock="Left">
+                                <StackPanel Grid.Column="0">
+                                    <RadioButton x:Name="AlbumArtTab"
+                                         Content="{DynamicResource SymbolCode_ToAlbumArt}"
+                                         Style="{DynamicResource RadioButtonStyle}"
+                                         IsChecked="True"
+                                         ToolTip="{DynamicResource ToolTip_AlbumArt}"
+                                         GroupName="tab"
+                                 Checked="RadioButton_Checked"
+                                 />
+                                    <RadioButton x:Name="LyricTab"
+                                         Content="{DynamicResource SymbolCode_ToLyricDisplay}" Style="{DynamicResource RadioButtonStyle}"
+                                         ToolTip="{DynamicResource ToolTip_Lyric}"
+                                         Checked="RadioButton_Checked"
+                                         GroupName="tab"/>
+                                    <RadioButton x:Name="NowPLayingTab"
+                                         Content="{DynamicResource SymbolCode_ToList}" Style="{DynamicResource RadioButtonStyle}"
+                                         ToolTip="{DynamicResource ToolTip_NowPlaying}"
+                                         Checked="RadioButton_Checked"
+                                         GroupName="tab"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{DynamicResource CardBorderStyle}" >
+                                <TabControl x:Name="TagCtrl" Grid.Column="1" Grid.ColumnSpan="2"
+                                            Background="{x:Null}"
+                                            ItemContainerStyle="{DynamicResource TabItemStyle}"
+                                            Padding="0"
+                                            BorderThickness="0" TabStripPlacement="Left">
+                                    <TabItem>
+                                        <Image x:Name="AlbumImage" Margin="10"
+                                               Source="{Binding MusicPicture}"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    </TabItem>
+                                    <TabItem>
+                                        <localuc:LyricDisplayControl
+                                            x:Name="LyricP"
+                                            Style="{DynamicResource LyricStyle}"
+                                            FilePath="{Binding LRCPath}"
+                                            NowValue="{Binding MusicPosition}"
+                                            />
+                                    </TabItem>
+                                    <TabItem/>
+                                </TabControl>
+                            </Border>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
+            </DockPanel>
+        </Grid>
+
+    </Border>
+</Window>

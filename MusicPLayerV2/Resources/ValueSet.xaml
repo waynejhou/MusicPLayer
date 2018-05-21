@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:MusicPLayerV2.Resources"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <SolidColorBrush x:Key="PrimaryColor" Color="Black"/>
+    <SolidColorBrush x:Key="SecondaryColor" Color="Pink"/>
+    <SolidColorBrush x:Key="SecondaryColorL" Color="LightPink"/>
+    <SolidColorBrush x:Key="ForegroundColor" Color="White"/>
+    <SolidColorBrush x:Key="Color25" Color="White" Opacity="0.25"/>
+    <SolidColorBrush x:Key="Color50" Color="White" Opacity="0.50"/>
+    <SolidColorBrush x:Key="Color75" Color="White" Opacity="0.75"/>
+    <sys:Double x:Key="LargeFontSize">32</sys:Double>
+    <sys:Double x:Key="MediumFontSize">20</sys:Double>
+    <sys:Double x:Key="SmallFontSize">14</sys:Double>
+    <FontFamily x:Key="SymbolFont">/MusicPLayerV2;component/Resources/Fonts/#Segoe MDL2 Assets</FontFamily>
+    <sys:String x:Key="TimespanToStringFormat">mm\:ss</sys:String>
+    
+    <sys:String x:Key="SymbolCode_Play">&#xE768;</sys:String>
+    <sys:String x:Key="SymbolCode_Pause">&#xE769;</sys:String>
+    <sys:String x:Key="SymbolCode_Volume">&#xE767;</sys:String>
+    <sys:String x:Key="SymbolCode_Next">&#xE893;</sys:String>
+    <sys:String x:Key="SymbolCode_Previous">&#xE892;</sys:String>
+    <sys:String x:Key="SymbolCode_RepeatAll">&#xE8EE;</sys:String>
+    <sys:String x:Key="SymbolCode_RepeatOne">&#xE8ED;</sys:String>
+    <sys:String x:Key="SymbolCode_Shuffle">&#xE8B1;</sys:String>
+    <sys:String x:Key="SymbolCode_ToMini">&#xEA5F;</sys:String>
+    <sys:String x:Key="SymbolCode_ToNormal">&#xE739;</sys:String>
+    <sys:String x:Key="SymbolCode_ToAlbumArt">&#xEB9F;</sys:String>
+    <sys:String x:Key="SymbolCode_ToLyricDisplay">&#xE8E3;</sys:String>
+    <sys:String x:Key="SymbolCode_ToList">&#xE8FD;</sys:String>
+    <sys:String x:Key="SymbolCode_ChromeMinimize">&#xe921;</sys:String>
+    <sys:String x:Key="SymbolCode_ChromeMaximize">&#xe922;</sys:String>
+    <sys:String x:Key="SymbolCode_ChromeRestore">&#xe923;</sys:String>
+    <sys:String x:Key="SymbolCode_ChromeClose">&#xe8bb;</sys:String>
+    <BitmapImage x:Key="NoImage" UriSource="/MusicPlayerV2;component/Resources/Image/Ellipses.png"/>
+</ResourceDictionary>
