@@ -28,6 +28,7 @@
     <sys:String x:Key="SymbolCode_ToAlbumArt">&#xEB9F;</sys:String>
     <sys:String x:Key="SymbolCode_ToLyricDisplay">&#xE8E3;</sys:String>
     <sys:String x:Key="SymbolCode_ToList">&#xE8FD;</sys:String>
+    <sys:String x:Key="SymbolCode_ToLibrary">&#xE93C;</sys:String>
     <sys:String x:Key="SymbolCode_ChromeMinimize">&#xe921;</sys:String>
     <sys:String x:Key="SymbolCode_ChromeMaximize">&#xe922;</sys:String>
     <sys:String x:Key="SymbolCode_ChromeRestore">&#xe923;</sys:String>

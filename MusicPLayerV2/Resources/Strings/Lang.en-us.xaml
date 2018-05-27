@@ -18,6 +18,7 @@
     <String x:Key="ToolTip_AlbumArt">Album Art</String>
     <String x:Key="ToolTip_Lyric">Lyric</String>
     <String x:Key="ToolTip_NowPlaying">Now Playing</String>
+    <String x:Key="ToolTip_Library">Library</String>
 
     <String x:Key="LrcEditor_InsertTimeTag">Insert Time Tag</String>
     <String x:Key="LrcEditor_ReplaceTimeTag">Replace Time Tag</String>

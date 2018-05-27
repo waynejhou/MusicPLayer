@@ -48,6 +48,8 @@ namespace MusicPLayerV2.Views
                     return;
                 }
             */
+            byte[,,] a = new byte[5, 5, 5];
+            a[1, 2, 3] = 5;
             App.PlayerModel.Dispose();
             Log.Info("Closing App");
         }

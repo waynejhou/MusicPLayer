@@ -110,6 +110,9 @@
     <Compile Include="Views\UserControls\LyricDisplayControl.xaml.cs">
       <DependentUpon>LyricDisplayControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserControls\PlayingListControl.xaml.cs">
+      <DependentUpon>PlayingListControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\PositionControl.xaml.cs">
       <DependentUpon>PositionControl.xaml</DependentUpon>
     </Compile>
@@ -161,6 +164,10 @@
     <Page Include="Views\UserControls\LyricDisplayControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserControls\PlayingListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\PositionControl.xaml">
       <SubType>Designer</SubType>

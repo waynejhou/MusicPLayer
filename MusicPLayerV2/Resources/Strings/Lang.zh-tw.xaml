@@ -18,6 +18,7 @@
     <String x:Key="ToolTip_AlbumArt">專輯封面</String>
     <String x:Key="ToolTip_Lyric">歌詞</String>
     <String x:Key="ToolTip_NowPlaying">現正清單</String>
+    <String x:Key="ToolTip_Library">媒體庫</String>
 
     <String x:Key="LrcEditor_InsertTimeTag">插入時間標籤</String>
     <String x:Key="LrcEditor_ReplaceTimeTag">取代時間標籤</String>

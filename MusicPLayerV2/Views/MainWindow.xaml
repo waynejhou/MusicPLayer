@@ -249,6 +249,11 @@
                                          ToolTip="{DynamicResource ToolTip_NowPlaying}"
                                          Checked="RadioButton_Checked"
                                          GroupName="tab"/>
+                                    <RadioButton x:Name="ViewLibrary"
+                                                 Content="{DynamicResource SymbolCode_ToLibrary}" Style="{DynamicResource RadioButtonStyle}"
+                                                 ToolTip="{DynamicResource ToolTip_Library}"
+                                                 Checked="RadioButton_Checked"
+                                                 GroupName="tab"/>
                                 </StackPanel>
                             </Border>
                             <Border Style="{DynamicResource CardBorderStyle}" >
@@ -272,6 +277,7 @@
                                             NowValue="{Binding MusicPosition}"
                                             />
                                     </TabItem>
+                                    <TabItem/>
                                     <TabItem/>
                                 </TabControl>
                             </Border>
