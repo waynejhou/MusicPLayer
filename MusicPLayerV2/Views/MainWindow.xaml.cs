@@ -191,7 +191,23 @@ namespace MusicPLayerV2.Views
             DragMove();
         }
 
+        internal void AlbumImage_SourceUpdated()
+        {
+            Size ss = new Size((AlbumImage.Source as BitmapImage).Width, (AlbumImage.Source as BitmapImage).Height);
+            if (ss.Width> AlbumArtBorder.ActualWidth|| ss.Height> AlbumArtBorder.ActualHeight)
+            {
+                AlbumImage.Stretch = Stretch.Uniform;
+            }
+            else
+            {
+                AlbumImage.Stretch = Stretch.None;
+            }
+        }
 
+        private void MainWin_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            AlbumImage_SourceUpdated();
+        }
     }
     public enum MainWindowMode { Mini, Normal, FullScreen };
     partial class MainWindow

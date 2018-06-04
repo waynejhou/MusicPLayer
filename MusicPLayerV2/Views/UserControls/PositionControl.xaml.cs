@@ -35,7 +35,7 @@ namespace MusicPLayerV2.Views.UserControls
             new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                 (DependencyObject obj, DependencyPropertyChangedEventArgs args)=>
                 {
-                    (obj as PositionControl).OnNowValueSet();
+                    (obj as PositionControl).OnNowValueSet((double)args.NewValue);
                 }));
         public static readonly DependencyProperty LineBrushProperty = DependencyProperty.Register(nameof(LineBrush), typeof(Brush), typeof(PositionControl),
             new FrameworkPropertyMetadata(Brushes.LightGray,
@@ -47,6 +47,45 @@ namespace MusicPLayerV2.Views.UserControls
             new FrameworkPropertyMetadata(false));
         public static readonly DependencyProperty IsThumbDraggingProperty = DependencyProperty.Register(nameof(IsThumbDragging), typeof(bool), typeof(PositionControl),
             new FrameworkPropertyMetadata(false));
+
+
+        public double MouseDeltaChange
+        {
+            get { return (double)GetValue(MouseDeltaChangeProperty); }
+            set { SetValue(MouseDeltaChangeProperty, value); }
+        }
+        public static readonly DependencyProperty MouseDeltaChangeProperty =
+            DependencyProperty.Register("MouseDeltaChange", typeof(double), typeof(PositionControl), new PropertyMetadata(0.1));
+
+
+        public bool IsSetValueOnlyUuholdThumb
+        {
+            get { return (bool)GetValue(IsSetValueOnlyUuholdThumbProperty); }
+            set { SetValue(IsSetValueOnlyUuholdThumbProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsSetValueOnlyUuholdThumb.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsSetValueOnlyUuholdThumbProperty =
+            DependencyProperty.Register(nameof(IsSetValueOnlyUuholdThumb), typeof(bool), typeof(PositionControl),
+                new FrameworkPropertyMetadata(true));
+
+
+
+
+        public double ThumbSize
+        {
+            get { return (double)GetValue(ThumbSizeProperty); }
+            set { SetValue(ThumbSizeProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ThumbSize.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ThumbSizeProperty =
+            DependencyProperty.Register(nameof(ThumbSize), typeof(double), typeof(PositionControl),
+                new FrameworkPropertyMetadata(40d,
+                (DependencyObject obj, DependencyPropertyChangedEventArgs args) =>
+                {
+                    (obj as PositionControl).OnThumbSizeSet();
+                }));
         #endregion
         public bool IsThumbMouseOver
         {
@@ -81,14 +120,24 @@ namespace MusicPLayerV2.Views.UserControls
             get { return (double)GetValue(NowValueProperty); }
             set
             {
-                if (value != NowValue)
-                    SetValue(NowValueProperty, Math.Max(Math.Min(value, Max), Min));
+                OnNowValueSet(value);
             }
         }
-        private void OnNowValueSet()
+        private void OnNowValueSet(double NewValue)
         {
+            if (NewValue != NowValue)
+                SetValue(NowValueProperty, Math.Max(Math.Min(NewValue, Max), Min));
             if (!IsThumbDragging)
-                SetPosition(NowValue);
+                SetPositionByValue(NowValue);
+        }
+
+        private void OnThumbSizeSet()
+        {
+            TheC.Width = ThumbSize;
+            TheC.Height = ThumbSize;
+            Canvas.SetTop(TheC, -ThumbSize / 2+2.5);
+            canvas.Margin = new Thickness(-ThumbSize / 2, 0, ThumbSize / 2, 0);
+            ValueTooltip.VerticalOffset = -50;
         }
 
         public string ValueString => ValueToStringConverter(NowValue);
@@ -117,7 +166,9 @@ namespace MusicPLayerV2.Views.UserControls
         {
             var w = (TheC.Parent as Canvas).ActualWidth;
             var newLeft = Math.Max(Math.Min(Canvas.GetLeft(TheC) + e.HorizontalChange, w),0);
-            PreviewSetPosition(newLeft);
+            SetPositionLeft(newLeft);
+            if (!IsSetValueOnlyUuholdThumb)
+                NowValue = Left2Value(newLeft);
         }
 
         private void TheC_DragCompleted(object sender, DragCompletedEventArgs e)
@@ -129,7 +180,7 @@ namespace MusicPLayerV2.Views.UserControls
 
         private void LineBorder_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SetPosition(NowValue);
+            SetPositionByValue(NowValue);
         }
 
         bool IsTimeShowValueText => IsThumbMouseOver || IsValueTooltipMouseOver || IsLineMouseOver;
@@ -190,20 +241,23 @@ namespace MusicPLayerV2.Views.UserControls
             if (Max - Min <= 0)
                 return 0d;
             var w = (TheC.Parent as Canvas).ActualWidth;
-            return Math.Max(Math.Min(((left ) / w * (Max - Min)) + Min, Max), Min);
+            var v = Math.Max(Math.Min(((left) / w * (Max - Min)) + Min, Max), Min);
+            return v;
         }
         private double Value2Left(double value)
         {
             if (Max - Min <= 0)
                 return 0;
             var w = (TheC.Parent as Canvas).ActualWidth;
-            return Math.Max(Math.Min(value / (Max - Min) * w, w), 0);
+            var l = Math.Max(Math.Min(value / (Max - Min) * w, w), 0);
+            return l;
         }
-        private void SetPosition(double value)
+
+        private void SetPositionByValue(double value)
         {
             Canvas.SetLeft(TheC, Value2Left(value));
         }
-        private void PreviewSetPosition(double left)
+        private void SetPositionLeft(double left)
         {
             var w = (TheC.Parent as Canvas).ActualWidth;
             Canvas.SetLeft(TheC, Math.Max(Math.Min(left, w), 0));
@@ -211,14 +265,26 @@ namespace MusicPLayerV2.Views.UserControls
 
         private void LineBorder_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            PreviewSetPosition(e.GetPosition(TheC).X);
+            SetPositionLeft(e.GetPosition(LineBorder).X);
             TheC.CaptureMouse();
         }
 
         private void LineBorder_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (Mouse.LeftButton == MouseButtonState.Pressed)
-                PreviewSetPosition(e.GetPosition(LineBorder).X);
+                SetPositionLeft(e.GetPosition(LineBorder).X);
+        }
+
+        private void uc_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                NowValue += MouseDeltaChange;
+            }
+            if (e.Delta < 0)
+            {
+                NowValue -= MouseDeltaChange;
+            }
         }
     }
 }

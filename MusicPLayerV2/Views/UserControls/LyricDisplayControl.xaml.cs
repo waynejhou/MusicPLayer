@@ -55,7 +55,13 @@ namespace MusicPLayerV2.Views.UserControls
         void OnSetFilePath()
         {
             if (!File.Exists(FilePath))
+            {
+                if (parser.IsLoaded){ 
+                    parser.Lyrics.Clear();
+                    Lyrics.Clear();
+                }
                 return;
+            }
             parser.FileName = FilePath;
             if (parser.IsLoaded)
                 Lyrics = parser.Lyrics;
@@ -147,7 +153,7 @@ namespace MusicPLayerV2.Views.UserControls
                         l.Foreground = new SolidColorBrush(ForeColor.Color);
                         l.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation()
                         {
-                            From = ForeColor.Color,
+                            From = (Foreground as SolidColorBrush).Color,
                             To = ForeHighlightColor.Color,
                             Duration = TimeSpan.FromMilliseconds(250)
                         });
@@ -161,7 +167,7 @@ namespace MusicPLayerV2.Views.UserControls
                             ll.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation()
                             {
                                 From = ForeHighlightColor.Color,
-                                To = ForeColor.Color,
+                                To = (Foreground as SolidColorBrush).Color,
                                 Duration = TimeSpan.FromMilliseconds(250)
                             });
                         }

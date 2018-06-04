@@ -132,6 +132,7 @@ namespace MusicPLayerV2.ViewModels
         {
             NotifyPropertyChanged(nameof(LRCPath));
             NotifyPropertyChanged(nameof(MusicPicture));
+            (App.Current.MainWindow as MainWindow).AlbumImage_SourceUpdated();
             NotifyPropertyChanged(nameof(Title));
         }
 

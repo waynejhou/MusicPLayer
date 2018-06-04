@@ -19,7 +19,8 @@
         StateChanged="MainWin_StateChanged"
         AllowsTransparency="True"
         Background="Black"
-        LocationChanged="Window_LocationChanged">
+        LocationChanged="Window_LocationChanged"
+        SizeChanged="MainWin_SizeChanged">
     <Window.Style>
         <Style TargetType="{x:Type local:MainWindow}">
             <Setter Property="WindowChrome.WindowChrome">
@@ -32,13 +33,13 @@
                     <ControlTemplate TargetType="{x:Type local:MainWindow}">
                         <Grid Background="Transparent">
                             <Border Background="{DynamicResource PrimaryColor}"/>
-                            <Border Background="{TemplateBinding Background}"
+                            <Border Background="{DynamicResource PrimaryColor}"
                                     Margin="{Binding RelativeSource={RelativeSource TemplatedParent},
                                 Path=(WindowChrome.WindowChrome).GlassFrameThickness}">
                                 <ContentPresenter Content="{TemplateBinding Content}" />
                             </Border>
                             <TextBlock x:Name="titleText" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title, FallbackValue=MainWin}" 
-                               VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="15" Foreground="White"
+                               VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="{DynamicResource MediumFontSize}" Foreground="{DynamicResource ForegroundColor}"
                                Margin="0,6,0,0"/>
                             <Border x:Name="iconBorder"
                                     VerticalAlignment="Top" HorizontalAlignment="Left"
@@ -47,7 +48,6 @@
                                 <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Icon}"
                                        Width="{x:Static SystemParameters.SmallIconWidth}"/>
                             </Border>
-
                             <Border HorizontalAlignment="Right" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True"
                                     Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(WindowChrome.WindowChrome).GlassFrameThickness.Top}">
                                 <StackPanel x:Name="BtnPanel" Orientation="Horizontal">
@@ -135,7 +135,7 @@
             <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
             <Setter Property="Width" Value="40"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -159,7 +159,7 @@
             <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
             <Setter Property="Width" Value="40"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -262,12 +262,24 @@
                                             ItemContainerStyle="{DynamicResource TabItemStyle}"
                                             Padding="0"
                                             BorderThickness="0" TabStripPlacement="Left">
-                                    <TabItem>
-                                        <Image x:Name="AlbumImage" Margin="10"
+                                    <TabItem >
+                                        <Grid>
+                                            <Border x:Name="AlbumArtBorder">
+                                                <Border.Effect>
+                                                    <BlurEffect Radius="30"/>
+                                                </Border.Effect>
+                                                <Border.Background>
+                                                    <ImageBrush ImageSource="{Binding MusicPicture}" Stretch="UniformToFill" Opacity="0.2" Viewport="0,0,0.5,1" TileMode="Tile"/>
+                                                </Border.Background>
+                                            </Border>
+                                            <Image x:Name="AlbumImage" Margin="10"
                                                Source="{Binding MusicPicture}"
                                                Stretch="Uniform"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
+                                        </Grid>
+
+
                                     </TabItem>
                                     <TabItem>
                                         <localuc:LyricDisplayControl

@@ -3,12 +3,14 @@
                     xmlns:local="clr-namespace:MusicPLayerV2.Resources"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <SolidColorBrush x:Key="PrimaryColor" Color="Black"/>
-    <SolidColorBrush x:Key="SecondaryColor" Color="Pink"/>
-    <SolidColorBrush x:Key="SecondaryColorL" Color="LightPink"/>
+    <SolidColorBrush x:Key="SecondaryColor" Color="#CC80FF80"/>
+    <SolidColorBrush x:Key="SecondaryColorL" Color="#CC96CF80"/>
     <SolidColorBrush x:Key="ForegroundColor" Color="White"/>
     <SolidColorBrush x:Key="Color25" Color="White" Opacity="0.10"/>
     <SolidColorBrush x:Key="Color50" Color="White" Opacity="0.50"/>
     <SolidColorBrush x:Key="Color75" Color="White" Opacity="0.75"/>
+    <DropShadowEffect x:Key="WordShadowEffect" BlurRadius="5" ShadowDepth="2"/>
+
     <sys:Double x:Key="LargeFontSize">32</sys:Double>
     <sys:Double x:Key="MediumFontSize">20</sys:Double>
     <sys:Double x:Key="SmallFontSize">14</sys:Double>

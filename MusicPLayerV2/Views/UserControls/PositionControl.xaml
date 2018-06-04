@@ -5,11 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MusicPLayerV2.Views.UserControls"
              mc:Ignorable="d" 
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              d:DesignHeight="100" d:DesignWidth="800"
              MouseMove="uc_MouseMove"
              PreviewMouseLeftButtonDown="LineBorder_PreviewMouseLeftButtonDown"
              PreviewMouseMove="LineBorder_PreviewMouseMove"
-             Background="Transparent">
+             Background="Transparent" MouseWheel="uc_MouseWheel">
     <UserControl.Resources>
         <Style x:Name="DefaultStyle" TargetType="local:PositionControl">
             <Style.Triggers>
@@ -23,7 +24,7 @@
         </Style>
     </UserControl.Resources>
     <Border x:Name="LineBorder" Background="LightGray" Height="5"
-            VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="20"
+            VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="20, 0, 20, 0"
             SizeChanged="LineBorder_SizeChanged"
             MouseEnter="LineBorder_MouseEnter"
             MouseLeave="LineBorder_MouseLeave"
@@ -35,7 +36,7 @@
                     HorizontalAlignment="Left">
                 
             </Border>
-            <Canvas Margin="-20 0 20 0">
+            <Canvas x:Name="canvas" Margin="-20 0 20 0" >
                 <Thumb x:Name="TheC" Width="40" Height="40" Canvas.Top="-17.5"
                    DragStarted="TheC_DragStarted"
                    DragDelta="TheC_DragDelta"
@@ -50,17 +51,19 @@
                             <Grid>
                                 <Ellipse x:Name="BigC"
                                      Fill="{DynamicResource Color25}"
-                                     Width="40" Height="40"/>
-                                <Ellipse x:Name="SmallC"
+                                     Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"/>
+                                <Border Padding="5">
+                                    <Ellipse x:Name="SmallC"
                                      Stroke="{TemplateBinding Foreground}"
-                                     StrokeThickness="5" Width="30" Height="30"/>
+                                     StrokeThickness="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                </Border>
                             </Grid>
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
                 <Popup x:Name="ValueTooltip" PopupAnimation="Fade"
                    Placement="Relative"
-                   MouseEnter="ValueTooltip_MouseEnter" MouseLeave="ValueTooltip_MouseLeave" VerticalOffset="-30" >
+                   MouseEnter="ValueTooltip_MouseEnter" MouseLeave="ValueTooltip_MouseLeave" VerticalOffset="-30" AllowsTransparency="True" >
                     <Border BorderThickness="1" Padding="5"
                         BorderBrush="{DynamicResource PrimaryColor}"
                         Background="{DynamicResource Color25}">

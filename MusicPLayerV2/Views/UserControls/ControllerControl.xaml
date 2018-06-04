@@ -118,6 +118,7 @@
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="Effect" Value="{DynamicResource WordShadowEffect}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding WindowMode,
                     RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"
@@ -131,6 +132,7 @@
         <Style x:Key="LabelTriggerVisibleStyle" TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="Effect" Value="{DynamicResource WordShadowEffect}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding WindowMode,
                     RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"
@@ -161,17 +163,10 @@
         <Border Grid.Row="0" Style="{DynamicResource CardBorderStyle}">
             <StackPanel>
                 <Label Style="{DynamicResource LabelStyle}">
-                    <Label.Effect>
-                        <DropShadowEffect ShadowDepth="3" BlurRadius ="3"/>
-                    </Label.Effect>
                     <AccessText TextWrapping="WrapWithOverflow" TextAlignment="Center" Text="{Binding MusicTitle, FallbackValue=Title}"/>
                 </Label>
-
                 <Label Style="{DynamicResource LabelTriggerVisibleStyle}">
                     <AccessText TextWrapping="WrapWithOverflow" Text="{Binding MusicArtistAlbum, FallbackValue=ArtistAlbum}"/>
-                    <Label.Effect>
-                        <DropShadowEffect ShadowDepth="3" BlurRadius ="3"/>
-                    </Label.Effect>
                 </Label>
             </StackPanel>
         </Border>
@@ -196,12 +191,34 @@
                         <Button Height="50" Content="{DynamicResource SymbolCode_Next}" 
                             Style="{StaticResource CircleButtonStyle}"
                             Margin="1"/>
-                        <Button Height="40" Content="{DynamicResource SymbolCode_Volume}"
+                        <Button x:Name="VolumnBtn" Height="40"
                             Style="{StaticResource CircleButtonTriggerVisibleStyle}"
-                            Margin="1"/>
+                            Margin="1" MouseEnter="VolumnBtn_MouseEnter" MouseLeave="VolumnBtn_MouseLeave">
+                            <Grid>
+                                <TextBlock Text="{DynamicResource SymbolCode_Volume}"/>
+                                <Popup x:Name="VolumnPopup" VerticalOffset="-60" MouseEnter="VolumnPopup_MouseEnter" MouseLeave="VolumnPopup_MouseLeave" AllowsTransparency="True">
+                                    <Border Style="{DynamicResource CardBorderStyle}">
+                                        <local:PositionControl FontFamily="Microsoft JhengHei" FontSize="{DynamicResource SmallFontSize}"
+                                                               ThumbSize="20" Width="150" Height="30"  Style="{DynamicResource PositionControlStyle}"
+                                                               Min="0" Max="1" NowValue="{Binding MusicVolume}"
+                                                               IsSetValueOnlyUuholdThumb="False"
+                                                               MouseDeltaChange="0.05"
+                                                               />
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Button>
                     </StackPanel>
                 </Border>
                 <Border HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <Button Content="{DynamicResource SymbolCode_ToMini}"
+                                Height="30" FontSize="{DynamicResource SmallFontSize}"
+                                Command="{Binding ChangeMode}"
+                                Style="{DynamicResource CircleButtonStyle}"/>
+                    </StackPanel>
+                </Border>
+                <Border HorizontalAlignment="Left">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Button Content="{DynamicResource SymbolCode_ToMini}"
                                 Height="30" FontSize="{DynamicResource SmallFontSize}"
@@ -232,7 +249,5 @@
                 </Border>
             </Grid>
         </Border>
-
-
     </Grid>
 </UserControl>

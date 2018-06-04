@@ -46,6 +46,7 @@ namespace MusicPLayerV2.ViewModels
         public double MusicPositionDouble { get => MusicPosition.TotalMilliseconds; set => MusicPosition = TimeSpan.FromMilliseconds(value); }
         public TimeSpan MusicLength => NPI.Length;
         public double MusicLengthDouble => NPI.Length.TotalMilliseconds;
+        public double MusicVolume { get => PM.Volume; set { PM.Volume = (float)value; } } 
 
         public ICommand PlayPauseCmd => new RelayCommand(OnPlayPause, () => PM.IsLoadded);
         public ICommand PlayCmd => new RelayCommand(() => PM.Play(), () => PM.IsLoadded);

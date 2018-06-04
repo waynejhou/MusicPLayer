@@ -44,7 +44,7 @@ namespace MusicPLayerV2.Models
         /// </summary>
         public float Volume
         {
-            get => (float)Math.Pow(_volume, -2);
+            get => (float)Math.Pow(_volume, 0.5);
             set
             {
                 _volume = (float)Math.Pow(Math.Max(0, Math.Min(1, value)), 2);
