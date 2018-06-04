@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
@@ -262,17 +263,38 @@ namespace MusicPLayerV2.Utils
 
         #endregion
     }
-    public struct LyricWithTime
+    public class LyricWithTime : DependencyObject, INotifyPropertyChanged
     {
-        TimeSpan _time;
-        string _lyric;
+        public string Lyric { get; set; }
+        public TimeSpan Time { get; set; }
 
-        public string Lyric { get => _lyric; set => _lyric = value; }
-        public TimeSpan Time { get => _time; set => _time = value; }
+
+        public bool IsHightLighted
+        {
+            get { return (bool)GetValue(IsHightLightedProperty); }
+            set { SetValue(IsHightLightedProperty, value); }
+        }
+        public static readonly DependencyProperty IsHightLightedProperty =
+            DependencyProperty.Register("IsHightLighted", typeof(bool), typeof(LyricWithTime),
+                new FrameworkPropertyMetadata((DependencyObject obj, DependencyPropertyChangedEventArgs args)=>
+                {
+                    (obj as LyricWithTime).OnSetHighlighted((bool)args.NewValue);
+                }));
+
+        private void OnSetHighlighted(bool newValue)
+        {
+            NotifyPropertyChanged(nameof(IsHightLighted));
+        }
 
         public override string ToString()
         {
-            return _lyric;
+            return Lyric;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

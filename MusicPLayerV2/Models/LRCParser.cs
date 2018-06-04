@@ -12,15 +12,11 @@ namespace MusicPLayerV2.Models
 {
     class LRCParser
     {
-        List<LyricWithTime> _lyrics = new List<LyricWithTime>();
         string _fileName = "";
         bool isLoaded = false;
         public bool IsLoaded{ get => isLoaded; set => isLoaded = value; }
 
-        public List<LyricWithTime> Lyrics
-        {
-            get => _lyrics;
-        }
+        public List<LyricWithTime> Lyrics { get; private set; } = new List<LyricWithTime>();
 
         public string FileName
         {
@@ -31,10 +27,10 @@ namespace MusicPLayerV2.Models
                 else
                 {
                     IsLoaded = false;
-                    _lyrics.Clear();
+                    Lyrics.Clear();
                     return;
                 }
-                _lyrics.Clear();
+                Lyrics.Clear();
                 _fileName = value;
                 var lines = File.ReadAllLines(_fileName);
                 Regex timeTag = new Regex(@"\[[0-9]*\:[0-9]*\.[0-9]*\]");
@@ -99,22 +95,22 @@ namespace MusicPLayerV2.Models
                             throw new FormatException("...");
                     }
 
-                    _lyrics.Add(new LyricWithTime() { Time = TimeSpan.MaxValue, Lyric = "" });
+                    Lyrics.Add(new LyricWithTime() { Time = TimeSpan.MaxValue, Lyric = "" });
                 }
-                _lyrics = _lyrics.OrderBy(x => x.Time).ToList();
+                Lyrics = Lyrics.OrderBy(x => x.Time).ToList();
             }
         }
 
 
         void AddLyric(TimeSpan time, string lyric)
         {
-            if (_lyrics.Select(x => x.Time).Contains(time)) {
-                var lt = _lyrics[_lyrics.FindIndex(x => x.Time == time)];
-                _lyrics[_lyrics.FindIndex(x => x.Time == time)] =
+            if (Lyrics.Select(x => x.Time).Contains(time)) {
+                var lt = Lyrics[Lyrics.FindIndex(x => x.Time == time)];
+                Lyrics[Lyrics.FindIndex(x => x.Time == time)] =
                     new LyricWithTime() { Time = lt.Time, Lyric = lt.Lyric + "\n" + lyric };
             }
             else
-                _lyrics.Add(new LyricWithTime() { Time = time, Lyric = lyric });
+                Lyrics.Add(new LyricWithTime() { Time = time, Lyric = lyric });
         }
 
         public LyricWithTime GetLyricFromTime(TimeSpan timeSpan)
@@ -131,7 +127,15 @@ namespace MusicPLayerV2.Models
             if (idx+1 < Lyrics.Count())
                 return Lyrics[idx+1];
             else
-                return new LyricWithTime();
+                return Lyrics[idx];
+        }
+        public LyricWithTime GetPrevLyricFromTime(TimeSpan timeSpan)
+        {
+            var idx = GetLyricIdxFromTime(timeSpan);
+            if (idx - 1 >= 0)
+                return Lyrics[idx - 1];
+            else
+                return Lyrics[0];
         }
         public int GetLyricIdxFromTime(TimeSpan timeSpan)
         {
@@ -140,14 +144,11 @@ namespace MusicPLayerV2.Models
                     return Math.Max(i-1,0);
             return -1;
         }
-
-        static List<LyricWithTime> _noLyricMessage = new List<LyricWithTime>()
+        public static List<LyricWithTime> NoLyricMessage { get; } = new List<LyricWithTime>()
         {
             new LyricWithTime{ Time=TimeSpan.Zero, Lyric="No Lyric Found!"},
             new LyricWithTime{ Time=TimeSpan.MaxValue, Lyric=""}
         };
-        public static List<LyricWithTime> NoLyricMessage { get => _noLyricMessage; }
-
     }
 
 }

@@ -182,7 +182,8 @@
         <Style x:Key="LyricStyle" TargetType="localuc:LyricDisplayControl">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
-            <Setter Property="ForeHighlightColor" Value="{DynamicResource SecondaryColor}"/>
+            <Setter Property="HighLight" Value="{DynamicResource SecondaryColor}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource LyricFont}"/>
             <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding ElementName=MainWin, Path=WindowMode}" Value="{x:Static local:MainWindowMode.Mini}">
@@ -198,6 +199,8 @@
         <KeyBinding Command="{Binding OpenCmd}" Gesture="Ctrl+O" />
         <KeyBinding Command="{Binding NewCmd}" Gesture="Ctrl+N" />
         <KeyBinding Command="{Binding ExitCmd}" Gesture="Alt+F4" />
+        <KeyBinding Command="{Binding ElementName=MainWin, Path=JumpToNextLyricCmd}" Gesture="Down"/>
+        <KeyBinding Command="{Binding ElementName=MainWin, Path=JumpToPrevLyricCmd}" Gesture="Up"/>
     </Window.InputBindings>
 
     <Border CornerRadius="10" Background="{DynamicResource PrimaryColor}" ClipToBounds="True">
@@ -285,8 +288,8 @@
                                         <localuc:LyricDisplayControl
                                             x:Name="LyricP"
                                             Style="{DynamicResource LyricStyle}"
-                                            FilePath="{Binding LRCPath}"
-                                            NowValue="{Binding MusicPosition}"
+                                            LyricFilePath="{Binding LRCPath}"
+                                            Position="{Binding MusicPosition}"
                                             />
                                     </TabItem>
                                     <TabItem/>

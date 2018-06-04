@@ -64,7 +64,7 @@ namespace MusicPLayerV2.Views
                 }
                 else if ((sender as RadioButton) == LyricTab)
                 {
-                    LyricP.ResetLinesHeight();
+                    //LyricP.ResetLinesHeight();
                     TagCtrl.SelectedIndex = 1;
                 }
                 else if ((sender as RadioButton) == NowPLayingTab)
@@ -208,6 +208,8 @@ namespace MusicPLayerV2.Views
         {
             AlbumImage_SourceUpdated();
         }
+        public ICommand JumpToNextLyricCmd => new RelayCommand(() => LyricP.JumpToNextLyric(), () => LyricP.IsLyricLoaded);
+        public ICommand JumpToPrevLyricCmd => new RelayCommand(() => LyricP.JumpToPrevLyric(), () => LyricP.IsLyricLoaded);
     }
     public enum MainWindowMode { Mini, Normal, FullScreen };
     partial class MainWindow

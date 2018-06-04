@@ -15,6 +15,7 @@
     <sys:Double x:Key="MediumFontSize">20</sys:Double>
     <sys:Double x:Key="SmallFontSize">14</sys:Double>
     <FontFamily x:Key="SymbolFont">/MusicPLayerV2;component/Resources/Fonts/#Segoe MDL2 Assets</FontFamily>
+    <FontFamily x:Key="LyricFont">Consolas</FontFamily>
     <sys:String x:Key="TimespanToStringFormat">mm\:ss</sys:String>
     
     <sys:String x:Key="SymbolCode_Play">&#xE768;</sys:String>

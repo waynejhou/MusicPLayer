@@ -55,7 +55,7 @@ namespace MusicPLayerV2.ViewModels
 
         public string LRCPath => (PM.IsLoadded) ? NPI.Path.Replace(new FileInfo(NPI.Path).Extension, ".lrc") : "";
 
-        public TimeSpan MusicPosition => PM.Position;
+        public TimeSpan MusicPosition { get => PM.Position; set => PM.Position = value; }
         #endregion
 
         #region Commands
