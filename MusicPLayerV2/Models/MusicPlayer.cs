@@ -100,6 +100,7 @@ namespace MusicPLayerV2.Models
             {
                 _soundOut.Play();
                 PlaybackStateChangedChangedEvent?.Invoke(this, oldValue, PlaybackState.Playing);
+                NowPlayingItem.IsNowPlaying = true;
             }
         }
 
@@ -149,31 +150,41 @@ namespace MusicPLayerV2.Models
         } 
 
         /// <summary>
-        /// 讀取音樂檔案
+        /// 從路徑讀取音樂檔案
         /// </summary>
         /// <param name="fileName">檔案路徑</param>
-        public void Load(string fileName)
+        public void LoadFromPath(string fileName)
         {
+            LoadFromMusicItem(MusicItem.CreatFromFile(fileName));
+        }
+
+        /// <summary>
+        /// MusicItem 讀取音樂檔案
+        /// </summary>
+        /// <param name="musicItem">MusicItem</param>
+        public void LoadFromMusicItem(MusicItem musicItem)
+        {
+            NowPlayingItem.IsNowPlaying = false;
             Stop();
             Dispose();
-            NowPlayingItem = MusicItem.CreatFromFile(fileName);
-            _waveSource = CodecFactory.Instance.GetCodec(fileName)
+            NowPlayingItem = musicItem;
+            if (musicItem.Picture == null)
+                musicItem.TryUpdatePicture();
+            _waveSource = CodecFactory.Instance.GetCodec(musicItem.Path)
                 .ToSampleSource()
                 .ToStereo()
                 .ToWaveSource();
             _soundOut = new WasapiOut() { Latency = 100 };
             _soundOut.Initialize(_waveSource);
             _soundOut.Volume = _volume;
-            //_soundOut.Stopped += (object sender, PlaybackStoppedEventArgs e) => { StoppedEvent?.Invoke(this); };
             LoaddedEvent?.Invoke(this);
             Position = TimeSpan.Zero;
-            Play();
             _wavePostionUpdThd = new Thread(() =>
             {
                 TimeSpan last = TimeSpan.Zero;
                 while (IsLoadded)
                 {
-                    //if(PlaybackState==PlaybackState.Stopped) StoppedEvent?.Invoke(this);
+
                     var newone = _waveSource.GetPosition();
                     if (newone != last)
                         WavePositionChangedEvent?.Invoke(this, newone);
@@ -201,9 +212,9 @@ namespace MusicPLayerV2.Models
         #endregion
 
         #region 靜態函式
-        static public bool SupportCheck(string fileName)
+        static public bool SupportCheck(string fileName, string filter)
         {
-            var str = ((string)App.Current.Resources["Filter_AudioFile"]).Split('|')[1].Split(';');
+            var str = filter.Split('|')[1].Split(';');
             foreach(var s in str)
             {
                 if (fileName.EndsWith(s.Remove(0, 1)))

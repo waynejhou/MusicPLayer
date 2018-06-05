@@ -37,7 +37,7 @@ namespace MusicPLayerV2.Utils
                 return result;
             }
         }
-        public void Execute(object parameter)
+        public void Execute(object parameter=null)
         {
             this.methodToExecute.Invoke();
         }

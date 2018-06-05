@@ -1,5 +1,9 @@
-﻿using System;
+﻿using MusicPLayerV2.Models;
+using MusicPLayerV2.Utils;
+using MusicPLayerV2.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +24,22 @@ namespace MusicPLayerV2.Views.UserControls
     /// </summary>
     public partial class PlayingListControl : UserControl
     {
+
+        private ResourceDictionary R => App.Current.Resources;
+        private MusicPlayer PM => App.PlayerModel;
+        private MusicItem NPI => App.PlayerModel.NowPlayingItem;
+        private ControllerViewModel C => App.Controller;
+        private PlayingListViewModel L => App.PlayingList;
+
         public PlayingListControl()
         {
             InitializeComponent();
+        }
+
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            L.Load(ListViewL.SelectedItem as MusicItem);
+            C.PlayCmd.Execute(null);
         }
     }
 }

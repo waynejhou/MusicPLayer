@@ -19,6 +19,7 @@
     <sys:String x:Key="TimespanToStringFormat">mm\:ss</sys:String>
     
     <sys:String x:Key="SymbolCode_Play">&#xE768;</sys:String>
+    <sys:String x:Key="SymbolCode_PlayBadge">&#xEDB5;</sys:String>
     <sys:String x:Key="SymbolCode_Pause">&#xE769;</sys:String>
     <sys:String x:Key="SymbolCode_Volume">&#xE767;</sys:String>
     <sys:String x:Key="SymbolCode_Next">&#xE893;</sys:String>

@@ -28,6 +28,8 @@ namespace MusicPLayerV2.ViewModels
         private  ResourceDictionary R => App.Current.Resources;
         private MusicPlayer PM => App.PlayerModel;
         private MusicItem NPI => App.PlayerModel.NowPlayingItem;
+        private ControllerViewModel C => App.Controller;
+        private PlayingListViewModel L => App.PlayingList;
 
         /// <summary>
         /// Title of the application, as displayed in the top bar of the window
@@ -61,7 +63,9 @@ namespace MusicPLayerV2.ViewModels
         #region Commands
         public ICommand OpenFileDialogCmd => new RelayCommand<string>(OnOpenFileDialog, (s) => true);
         public ICommand OpenFilesCmd => new RelayCommand<string[]>(OnOpenFiles, (string[] s) => true);
-        public ICommand LoadFileCmd => new RelayCommand<string>(OnLoadFile, (string s) => true);
+        public ICommand AddFilesCmd => L.AddFilesCmd;
+        public ICommand AddFileCmd => L.AddFileCmd;
+
 
         public ICommand ShowAboutDialogCmd => new RelayCommand(OnShowAboutDialog, () => true);
         public ICommand ExitCmd => new RelayCommand(OnExitApp, () => true);
@@ -85,12 +89,12 @@ namespace MusicPLayerV2.ViewModels
                 if (arg == "Open")
                 {
                     OpenFilesCmd.Execute(settings.FileNames);
-                    //PlayCmd.Execute(null);
+                    C.PlayCmd.Execute(null);
                 }
-                /*if (arg == "Add")
+                if (arg == "Add")
                 {
-                    AddFilesCmd.Execute(settings.FileNames);
-                }*/
+                    L.AddFilesCmd.Execute(settings.FileNames);
+                }
                 Log.Info("Opening file: " + settings.FileName);
             }
         }
@@ -100,20 +104,16 @@ namespace MusicPLayerV2.ViewModels
             {
                 if (i == 0)
                 {
-                    LoadFileCmd.Execute(fileNames[i]);
-                    //PlayPauseCmd.Execute(null);
+                    L.LoadFileCmd.Execute(fileNames[i]);
+                    C.PlayCmd.Execute(null);
                 }
-                //AddFileCmd.Execute(fileNames[i]);
+                else
+                {
+                    L.AddFileCmd.Execute(fileNames[i]);
+                }
             }
         }
-        private void OnLoadFile(string fileName)
-        {
-            if (!MusicPlayer.SupportCheck(fileName))
-                return;
-            PM.Load(fileName);
-            //App.MainWin.LyricP.FilePath = fileName.Replace(new FileInfo(fileName).Extension, ".lrc");
-            //NotifyAllPropotery();
-        }
+
         private void OnShowAboutDialog()
         {
             Log.Info("Opening About dialog");
@@ -132,7 +132,7 @@ namespace MusicPLayerV2.ViewModels
         {
             NotifyPropertyChanged(nameof(LRCPath));
             NotifyPropertyChanged(nameof(MusicPicture));
-            (App.Current.MainWindow as MainWindow).AlbumImage_SourceUpdated();
+            App.MainWin.AlbumImage_SourceUpdated();
             NotifyPropertyChanged(nameof(Title));
         }
 

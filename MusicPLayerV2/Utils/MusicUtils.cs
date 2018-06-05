@@ -136,8 +136,15 @@ namespace MusicPLayerV2.Utils
         }
 
         bool _isNowPlaying;
-        public bool IsNowPlaying { get=> _isNowPlaying;
-            set { _isNowPlaying = value; NotifyPropertyChanged(nameof(IsNowPlaying)); } }
+        public bool IsNowPlaying
+        {
+            get => _isNowPlaying;
+            set
+            {
+                _isNowPlaying = value;
+                NotifyPropertyChanged(nameof(IsNowPlaying));
+            }
+        }
 
         /// <summary>
         /// 未知的音樂項目
@@ -182,9 +189,34 @@ namespace MusicPLayerV2.Utils
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
         public void NotifyMusicItem()
         {
             NotifyPropertyChanged(nameof(IsNowPlaying));
+        }
+
+        public void TryUpdatePicture()
+        {
+            using (var t = TagLib.File.Create(Path))
+            {
+                var tag = t.Tag;
+                if (tag.Pictures.Length <= 0)
+                {
+                    var picPath =
+                        new FileInfo(Path).Directory.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
+                        .Where(x => x.Name.Contains("Cover"))
+                        .Where(x => x.Name.EndsWith(".png")
+                        || x.Name.EndsWith(".jpg")
+                        || x.Name.EndsWith(".PNG")
+                        || x.Name.EndsWith(".JPG")
+                        || x.Name.EndsWith(".jpeg")
+                        || x.Name.EndsWith(".JPEG")).Select(x => x.FullName).FirstOrDefault();
+                    if (!string.IsNullOrWhiteSpace(picPath))
+                        Picture = new BitmapImage(new Uri(picPath));
+                }
+                else
+                    Picture = ImageData2BitmapImage(tag.Pictures[0].Data.Data);
+            }
         }
         #endregion
 

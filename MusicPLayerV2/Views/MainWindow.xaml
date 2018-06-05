@@ -191,13 +191,14 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="PlayingListStyle" TargetType="localuc:PlayingListControl">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+        </Style>
     </Window.Resources>
     <Window.InputBindings>
         <!-- Example of Keyboard shortcuts -->
-        <KeyBinding Command="{Binding SaveCmd}" Key="S" Modifiers="Ctrl" />
-        <KeyBinding Command="{Binding SaveAsCmd}" Gesture="Ctrl+Shift+S" />
-        <KeyBinding Command="{Binding OpenCmd}" Gesture="Ctrl+O" />
-        <KeyBinding Command="{Binding NewCmd}" Gesture="Ctrl+N" />
+        <KeyBinding Command="{Binding OpenFileDialogCmd}" Gesture="Ctrl+O" />
         <KeyBinding Command="{Binding ExitCmd}" Gesture="Alt+F4" />
         <KeyBinding Command="{Binding ElementName=MainWin, Path=JumpToNextLyricCmd}" Gesture="Down"/>
         <KeyBinding Command="{Binding ElementName=MainWin, Path=JumpToPrevLyricCmd}" Gesture="Up"/>
@@ -221,6 +222,7 @@
                 <Menu x:Name="MainMenu" DockPanel.Dock="Top" Margin="0,0,0.4,0">
                     <MenuItem Header="{DynamicResource Menu_File}">
                         <MenuItem Header="{DynamicResource Menu_File_Open}" Command="{Binding OpenFileDialogCmd}" CommandParameter="Open" InputGestureText="Ctrl+O" />
+                        <MenuItem Header="{DynamicResource Menu_File_Add}" Command="{Binding OpenFileDialogCmd}" CommandParameter="Add" InputGestureText="Ctrl+P" />
                         <Separator />
                         <MenuItem Header="{DynamicResource Menu_File_Exit}" Command="{Binding ExitCmd}" InputGestureText="Alt+F4"/>
                     </MenuItem>
@@ -260,41 +262,43 @@
                                 </StackPanel>
                             </Border>
                             <Border Style="{DynamicResource CardBorderStyle}" >
-                                <TabControl x:Name="TagCtrl" Grid.Column="1" Grid.ColumnSpan="2"
+                                <Grid>
+                                    <Border x:Name="AlbumArtBorder">
+                                        <Border.Effect>
+                                            <BlurEffect Radius="30"/>
+                                        </Border.Effect>
+                                        <Border.Background>
+                                            <ImageBrush ImageSource="{Binding MusicPicture}" Stretch="UniformToFill" Opacity="0.2" Viewport="0,0,0.5,1" TileMode="FlipX"/>
+                                        </Border.Background>
+                                    </Border>
+                                    <TabControl x:Name="TagCtrl" Grid.Column="1" Grid.ColumnSpan="2"
                                             Background="{x:Null}"
                                             ItemContainerStyle="{DynamicResource TabItemStyle}"
                                             Padding="0"
                                             BorderThickness="0" TabStripPlacement="Left">
-                                    <TabItem >
-                                        <Grid>
-                                            <Border x:Name="AlbumArtBorder">
-                                                <Border.Effect>
-                                                    <BlurEffect Radius="30"/>
-                                                </Border.Effect>
-                                                <Border.Background>
-                                                    <ImageBrush ImageSource="{Binding MusicPicture}" Stretch="UniformToFill" Opacity="0.2" Viewport="0,0,0.5,1" TileMode="Tile"/>
-                                                </Border.Background>
-                                            </Border>
+                                        <TabItem >
                                             <Image x:Name="AlbumImage" Margin="10"
                                                Source="{Binding MusicPicture}"
                                                Stretch="Uniform"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
-                                        </Grid>
-
-
-                                    </TabItem>
-                                    <TabItem>
-                                        <localuc:LyricDisplayControl
+                                        </TabItem>
+                                        <TabItem>
+                                            <localuc:LyricDisplayControl
                                             x:Name="LyricP"
                                             Style="{DynamicResource LyricStyle}"
                                             LyricFilePath="{Binding LRCPath}"
                                             Position="{Binding MusicPosition}"
                                             />
-                                    </TabItem>
-                                    <TabItem/>
-                                    <TabItem/>
-                                </TabControl>
+                                        </TabItem>
+                                        <TabItem>
+                                            <localuc:PlayingListControl
+                                            x:Name="ListP"
+                                            Style="{DynamicResource PlayingListStyle}"/>
+                                        </TabItem>
+                                        <TabItem/>
+                                    </TabControl>
+                                </Grid>
                             </Border>
                         </DockPanel>
                     </Border>

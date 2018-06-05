@@ -18,9 +18,11 @@ namespace MusicPLayerV2
     public partial class App : Application
     {
         private static readonly ILog Log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static MainWindow app;
+        public static MainWindow MainWin { get; set; }
         public static SettingManager Settings { get; set; } = SettingManager.LoadOrNew();
         public static MusicPlayer PlayerModel { get; set; } = new MusicPlayer();
+        public static ControllerViewModel Controller { get; set; }
+        public static PlayingListViewModel PlayingList { get; set; }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -32,8 +34,8 @@ namespace MusicPLayerV2
 
             Log.Info("Starting App");
             LogMachineDetails();
-            app = new MainWindow();
-            app.Show();
+            MainWin = new MainWindow();
+            MainWin.Show();
 
             if (e.Args.Length == 1) //make sure an argument is passed
             {
@@ -55,7 +57,7 @@ namespace MusicPLayerV2
 
             // Show a message before closing application
             var dialogService = new MvvmDialogs.DialogService();
-            dialogService.ShowMessageBox((INotifyPropertyChanged)(app.DataContext),
+            dialogService.ShowMessageBox((INotifyPropertyChanged)(MainWin.DataContext),
                 "Oops, something went wrong and the application must close. Please find a " +
                 "report on the issue at: " + path + Environment.NewLine +
                 "If the problem persist, please contact wayne.",

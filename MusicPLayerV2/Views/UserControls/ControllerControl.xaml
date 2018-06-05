@@ -180,15 +180,18 @@
                     <StackPanel Orientation="Horizontal">
                         <Button Height="40" Content="{Binding NextMusicMode, FallbackValue={StaticResource SymbolCode_RepeatAll}}"
                             Style="{StaticResource CircleButtonTriggerVisibleStyle}"
+                                Command="{Binding ChangeNextModeCmd}"
                             Margin="1"/>
                         <Button Height="50" Content="{DynamicResource SymbolCode_Previous}"
                             Style="{StaticResource CircleButtonStyle}"
+                                Command="{Binding PrevCmd}"
                             Margin="1"/>
                         <Button Height="60" Content="{Binding MusicPlayPauseBtnStr, FallbackValue={StaticResource SymbolCode_Play}}" 
                             Command="{Binding PlayPauseCmd}"
                             Style="{StaticResource CircleButtonStyle}"
                             Margin="1"/>
                         <Button Height="50" Content="{DynamicResource SymbolCode_Next}" 
+                                Command="{Binding NextCmd}"
                             Style="{StaticResource CircleButtonStyle}"
                             Margin="1"/>
                         <Button x:Name="VolumnBtn" Height="40"

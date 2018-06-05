@@ -104,6 +104,7 @@
     <Compile Include="Utils\MusicUtils.cs" />
     <Compile Include="Utils\SingleInstance.cs" />
     <Compile Include="ViewModels\ControllerViewModel.cs" />
+    <Compile Include="ViewModels\PlayingListViewModel.cs" />
     <Compile Include="Views\UserControls\ControllerControl.xaml.cs">
       <DependentUpon>ControllerControl.xaml</DependentUpon>
     </Compile>

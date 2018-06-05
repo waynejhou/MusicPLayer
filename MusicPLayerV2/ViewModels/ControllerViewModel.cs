@@ -11,7 +11,7 @@ using MusicPLayerV2.Views;
 
 namespace MusicPLayerV2.ViewModels
 {
-    class ControllerViewModel:ViewModelBase
+    public class ControllerViewModel:ViewModelBase
     {
         public ControllerViewModel()
         {
@@ -19,11 +19,14 @@ namespace MusicPLayerV2.ViewModels
             PM.PlaybackStateChangedChangedEvent += PM_PlaybackStateChangedChangedEvent;
             PM.WavePositionChangedEvent += PM_WavePositionChangedEvent;
             PM.StoppedEvent += PM_StoppedEvent;
+            App.Controller = this;
         }
 
         private MusicPlayer PM => App.PlayerModel;
         private MusicItem NPI => App.PlayerModel.NowPlayingItem;
         private ResourceDictionary R => App.Current.Resources;
+        private ControllerViewModel C => App.Controller;
+        private PlayingListViewModel L => App.PlayingList;
 
         public string MusicTitle => PM.NowPlayingItem.Title;
         public string MusicArtistAlbum => $"{NPI.Artist}\n{NPI.Album}";
@@ -35,8 +38,8 @@ namespace MusicPLayerV2.ViewModels
             {
                 if (PM.IsLoadded && PM.PlaybackState == CSCore.SoundOut.PlaybackState.Stopped)
                 {
-                    /*if (!PM.ManualStop)
-                        NextCmd.Execute(null);*/
+                    if (!PM.ManualStop)
+                        NextCmd.Execute(null);
                     PM.ManualStop = false;
                 }
                 return PM.Position;
@@ -46,11 +49,63 @@ namespace MusicPLayerV2.ViewModels
         public double MusicPositionDouble { get => MusicPosition.TotalMilliseconds; set => MusicPosition = TimeSpan.FromMilliseconds(value); }
         public TimeSpan MusicLength => NPI.Length;
         public double MusicLengthDouble => NPI.Length.TotalMilliseconds;
-        public double MusicVolume { get => PM.Volume; set { PM.Volume = (float)value; } } 
+        public double MusicVolume { get => PM.Volume; set { PM.Volume = (float)value; } }
+        public string NextMusicMode
+        {
+            get
+            {
+                switch (L.NextModeType)
+                {
+                    case NextOneMode.Random:
+                        return (string)R["SymbolCode_Shuffle"];
+                    case NextOneMode.RepeatList:
+                        return (string)R["SymbolCode_RepeatAll"];
+                    case NextOneMode.RepeatOne:
+                        return (string)R["SymbolCode_RepeatOne"];
+                    default:
+                        return "";
+                }
+            }
+        }
 
         public ICommand PlayPauseCmd => new RelayCommand(OnPlayPause, () => PM.IsLoadded);
-        public ICommand PlayCmd => new RelayCommand(() => PM.Play(), () => PM.IsLoadded);
-        public ICommand PauseCmd => new RelayCommand(() => PM.Pause(), () => PM.IsLoadded);
+        public ICommand PlayCmd => new RelayCommand(PM.Play, () => PM.IsLoadded);
+        public ICommand PauseCmd => new RelayCommand(PM.Pause, () => PM.IsLoadded);
+        public ICommand NextCmd => new RelayCommand(OnPlayNext, () => L==null?false:L.CanGetNext);
+        public ICommand ChangeNextModeCmd => new RelayCommand(OnChangeNextMode, () => true);
+
+        private void OnChangeNextMode()
+        {
+            switch (L.NextModeType)
+            {
+                case NextOneMode.Random:
+                    L.NextModeType = NextOneMode.RepeatList;
+                    break;
+                case NextOneMode.RepeatList:
+                    L.NextModeType = NextOneMode.RepeatOne;
+                    break;
+                case NextOneMode.RepeatOne:
+                    L.NextModeType = NextOneMode.Random;
+                    break;
+                default:
+                    break;
+            }
+            NotifyPropertyChanged(nameof(NextMusicMode));
+        }
+
+        private void OnPlayNext()
+        {
+            L.Load(L.GetNextMusic());
+            PlayCmd.Execute(null);
+        }
+
+        public ICommand PrevCmd => new RelayCommand(OnPlayPrev, () => L == null ? false : L.CanGetLast);
+
+        private void OnPlayPrev()
+        {
+            L.Load(L.GetPrevMusic());
+            PlayCmd.Execute(null);
+        }
 
         public ICommand ChangeMode => new RelayCommand(() => {
             switch ((App.Current.MainWindow as MainWindow).WindowMode)
@@ -89,7 +144,6 @@ namespace MusicPLayerV2.ViewModels
 
         private void PM_LoaddedEvent(object sender)
         {
-            Console.WriteLine("loadded");
             NotifyPropertyChanged(nameof(MusicTitle));
             NotifyPropertyChanged(nameof(MusicArtistAlbum));
             NotifyPropertyChanged(nameof(MusicLength));
@@ -107,6 +161,12 @@ namespace MusicPLayerV2.ViewModels
         private void PM_StoppedEvent(object sender)
         {
             NotifyPropertyChanged(nameof(MusicPlayPauseBtnStr));
+            if (PM.IsLoadded && PM.PlaybackState == CSCore.SoundOut.PlaybackState.Stopped)
+            {
+                if (!PM.ManualStop)
+                    NextCmd.Execute(null);
+                PM.ManualStop = false;
+            }
         }
     }
 }
