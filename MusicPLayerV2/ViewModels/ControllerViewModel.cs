@@ -54,6 +54,8 @@ namespace MusicPLayerV2.ViewModels
         {
             get
             {
+                if (L == null)
+                    return (string)R["SymbolCode_RepeatAll"];
                 switch (L.NextModeType)
                 {
                     case NextOneMode.Random:

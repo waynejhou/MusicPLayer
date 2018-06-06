@@ -122,7 +122,7 @@ namespace MusicPLayerV2.Views.UserControls
             {
                 if (nowIdx >= 0)
                     parser.Lyrics[nowIdx].IsHightLighted = true;
-                if (lastIndex >= 0)
+                if (lastIndex >= 0 && lastIndex < parser.Lyrics.Count)
                     parser.Lyrics[lastIndex].IsHightLighted = false;
                 lastIndex = nowIdx;
             }

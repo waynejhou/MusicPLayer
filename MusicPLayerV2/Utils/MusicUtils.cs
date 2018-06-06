@@ -176,14 +176,6 @@ namespace MusicPLayerV2.Utils
             return $"{Path}";
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj == null) return false;
-            if (obj.GetType() != GetType()) return false;
-            if (Path != (obj as MusicItem).Path) return false;
-            return true;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {

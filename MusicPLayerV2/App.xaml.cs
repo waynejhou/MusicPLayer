@@ -12,10 +12,11 @@ using System.ComponentModel;
 using MusicPLayerV2.ViewModels;
 using MusicPLayerV2.Views;
 using MusicPLayerV2.Models;
+using Microsoft.Shell;
 
 namespace MusicPLayerV2
 {
-    public partial class App : Application
+    public partial class App : Application, ISingleInstanceApp
     {
         private static readonly ILog Log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static MainWindow MainWin { get; set; }
@@ -23,6 +24,7 @@ namespace MusicPLayerV2
         public static MusicPlayer PlayerModel { get; set; } = new MusicPlayer();
         public static ControllerViewModel Controller { get; set; }
         public static PlayingListViewModel PlayingList { get; set; }
+        public static MainViewModel MainModel { get; set; }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -37,15 +39,10 @@ namespace MusicPLayerV2
             MainWin = new MainWindow();
             MainWin.Show();
 
-            if (e.Args.Length == 1) //make sure an argument is passed
+            if (e.Args.Length > 0)
             {
-                Log.Info("File type association: " + e.Args[0]);
-                FileInfo file = new FileInfo(e.Args[0]);
-                if (file.Exists) //make sure it's actually a file
-                {
-                    // Here, add you own code
-                    // ((MainViewModel)app.DataContext).OpenFile(file.FullName);
-                }
+                MainModel.OpenFilesCmd.Execute(e.Args);
+                Controller.PlayCmd.Execute(null);
             }
         }
 
@@ -77,6 +74,35 @@ namespace MusicPLayerV2
                           "RAM: " + computer.TotalPhysicalMemory.ToString() + Environment.NewLine +
                           "Language: " + computer.InstalledUICulture.EnglishName;
             Log.Info(text);
+        }
+
+        private const string Unique = "MusicPLayerV2";
+        [STAThread]
+        private static void Main(string[] args)
+        {
+            if (SingleInstance<App>.InitializeAsFirstInstance(Unique))
+            {
+                var application = new App();
+
+                application.InitializeComponent();
+                application.Run();
+
+                // Allow single instance code to perform cleanup operations
+                SingleInstance<App>.Cleanup();
+            }
+        }
+
+        public bool SignalExternalCommandLineArgs(IList<string> args)
+        {
+            args.RemoveAt(0);
+            if (args.Count > 0)
+            {
+                string[] a = new string[args.Count];
+                args.CopyTo(a, 0);
+                MainModel.OpenFilesCmd.Execute(a);
+                Controller.PlayCmd.Execute(null);
+            }
+            return true;
         }
     }
 }

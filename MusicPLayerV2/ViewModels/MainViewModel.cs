@@ -21,7 +21,7 @@ using System.Windows.Media.Imaging;
 
 namespace MusicPLayerV2.ViewModels
 {
-    class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
         #region Parameters
         private readonly IDialogService DialogService;
@@ -40,6 +40,7 @@ namespace MusicPLayerV2.ViewModels
         #region Constructors
         public MainViewModel()
         {
+            App.MainModel = this;
             // DialogService is used to handle dialogs
             this.DialogService = new MvvmDialogs.DialogService();
             PM.LoaddedEvent += PM_LoaddedEvent;
