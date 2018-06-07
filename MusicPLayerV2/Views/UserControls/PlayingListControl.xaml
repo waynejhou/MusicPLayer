@@ -32,9 +32,17 @@
         <ListView BorderThickness="0" x:Name="ListViewL"
                   Width="{Binding ElementName=UserControl, Path=ActualWidth}"
                   Background="{Binding ElementName=UserControl, Path=Background, FallbackValue=White}"
-                  ItemsSource="{Binding PlayingList}"
+                  ItemsSource="{Binding PlayingList, Mode=TwoWay}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   >
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{DynamicResource List_Menu_Remove_Selected_Item}"
+                              CommandParameter="{Binding SelectedItems, ElementName=ListViewL}"
+                              Command="{Binding RemoveItemFromListCmd}"
+                              />
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type util:MusicItem}">
                     <Label Style="{DynamicResource LabelTriggerVisibleStyle}"

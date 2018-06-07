@@ -41,5 +41,11 @@ namespace MusicPLayerV2.Views.UserControls
             L.Load(ListViewL.SelectedItem as MusicItem);
             C.PlayCmd.Execute(null);
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            //var selectIndex = ListViewL.SelectedItems.Cast<MusicItem>().ToList().ConvertAll(x => L.PlayingList.IndexOf(x)).OrderByDescending(x => x).ToList();
+            //L.RemoveIndexItemFromListCmd.Execute(selectIndex);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MusicPLayerV2.Models;
 using MusicPLayerV2.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -20,6 +21,14 @@ namespace MusicPLayerV2.ViewModels
         public ICommand LoadFileCmd => new RelayCommand<string>(OnLoadFile, (string s) => true);
         public ICommand AddFilesCmd => new RelayCommand<string[]>((paths) => AddToList(paths), (paths) => true);
         public ICommand AddFileCmd => new RelayCommand<string>((path) => AddToList(path), (path) => true);
+        public ICommand RemoveItemFromListCmd => new RelayCommand<object>(RemoveSelectedItems, (l) => PlayingList.Count > 0);
+
+        private void RemoveSelectedItems(object SelectItems)
+        {
+            Console.WriteLine(SelectItems==null);
+            /*foreach (int mi in SelectItems)
+                PlayingList.RemoveAt(mi);*/
+        }
 
         public PlayingListViewModel()
         {
