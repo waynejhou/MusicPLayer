@@ -34,11 +34,11 @@
                   Background="{Binding ElementName=UserControl, Path=Background, FallbackValue=White}"
                   ItemsSource="{Binding PlayingList, Mode=TwoWay}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  SelectionChanged="ListViewL_SelectionChanged"
                   >
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="{DynamicResource List_Menu_Remove_Selected_Item}"
-                              CommandParameter="{Binding SelectedItems, ElementName=ListViewL}"
                               Command="{Binding RemoveItemFromListCmd}"
                               />
                 </ContextMenu>

@@ -6,7 +6,10 @@
     <String x:Key="Menu_File_Add">_Add Audio File</String>
     <String x:Key="Menu_File_OpenLyric">_Open Lyric File</String>
     <String x:Key="Menu_File_Exit">_Close MusicPLayer</String>
+    
     <String x:Key="Menu_Help">_Help</String>
+    <String x:Key="Menu_Help_About">_About</String>
+    <String x:Key="Menu_Help_OpenSetting">_Option</String>
 
     <String x:Key="Menu_Edit">_Edit</String>
     <String x:Key="Menu_Edit_OpenLrcEditor">Open _Lrc Editor</String>
@@ -25,4 +28,16 @@
     <String x:Key="LrcEditor_InsertTimeTag">Insert Time Tag</String>
     <String x:Key="LrcEditor_ReplaceTimeTag">Replace Time Tag</String>
     <String x:Key="LrcEditor_NewLineTimeTag">New Line With Time Tag</String>
+
+    <String x:Key="Setting_UISettings">User Interface Settings</String>
+    <String x:Key="Setting_Colors">Color</String>
+    <String x:Key="Setting_PrimaryColor">Primary Color</String>
+    <String x:Key="Setting_SecondaryColor">Secondary Color</String>
+    <String x:Key="Setting_SecondaryColorL">Secondary Color Ex</String>
+    <String x:Key="Setting_ForegroundColor">Foreground Color</String>
+    <String x:Key="Setting_Font">Font</String>
+    <String x:Key="Setting_LyricFont">Lyric Font</String>
+    <String x:Key="Setting_SmallFontSize">Small Font Size</String>
+    <String x:Key="Setting_MediumFontSize">Medium Font Size</String>
+    <String x:Key="Setting_PlayerSettings">Music Player Settings</String>
 </wpf:ResourceDictionary>

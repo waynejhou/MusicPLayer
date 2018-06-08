@@ -226,7 +226,10 @@
                         <Separator />
                         <MenuItem Header="{DynamicResource Menu_File_Exit}" Command="{Binding ExitCmd}" InputGestureText="Alt+F4"/>
                     </MenuItem>
-                    <MenuItem Header="{DynamicResource Menu_Help}" Command="{Binding ShowAboutDialogCmd}"/>
+                    <MenuItem Header="{DynamicResource Menu_Help}">
+                        <MenuItem Header="{DynamicResource Menu_Help_About}" Command="{Binding ShowAboutDialogCmd}" InputGestureText="F2"/>
+                        <MenuItem Header="{DynamicResource Menu_Help_OpenSetting}" Command="{Binding ShowSettingDialogCmd}" InputGestureText="Ctrl+,"/>
+                    </MenuItem>
                 </Menu>
                 <DockPanel>
                     <Border x:Name="InfoBorder" DockPanel.Dock="Bottom">

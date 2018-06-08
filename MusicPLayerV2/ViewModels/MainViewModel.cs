@@ -69,6 +69,8 @@ namespace MusicPLayerV2.ViewModels
 
 
         public ICommand ShowAboutDialogCmd => new RelayCommand(OnShowAboutDialog, () => true);
+        public ICommand ShowSettingDialogCmd => new RelayCommand(OnShowSettingDialog, () => true);
+
         public ICommand ExitCmd => new RelayCommand(OnExitApp, () => true);
 
         public ICommand ChangeLang => new RelayCommand<string>((arg) => App.Settings.Language = arg, (arg) => true);
@@ -121,6 +123,12 @@ namespace MusicPLayerV2.ViewModels
             AboutViewModel dialog = new AboutViewModel();
             var result = DialogService.ShowDialog<About>(this, dialog);
         }
+        private void OnShowSettingDialog()
+        {
+            SettingWindow settingWindow = new SettingWindow();
+            settingWindow.Show();
+        }
+
         private void OnExitApp()
         {
             System.Windows.Application.Current.MainWindow.Close();

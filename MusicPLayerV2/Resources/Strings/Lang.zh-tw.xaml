@@ -6,7 +6,10 @@
     <String x:Key="Menu_File_Add">加入音訊檔案 (_A)</String>
     <String x:Key="Menu_File_OpenLyric">開啟歌詞檔案 (_O)</String>
     <String x:Key="Menu_File_Exit">關閉 MusicPLayer (_C)</String>
+
     <String x:Key="Menu_Help">說明 (_H)</String>
+    <String x:Key="Menu_Help_About">關於 (_A)</String>
+    <String x:Key="Menu_Help_OpenSetting">選項 (_O)</String>
 
     <String x:Key="Menu_Edit">編輯 (_E)</String>
     <String x:Key="Menu_Edit_OpenLrcEditor">開啟 Lrc 編輯器 (_L)</String>
@@ -25,4 +28,16 @@
     <String x:Key="LrcEditor_InsertTimeTag">插入時間標籤</String>
     <String x:Key="LrcEditor_ReplaceTimeTag">取代時間標籤</String>
     <String x:Key="LrcEditor_NewLineTimeTag">換行時間標籤</String>
+
+    <String x:Key="Setting_UISettings">介面設定調整</String>
+    <String x:Key="Setting_Colors">顏色</String>
+    <String x:Key="Setting_PrimaryColor">主題色</String>
+    <String x:Key="Setting_SecondaryColor">點綴色</String>
+    <String x:Key="Setting_SecondaryColorL">強調點綴色</String>
+    <String x:Key="Setting_ForegroundColor">前景色</String>
+    <String x:Key="Setting_Font">字型</String>
+    <String x:Key="Setting_LyricFont">歌詞字型</String>
+    <String x:Key="Setting_SmallFontSize">小型字大小</String>
+    <String x:Key="Setting_MediumFontSize">中型字大小</String>
+    <String x:Key="Setting_PlayerSettings">撥放器設定調整</String>
 </wpf:ResourceDictionary>

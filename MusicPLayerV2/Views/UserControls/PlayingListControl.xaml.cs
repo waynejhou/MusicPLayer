@@ -47,5 +47,11 @@ namespace MusicPLayerV2.Views.UserControls
             //var selectIndex = ListViewL.SelectedItems.Cast<MusicItem>().ToList().ConvertAll(x => L.PlayingList.IndexOf(x)).OrderByDescending(x => x).ToList();
             //L.RemoveIndexItemFromListCmd.Execute(selectIndex);
         }
+
+        private void ListViewL_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (L != null)
+                L.SelectedItems = ListViewL.SelectedItems;
+        }
     }
 }

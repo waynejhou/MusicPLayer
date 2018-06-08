@@ -13,6 +13,7 @@ using MusicPLayerV2.ViewModels;
 using MusicPLayerV2.Views;
 using MusicPLayerV2.Models;
 using Microsoft.Shell;
+using System.Windows.Markup;
 
 namespace MusicPLayerV2
 {
@@ -37,6 +38,7 @@ namespace MusicPLayerV2
             Log.Info("Starting App");
             LogMachineDetails();
             MainWin = new MainWindow();
+            MainWin.Language = XmlLanguage.GetLanguage(Settings.Language);
             MainWin.Show();
 
             if (e.Args.Length > 0)

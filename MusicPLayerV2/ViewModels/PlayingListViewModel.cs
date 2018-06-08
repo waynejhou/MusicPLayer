@@ -21,13 +21,13 @@ namespace MusicPLayerV2.ViewModels
         public ICommand LoadFileCmd => new RelayCommand<string>(OnLoadFile, (string s) => true);
         public ICommand AddFilesCmd => new RelayCommand<string[]>((paths) => AddToList(paths), (paths) => true);
         public ICommand AddFileCmd => new RelayCommand<string>((path) => AddToList(path), (path) => true);
-        public ICommand RemoveItemFromListCmd => new RelayCommand<object>(RemoveSelectedItems, (l) => PlayingList.Count > 0);
+        public ICommand RemoveItemFromListCmd => new RelayCommand(RemoveSelectedItems, () => PlayingList.Count > 0 && SelectedItems != null && SelectedItems.Count > 0);
 
-        private void RemoveSelectedItems(object SelectItems)
+        private void RemoveSelectedItems()
         {
-            Console.WriteLine(SelectItems==null);
-            /*foreach (int mi in SelectItems)
-                PlayingList.RemoveAt(mi);*/
+            var values = SelectedItems.Cast<MusicItem>().ToList().ConvertAll(x => PlayingList.IndexOf(x)).OrderByDescending(x => x).ToList();
+            foreach (int mi in values)
+                PlayingList.RemoveAt(mi);
         }
 
         public PlayingListViewModel()
@@ -85,6 +85,7 @@ namespace MusicPLayerV2.ViewModels
         public bool CanGetNext => ((NextModeType == NextOneMode.Random) && PlayingHistory.Count > 0) || (NextModeType == NextOneMode.RepeatList) || (NextModeType == NextOneMode.RepeatOne);
         Random _rnd = new Random();
         bool IsGetPrev = false;
+        public IList SelectedItems { get; set; }
 
         int NowPlayIndex => PlayingList.Contains(NPI) ? PlayingList.IndexOf(NPI) : -1;
         public MusicItem GetNextMusic()

@@ -5,6 +5,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Linq;
 using System.Windows.Media;
+using System.Windows.Markup;
 
 namespace MusicPLayerV2.Models
 {
@@ -25,6 +26,7 @@ namespace MusicPLayerV2.Models
                     App.Current.Resources.MergedDictionaries.Remove(
                         App.Current.Resources.MergedDictionaries.First(x => x.Source.OriginalString == $@"Resources/Strings/Lang.{_language}.xaml"));
                     _language = value;
+                    App.MainWin.Language = XmlLanguage.GetLanguage(value);
                 }
             }
         }
