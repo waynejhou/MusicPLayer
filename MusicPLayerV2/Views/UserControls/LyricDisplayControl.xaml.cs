@@ -20,6 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Controls.Primitives;
+using System.Timers;
 
 namespace MusicPLayerV2.Views.UserControls
 {
@@ -32,6 +33,7 @@ namespace MusicPLayerV2.Views.UserControls
         {
             InitializeComponent();
             LyricsItem.ItemContainerGenerator.StatusChanged += ItemContainerGenerator_StatusChanged;
+            timer.Elapsed += Timer_Elapsed;
         }
 
         LRCParser parser = new LRCParser();
@@ -142,10 +144,20 @@ namespace MusicPLayerV2.Views.UserControls
                 LinesHeight[i] = label.ActualHeight;
             }
         }
+        Timer timer = new Timer();
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (LyricsItem.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+                LyricsItem.Dispatcher.Invoke(CalcLinesHeight);
+        }
+
         private void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
         {
             if (LyricsItem.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
                 CalcLinesHeight();
+            timer.Interval = 1000;
+            timer.Start();
         }
 
         private void LyricOne_SizeChanged(object sender, SizeChangedEventArgs e)

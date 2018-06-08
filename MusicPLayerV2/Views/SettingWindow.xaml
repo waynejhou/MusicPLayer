@@ -110,7 +110,6 @@
                 <local:DPString Text="{DynamicResource Setting_PlayerSettings}"/>
             </ListView>
         </Border>
-        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left"/>
         <Border Grid.Column="1" x:Name="CenterBorder" Margin="0,5,0,0">
             <ScrollViewer>
                 <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -177,5 +176,6 @@
                 </StackPanel>
             </ScrollViewer>
         </Border>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left"/>
     </Grid>
 </Window>
