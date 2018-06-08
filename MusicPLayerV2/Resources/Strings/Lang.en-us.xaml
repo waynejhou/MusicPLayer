@@ -35,9 +35,17 @@
     <String x:Key="Setting_SecondaryColor">Secondary Color</String>
     <String x:Key="Setting_SecondaryColorL">Secondary Color Ex</String>
     <String x:Key="Setting_ForegroundColor">Foreground Color</String>
+    
     <String x:Key="Setting_Font">Font</String>
+    <String x:Key="Setting_PrimaryFont">Primary Font</String>
+    <String x:Key="Setting_TextMediumFontSize">Text Medium Font Size</String>
+    <String x:Key="Setting_TextSmallFontSize">Text Small Font Size</String>
+
+    <String x:Key="Setting_LyricDisplay">Lyric Display</String>
     <String x:Key="Setting_LyricFont">Lyric Font</String>
-    <String x:Key="Setting_SmallFontSize">Small Font Size</String>
-    <String x:Key="Setting_MediumFontSize">Medium Font Size</String>
+    <String x:Key="Setting_LyricMediumFontSize">Lyric Medium Font Size</String>
+    <String x:Key="Setting_LyricSmallFontSize">Lyric Small Font Size</String>
+    
+    
     <String x:Key="Setting_PlayerSettings">Music Player Settings</String>
 </wpf:ResourceDictionary>

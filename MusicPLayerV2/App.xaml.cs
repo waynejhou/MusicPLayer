@@ -21,7 +21,7 @@ namespace MusicPLayerV2
     {
         private static readonly ILog Log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static MainWindow MainWin { get; set; }
-        public static SettingManager Settings { get; set; } = SettingManager.LoadOrNew();
+        public static SettingsViewModel Settings { get; set; } = new SettingsViewModel();
         public static MusicPlayer PlayerModel { get; set; } = new MusicPlayer();
         public static ControllerViewModel Controller { get; set; }
         public static PlayingListViewModel PlayingList { get; set; }

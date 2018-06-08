@@ -168,7 +168,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\SampleModel.cs" />
-    <Compile Include="Models\SettingManager.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

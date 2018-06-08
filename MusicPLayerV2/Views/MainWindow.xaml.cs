@@ -193,15 +193,12 @@ namespace MusicPLayerV2.Views
 
         internal void AlbumImage_SourceUpdated()
         {
-            Size ss = new Size((AlbumImage.Source as BitmapImage).Width, (AlbumImage.Source as BitmapImage).Height);
-            if (ss.Width> AlbumArtBorder.ActualWidth|| ss.Height> AlbumArtBorder.ActualHeight)
-            {
-                AlbumImage.Stretch = Stretch.Uniform;
-            }
-            else
-            {
-                AlbumImage.Stretch = Stretch.None;
-            }
+            if (NPI == null)
+                return;
+            if (NPI.Picture == null)
+                return;
+            ImageBorder.MaxWidth = NPI.Picture.PixelWidth;
+            ImageBorder.MaxHeight = NPI.Picture.PixelHeight;
         }
 
         private void MainWin_SizeChanged(object sender, SizeChangedEventArgs e)

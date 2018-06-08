@@ -14,7 +14,7 @@
             <Setter Property="Width" Value="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
             <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
             <Setter Property="VerticalAlignment" Value="Bottom"/>
-            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Setter Property="FontSize" Value="{DynamicResource ControlBtnMediusFontSize}"/>
             <Setter Property="Padding" Value="2"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Background" Value="{DynamicResource Color25}"/>
@@ -116,28 +116,30 @@
             </Style.Triggers>
         </Style>
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Setter Property="FontSize" Value="{DynamicResource TextMediumFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
             <Setter Property="Effect" Value="{DynamicResource WordShadowEffect}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding WindowMode,
                     RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"
                              Value="{x:Static localv:MainWindowMode.Mini}">
-                    <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+                    <Setter Property="FontSize" Value="{DynamicResource TextSmallFontSize}"/>
                     <Setter Property="HorizontalAlignment" Value="Center"/>
                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="LabelTriggerVisibleStyle" TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Setter Property="FontSize" Value="{DynamicResource TextMediumFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
             <Setter Property="Effect" Value="{DynamicResource WordShadowEffect}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding WindowMode,
                     RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"
                              Value="{x:Static localv:MainWindowMode.Mini}">
-                    <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+                    <Setter Property="FontSize" Value="{DynamicResource TextSmallFontSize}"/>
                     <Setter Property="Visibility" Value="Collapsed"/>
                 </DataTrigger>
             </Style.Triggers>
@@ -216,7 +218,7 @@
                 <Border HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Button Content="{DynamicResource SymbolCode_ToMini}"
-                                Height="30" FontSize="{DynamicResource SmallFontSize}"
+                                Height="30" FontSize="{DynamicResource ControlBtnSmallFontSize}"
                                 Command="{Binding ChangeMode}"
                                 Style="{DynamicResource CircleButtonStyle}"/>
                     </StackPanel>
@@ -224,7 +226,7 @@
                 <Border HorizontalAlignment="Left">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Button Content="{DynamicResource SymbolCode_ToMini}"
-                                Height="30" FontSize="{DynamicResource SmallFontSize}"
+                                Height="30" FontSize="{DynamicResource ControlBtnSmallFontSize}"
                                 Command="{Binding ChangeMode}"
                                 Style="{DynamicResource CircleButtonStyle}"/>
                     </StackPanel>

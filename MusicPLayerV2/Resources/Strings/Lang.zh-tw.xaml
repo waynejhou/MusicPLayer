@@ -35,9 +35,17 @@
     <String x:Key="Setting_SecondaryColor">點綴色</String>
     <String x:Key="Setting_SecondaryColorL">強調點綴色</String>
     <String x:Key="Setting_ForegroundColor">前景色</String>
+    
     <String x:Key="Setting_Font">字型</String>
+    <String x:Key="Setting_PrimaryFont">主題字型</String>
+    <String x:Key="Setting_TextMediumFontSize">文本小型字大小</String>
+    <String x:Key="Setting_TextSmallFontSize">文本中型字大小</String>
+
+    <String x:Key="Setting_LyricDisplay">歌詞顯示</String>
     <String x:Key="Setting_LyricFont">歌詞字型</String>
-    <String x:Key="Setting_SmallFontSize">小型字大小</String>
-    <String x:Key="Setting_MediumFontSize">中型字大小</String>
+    <String x:Key="Setting_LyricMediumFontSize">歌詞中型字大小</String>
+    <String x:Key="Setting_LyricSmallFontSize">歌詞小型字大小</String>
+
+
     <String x:Key="Setting_PlayerSettings">撥放器設定調整</String>
 </wpf:ResourceDictionary>

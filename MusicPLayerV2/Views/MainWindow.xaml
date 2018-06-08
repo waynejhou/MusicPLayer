@@ -38,9 +38,17 @@
                                 Path=(WindowChrome.WindowChrome).GlassFrameThickness}">
                                 <ContentPresenter Content="{TemplateBinding Content}" />
                             </Border>
-                            <TextBlock x:Name="titleText" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title, FallbackValue=MainWin}" 
-                               VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="{DynamicResource MediumFontSize}" Foreground="{DynamicResource ForegroundColor}"
-                               Margin="0,6,0,0"/>
+                            <Border VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="{Binding RelativeSource={RelativeSource TemplatedParent},
+                                Path=(WindowChrome.WindowChrome).CaptionHeight}">
+                                <TextBlock x:Name="titleText"
+                                           Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title, FallbackValue=MainWin}" 
+                                           FontFamily="{DynamicResource PrimaryFont}"
+                                           FontSize="{DynamicResource TitleFontSize}"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+
                             <Border x:Name="iconBorder"
                                     VerticalAlignment="Top" HorizontalAlignment="Left"
                                     Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(WindowChrome.WindowChrome).ResizeBorderThickness}"
@@ -80,7 +88,7 @@
             <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="5"/>
-            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontSize" Value="{DynamicResource TabBarFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -184,10 +192,10 @@
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
             <Setter Property="HighLight" Value="{DynamicResource SecondaryColor}"/>
             <Setter Property="FontFamily" Value="{DynamicResource LyricFont}"/>
-            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Setter Property="FontSize" Value="{DynamicResource LyricMediumFontSize}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding ElementName=MainWin, Path=WindowMode}" Value="{x:Static local:MainWindowMode.Mini}">
-                    <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+                    <Setter Property="FontSize" Value="{DynamicResource LyricSmallFontSize}"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -280,11 +288,13 @@
                                             Padding="0"
                                             BorderThickness="0" TabStripPlacement="Left">
                                         <TabItem >
-                                            <Image x:Name="AlbumImage" Margin="10"
-                                               Source="{Binding MusicPicture}"
-                                               Stretch="Uniform"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"/>
+                                            <Border x:Name="ImageBorder">
+                                                <Image x:Name="AlbumImage" Margin="10"
+                                                       Source="{Binding MusicPicture}"
+                                                       Stretch="Uniform"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                            </Border>
                                         </TabItem>
                                         <TabItem>
                                             <localuc:LyricDisplayControl

@@ -54,7 +54,7 @@ namespace MusicPLayerV2.ViewModels
         #endregion
 
         #region Property
-        public BitmapImage MusicPicture => NPI.Picture ?? (BitmapImage)R["NoImage"];
+        public BitmapSource MusicPicture => NPI.Picture ?? (BitmapImage)R["NoImage"];
 
         public string LRCPath => (PM.IsLoadded) ? NPI.Path.Replace(new FileInfo(NPI.Path).Extension, ".lrc") : "";
 
@@ -125,8 +125,7 @@ namespace MusicPLayerV2.ViewModels
         }
         private void OnShowSettingDialog()
         {
-            SettingWindow settingWindow = new SettingWindow();
-            settingWindow.Show();
+            DialogService.Show<SettingWindow>(this, App.Settings);
         }
 
         private void OnExitApp()
