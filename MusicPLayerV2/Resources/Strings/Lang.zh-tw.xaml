@@ -46,6 +46,9 @@
     <String x:Key="Setting_LyricMediumFontSize">歌詞中型字大小</String>
     <String x:Key="Setting_LyricSmallFontSize">歌詞小型字大小</String>
 
-
+    <String x:Key="Setting_Language">語言</String>
+    <String x:Key="Setting_Language_zh-tw">繁體中文 - 臺灣</String>
+    <String x:Key="Setting_Language_en-us">English - US (英文 - 美國)</String>
+    
     <String x:Key="Setting_PlayerSettings">撥放器設定調整</String>
 </wpf:ResourceDictionary>

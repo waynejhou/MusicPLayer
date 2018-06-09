@@ -26,30 +26,4 @@ namespace MusicPLayerV2.Views
 
     }
 
-
-    public class DPString: DependencyObject
-    {
-        public string Text
-        {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
-        }
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register(nameof(Text), typeof(string), typeof(DPString),
-                new FrameworkPropertyMetadata(""));
-
-        public string Condition
-        {
-            get { return (string)GetValue(ConditionProperty); }
-            set { SetValue(ConditionProperty, value); }
-        }
-        public static readonly DependencyProperty ConditionProperty =
-            DependencyProperty.Register(nameof(Condition), typeof(string), typeof(DPString),
-                new FrameworkPropertyMetadata(""));
-
-        public override string ToString()
-        {
-            return Text;
-        }
-    }
 }

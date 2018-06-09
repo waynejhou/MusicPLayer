@@ -12,7 +12,7 @@
         mc:Ignorable="d"
         Title="SettingWindow" Height="450" Width="800">
     <Window.Resources>
-        <DataTemplate x:Key="LeftPanelItemTemplate" DataType="{x:Type local:DPString}">
+        <DataTemplate x:Key="LeftPanelItemTemplate">
             <Label Content="{Binding}"/>
         </DataTemplate>
         <ItemsPanelTemplate x:Key="CenterItemsPanelTemplate">
@@ -106,75 +106,95 @@
         </Grid.ColumnDefinitions>
         <Border Grid.Column="0">
             <ListView x:Name="LeftPanel" ItemTemplate="{DynamicResource LeftPanelItemTemplate}">
-                <local:DPString Text="{DynamicResource Setting_UISettings}"/>
-                <local:DPString Text="{DynamicResource Setting_PlayerSettings}"/>
+                <TextBlock Text="{DynamicResource Setting_UISettings}"/>
+                <TextBlock Text="{DynamicResource Setting_PlayerSettings}"/>
             </ListView>
         </Border>
         <Border Grid.Column="1" x:Name="CenterBorder" Margin="0,5,0,0">
-            <ScrollViewer>
-                <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <Label Content="{DynamicResource Setting_Colors}" Style="{DynamicResource Separator}"/>
-                    <ItemsControl Style="{DynamicResource ItemsControlStyle}">
-                        <Label AutomationProperties.Name="{DynamicResource Setting_PrimaryColor}" Style="{DynamicResource LabelStyle}">
-                            <xctk:ColorPicker
+            <DockPanel>
+                <Grid DockPanel.Dock="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="1" Content="儲存" Margin="5" Command="{Binding SaveSettingsCmd}"/>
+                </Grid>
+                <ScrollViewer>
+                    <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <Label Content="{DynamicResource Setting_Colors}" Style="{DynamicResource Separator}"/>
+                        <ItemsControl Style="{DynamicResource ItemsControlStyle}">
+                            <Label AutomationProperties.Name="{DynamicResource Setting_PrimaryColor}" Style="{DynamicResource LabelStyle}">
+                                <xctk:ColorPicker
                                    Style="{DynamicResource ColorPickerStyle}"
                                    SelectedColor="{Binding PrimaryColor}"/>
-                        </Label>
-                        <Label AutomationProperties.Name="{DynamicResource Setting_SecondaryColor}" Style="{DynamicResource LabelStyle}">
-                        <xctk:ColorPicker
+                            </Label>
+                            <Label AutomationProperties.Name="{DynamicResource Setting_SecondaryColor}" Style="{DynamicResource LabelStyle}">
+                                <xctk:ColorPicker
                                    Style="{DynamicResource ColorPickerStyle}"
                                    SelectedColor="{Binding SecondaryColor}"/>
-                        </Label>
-                        <Label AutomationProperties.Name="{DynamicResource Setting_SecondaryColorL}" Style="{DynamicResource LabelStyle}">
-                            <xctk:ColorPicker
+                            </Label>
+                            <Label AutomationProperties.Name="{DynamicResource Setting_SecondaryColorL}" Style="{DynamicResource LabelStyle}">
+                                <xctk:ColorPicker
                                    Style="{DynamicResource ColorPickerStyle}"
                                    SelectedColor="{Binding SecondaryColorL}"/>
-                        </Label>
-                        <Label AutomationProperties.Name="{DynamicResource Setting_ForegroundColor}" Style="{DynamicResource LabelStyle}">
-                            <xctk:ColorPicker
+                            </Label>
+                            <Label AutomationProperties.Name="{DynamicResource Setting_ForegroundColor}" Style="{DynamicResource LabelStyle}">
+                                <xctk:ColorPicker
                                    Style="{DynamicResource ColorPickerStyle}"
                                    SelectedColor="{Binding ForegroundColor}"/>
-                        </Label>
-                    </ItemsControl>
-                    <Label Content="{DynamicResource Setting_Font}" Style="{DynamicResource Separator}"/>
-                    <ItemsControl Style="{DynamicResource ItemsControlStyle}">
-                        <Label AutomationProperties.Name="{DynamicResource Setting_PrimaryFont}" Style="{DynamicResource LabelStyle}">
-                            <ComboBox Width="100" ItemsSource="{Binding FontFamiliesList}" SelectedItem="{Binding PrimaryFont}">
+                            </Label>
+                        </ItemsControl>
+                        <Label Content="{DynamicResource Setting_Font}" Style="{DynamicResource Separator}"/>
+                        <ItemsControl Style="{DynamicResource ItemsControlStyle}">
+                            <Label AutomationProperties.Name="{DynamicResource Setting_PrimaryFont}" Style="{DynamicResource LabelStyle}">
+                                <ComboBox Width="100" ItemsSource="{Binding FontFamiliesList}" SelectedItem="{Binding PrimaryFont}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Key}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Label>
+                            <Label AutomationProperties.Name="{DynamicResource Setting_TextMediumFontSize}" Style="{DynamicResource LabelStyle}">
+                                <xctk:DoubleUpDown Value="{Binding TextMediumFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
+                            </Label>
+                            <Label AutomationProperties.Name="{DynamicResource Setting_TextSmallFontSize}" Style="{DynamicResource LabelStyle}">
+                                <xctk:DoubleUpDown Value="{Binding TextSmallFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
+                            </Label>
+                        </ItemsControl>
+                        <Label Content="{DynamicResource Setting_LyricDisplay}" Style="{DynamicResource Separator}"/>
+                        <ItemsControl Style="{DynamicResource ItemsControlStyle}">
+                            <Label AutomationProperties.Name="{DynamicResource Setting_LyricFont}" Style="{DynamicResource LabelStyle}">
+                                <ComboBox Width="100" ItemsSource="{Binding FontFamiliesList}" SelectedItem="{Binding LyricFont}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Key}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Label>
+                            <Label AutomationProperties.Name="{DynamicResource Setting_LyricMediumFontSize}" Style="{DynamicResource LabelStyle}">
+                                <xctk:DoubleUpDown Value="{Binding LyricMediumFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
+                            </Label>
+                            <Label AutomationProperties.Name="{DynamicResource Setting_LyricSmallFontSize}" Style="{DynamicResource LabelStyle}">
+                                <xctk:DoubleUpDown Value="{Binding LyricSmallFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
+                            </Label>
+
+                        </ItemsControl>
+                        <Label Content="{DynamicResource Setting_Language}" Style="{DynamicResource Separator}"/>
+                        <ItemsControl Style="{DynamicResource ItemsControlStyle}">
+                            <ComboBox Width="300" ItemsSource="{Binding LanguageList}" SelectedItem="{Binding LanguageKeyValue}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Key}"/>
+                                        <TextBlock Text="{Binding Value}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                        </Label>
-                        <Label AutomationProperties.Name="{DynamicResource Setting_TextMediumFontSize}" Style="{DynamicResource LabelStyle}">
-                            <xctk:DoubleUpDown Value="{Binding TextMediumFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
-                        </Label>
-                        <Label AutomationProperties.Name="{DynamicResource Setting_TextSmallFontSize}" Style="{DynamicResource LabelStyle}">
-                            <xctk:DoubleUpDown Value="{Binding TextSmallFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
-                        </Label>
-                    </ItemsControl>
-                    <Label Content="{DynamicResource Setting_LyricDisplay}" Style="{DynamicResource Separator}"/>
-                    <ItemsControl Style="{DynamicResource ItemsControlStyle}">
-                        <Label AutomationProperties.Name="{DynamicResource Setting_LyricFont}" Style="{DynamicResource LabelStyle}">
-                            <ComboBox Width="100" ItemsSource="{Binding FontFamiliesList}" SelectedItem="{Binding LyricFont}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Key}"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </Label>
-                        <Label AutomationProperties.Name="{DynamicResource Setting_LyricMediumFontSize}" Style="{DynamicResource LabelStyle}">
-                            <xctk:DoubleUpDown Value="{Binding LyricMediumFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
-                        </Label>
-                        <Label AutomationProperties.Name="{DynamicResource Setting_LyricSmallFontSize}" Style="{DynamicResource LabelStyle}">
-                            <xctk:DoubleUpDown Value="{Binding LyricSmallFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
-                        </Label>
-                            
-                    </ItemsControl>
-                </StackPanel>
-            </ScrollViewer>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+            
         </Border>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left"/>
     </Grid>

@@ -73,7 +73,6 @@ namespace MusicPLayerV2.ViewModels
 
         public ICommand ExitCmd => new RelayCommand(OnExitApp, () => true);
 
-        public ICommand ChangeLang => new RelayCommand<string>((arg) => App.Settings.Language = arg, (arg) => true);
 
         private void OnOpenFileDialog(string arg)
         {

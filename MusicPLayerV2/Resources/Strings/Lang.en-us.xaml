@@ -45,7 +45,10 @@
     <String x:Key="Setting_LyricFont">Lyric Font</String>
     <String x:Key="Setting_LyricMediumFontSize">Lyric Medium Font Size</String>
     <String x:Key="Setting_LyricSmallFontSize">Lyric Small Font Size</String>
-    
-    
+
+    <String x:Key="Setting_Language">Language</String>
+    <String x:Key="Setting_Language_en-us">English - US</String>
+    <String x:Key="Setting_Language_zh-tw">繁體中文-臺灣 (Traditional Chinese - Taiwan)</String>
+
     <String x:Key="Setting_PlayerSettings">Music Player Settings</String>
 </wpf:ResourceDictionary>

@@ -21,7 +21,7 @@ namespace MusicPLayerV2
     {
         private static readonly ILog Log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static MainWindow MainWin { get; set; }
-        public static SettingsViewModel Settings { get; set; } = new SettingsViewModel();
+        public static SettingsViewModel Settings { get; set; }
         public static MusicPlayer PlayerModel { get; set; } = new MusicPlayer();
         public static ControllerViewModel Controller { get; set; }
         public static PlayingListViewModel PlayingList { get; set; }
@@ -38,7 +38,8 @@ namespace MusicPLayerV2
             Log.Info("Starting App");
             LogMachineDetails();
             MainWin = new MainWindow();
-            MainWin.Language = XmlLanguage.GetLanguage(Settings.Language);
+            Settings = SettingsViewModel.LoadOrNew();
+            Settings.SaveSettingAsXml();
             MainWin.Show();
 
             if (e.Args.Length > 0)
@@ -85,10 +86,8 @@ namespace MusicPLayerV2
             if (SingleInstance<App>.InitializeAsFirstInstance(Unique))
             {
                 var application = new App();
-
                 application.InitializeComponent();
                 application.Run();
-
                 // Allow single instance code to perform cleanup operations
                 SingleInstance<App>.Cleanup();
             }
