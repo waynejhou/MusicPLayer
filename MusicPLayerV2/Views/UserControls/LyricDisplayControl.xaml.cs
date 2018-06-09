@@ -148,15 +148,20 @@ namespace MusicPLayerV2.Views.UserControls
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (LyricsItem.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
-                LyricsItem.Dispatcher.Invoke(CalcLinesHeight);
+            try
+            {
+                if (LyricsItem.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+                    LyricsItem.Dispatcher.Invoke(CalcLinesHeight);
+            }
+            catch (TaskCanceledException) { }
+
         }
 
         private void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
         {
             if (LyricsItem.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
                 CalcLinesHeight();
-            timer.Interval = 1000;
+            timer.Interval = 500;
             timer.Start();
         }
 

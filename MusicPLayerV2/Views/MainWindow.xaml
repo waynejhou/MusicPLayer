@@ -201,7 +201,12 @@
         </Style>
         <Style x:Key="PlayingListStyle" TargetType="localuc:PlayingListControl">
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
-            <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
+            <Setter Property="FontSize" Value="{DynamicResource TextMediumFontSize}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=MainWin, Path=WindowMode}" Value="{x:Static local:MainWindowMode.Mini}">
+                    <Setter Property="FontSize" Value="{DynamicResource TextSmallFontSize}"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
     <Window.InputBindings>
