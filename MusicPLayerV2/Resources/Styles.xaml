@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:MusicPLayerV2.Resources">
     <Style x:Key="CardBorderStyle" TargetType="{x:Type Border}">
-        <Setter Property="Background" Value="{DynamicResource Color25}"/>
+        <Setter Property="Background" Value="{DynamicResource PanelOpacity}"/>
         <Setter Property="CornerRadius" Value="10"/>
         <Setter Property="Margin" Value="5"/>
         <Setter Property="Padding" Value="5"/>

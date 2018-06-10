@@ -17,7 +17,7 @@
             <Setter Property="FontSize" Value="{DynamicResource ControlBtnMediusFontSize}"/>
             <Setter Property="Padding" Value="2"/>
             <Setter Property="Margin" Value="5"/>
-            <Setter Property="Background" Value="{DynamicResource Color25}"/>
+            <Setter Property="Background" Value="{DynamicResource PanelOpacity}"/>
             <Setter Property="BorderBrush" Value="{x:Null}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
@@ -58,7 +58,7 @@
             <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
             <Setter Property="Padding" Value="2"/>
             <Setter Property="Margin" Value="5"/>
-            <Setter Property="Background" Value="{DynamicResource Color25}"/>
+            <Setter Property="Background" Value="{DynamicResource PanelOpacity}"/>
             <Setter Property="BorderBrush" Value="{x:Null}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
@@ -118,7 +118,7 @@
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="{DynamicResource TextMediumFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
-            <Setter Property="Effect" Value="{DynamicResource WordShadowEffect}"/>
+            <Setter Property="Effect" Value="{DynamicResource TextShadowEffect}"/>
             <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding WindowMode,
@@ -133,7 +133,7 @@
         <Style x:Key="LabelTriggerVisibleStyle" TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="{DynamicResource TextMediumFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
-            <Setter Property="Effect" Value="{DynamicResource WordShadowEffect}"/>
+            <Setter Property="Effect" Value="{DynamicResource TextShadowEffect}"/>
             <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding WindowMode,

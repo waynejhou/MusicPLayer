@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -32,6 +33,7 @@ namespace MusicPLayerV2.ViewModels
             set {
                 if (_appLanguage != value)
                 {
+                    _fontFamiliesList = null;
                     App.Current.Resources.MergedDictionaries.Add(new ResourceDictionary()
                     {
                         Source = new Uri($@"Resources/Strings/Lang.{value}.xaml", UriKind.Relative)
@@ -41,6 +43,7 @@ namespace MusicPLayerV2.ViewModels
                         First(x => x.Source.OriginalString == $@"Resources/Strings/Lang.{_appLanguage}.xaml"));
                     _appLanguage = value;
                     App.MainWin.Language = value;
+                    NotifyPropertyChanged(nameof(LanguageToHuman));
                 }
             }
         }
@@ -49,6 +52,7 @@ namespace MusicPLayerV2.ViewModels
             get => AppLanguage.ToString();
             set => AppLanguage = XmlLanguage.GetLanguage(value);
         }
+        public string LanguageToHuman => (string)R[$"Setting_Language_{Language}"];
         [XmlIgnore]
         public KeyValuePair<XmlLanguage, string> LanguageKeyValue
         {
@@ -69,20 +73,9 @@ namespace MusicPLayerV2.ViewModels
             set
             {
                 R["PrimaryColor"] = new SolidColorBrush(value);
-                var max = Math.Max(Math.Max(value.R, value.G), value.B);
-                var min = Math.Min(Math.Min(value.R, value.G), value.B);
-                if((max + min) / 2d / 255d * 100d > 50)
-                {
-                    R["Color25"] = new SolidColorBrush(Colors.Black) { Opacity = 0.1 };
-                    R["Color50"] = new SolidColorBrush(Colors.Black) { Opacity = 0.5 };
-                    R["Color75"] = new SolidColorBrush(Colors.Black) { Opacity = 0.75 };
-                }
-                else
-                {
-                    R["Color25"] = new SolidColorBrush(Colors.White) { Opacity = 0.1 };
-                    R["Color50"] = new SolidColorBrush(Colors.White) { Opacity = 0.5 };
-                    R["Color75"] = new SolidColorBrush(Colors.White) { Opacity = 0.75 };
-                }
+                var invertCOlor = Color.FromRgb((byte)(255 - ((int)(value.R))), (byte)(255 - ((int)(value.G))), (byte)(255 - ((int)(value.B))));
+                R["PanelOpacity"] = new SolidColorBrush(invertCOlor) { Opacity = (R["PanelOpacity"] as SolidColorBrush).Opacity };
+                R["PanelOpacityL"] = new SolidColorBrush(invertCOlor) { Opacity = (R["PanelOpacityL"] as SolidColorBrush).Opacity };
             }
         }
         public string PrimaryColorHex
@@ -105,13 +98,70 @@ namespace MusicPLayerV2.ViewModels
             set => SecondaryColorL = (Color)ColorConverter.ConvertFromString(value);
         }
         [XmlIgnore]
-        public Color ForegroundColor { get => (R["ForegroundColor"] as SolidColorBrush).Color; set => R["ForegroundColor"] = new SolidColorBrush(value); }
+        public Color ForegroundColor
+        {
+            get => (R["ForegroundColor"] as SolidColorBrush).Color;
+            set => R["ForegroundColor"] = new SolidColorBrush(value);
+        }
         public string ForegroundColorLHex
         {
             get => ForegroundColor.ToString();
             set => ForegroundColor = (Color)ColorConverter.ConvertFromString(value);
         }
 
+        [XmlIgnore]
+        public Color LyricForegroundColor
+        {
+            get => (R["LyricForegroundColor"] as SolidColorBrush).Color;
+            set => R["LyricForegroundColor"] = new SolidColorBrush(value);
+        }
+        public string LyricForegroundColorHex
+        {
+            get => LyricForegroundColor.ToString();
+            set => LyricForegroundColor = (Color)ColorConverter.ConvertFromString(value);
+        }
+        [XmlIgnore]
+        public Color LyricHighlightColor
+        {
+            get => (R["LyricHighlightColor"] as SolidColorBrush).Color;
+            set => R["LyricHighlightColor"] = new SolidColorBrush(value);
+        }
+        public string LyricHighlightColorHex
+        {
+            get => LyricHighlightColor.ToString();
+            set => LyricHighlightColor = (Color)ColorConverter.ConvertFromString(value);
+        }
+
+        [XmlIgnore]
+        public Color LyricShadowColor
+        {
+            get => (R["LyricShadowEffect"] as DropShadowEffect).Color;
+            set
+            {
+                var lse = R["LyricShadowEffect"] as DropShadowEffect;
+                R["LyricShadowEffect"] = new DropShadowEffect() { BlurRadius = lse.BlurRadius, ShadowDepth = lse.ShadowDepth, Color = value };
+            }
+        }
+        public string LyricShadowColorHex
+        {
+            get => LyricShadowColor.ToString();
+            set => LyricShadowColor = (Color)ColorConverter.ConvertFromString(value);
+        }
+        [XmlIgnore]
+        public Color TextShadowColor
+        {
+            get => (R["TextShadowEffect"] as DropShadowEffect).Color;
+            set
+            {
+                var tse = R["TextShadowEffect"] as DropShadowEffect;
+                R["TextShadowEffect"] = new DropShadowEffect() { BlurRadius = tse.BlurRadius, ShadowDepth = tse.ShadowDepth, Color = value };
+            }
+        }
+        public string TextShadowColorHex
+        {
+            get => TextShadowColor.ToString();
+            set => TextShadowColor = (Color)ColorConverter.ConvertFromString(value);
+        }
         [XmlIgnore]
         private IEnumerable<KeyValuePair<string, FontFamily>> _fontFamiliesList;
         [XmlIgnore]
@@ -139,6 +189,12 @@ namespace MusicPLayerV2.ViewModels
         public double TextSmallFontSize { get => (double)R[nameof(TextSmallFontSize)]; set => R[nameof(TextSmallFontSize)] = value; }
         public double LyricMediumFontSize { get => (double)R[nameof(LyricMediumFontSize)]; set => R[nameof(LyricMediumFontSize)] = value; }
         public double LyricSmallFontSize { get => (double)R[nameof(LyricSmallFontSize)]; set => R[nameof(LyricSmallFontSize)] = value; }
+        public double PanelOpacity {
+            get => (R[nameof(PanelOpacity)] as SolidColorBrush).Opacity;
+            set => R[nameof(PanelOpacity)] = new SolidColorBrush((R[nameof(PanelOpacity)] as SolidColorBrush).Color) { Opacity = value };
+        }
+
+        public double MusicVolume { get => C.MusicVolume; set => C.MusicVolume = value; }
 
         [XmlIgnore]
         public KeyValuePair<string, FontFamily> PrimaryFont

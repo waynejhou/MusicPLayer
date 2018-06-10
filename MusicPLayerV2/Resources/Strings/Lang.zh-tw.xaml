@@ -38,18 +38,24 @@
     <String x:Key="Setting_SecondaryColor">點綴色</String>
     <String x:Key="Setting_SecondaryColorL">強調點綴色</String>
     <String x:Key="Setting_ForegroundColor">前景色</String>
-    
+    <String x:Key="Setting_PanelOpacity">面板透明度</String>
+
     <String x:Key="Setting_Font">字型</String>
     <String x:Key="Setting_PrimaryFont">主題字型</String>
+    <String x:Key="Setting_TextShadowColor">文本陰影色</String>
     <String x:Key="Setting_TextMediumFontSize">文本小型字大小</String>
     <String x:Key="Setting_TextSmallFontSize">文本中型字大小</String>
 
     <String x:Key="Setting_LyricDisplay">歌詞顯示</String>
     <String x:Key="Setting_LyricFont">歌詞字型</String>
+    <String x:Key="Setting_LyricForegroundColor">歌詞前景色</String>
+    <String x:Key="Setting_LyricHighlightColor">歌詞高亮色</String>
+    <String x:Key="Setting_LyricShadowColor">歌詞陰影色</String>
     <String x:Key="Setting_LyricMediumFontSize">歌詞中型字大小</String>
     <String x:Key="Setting_LyricSmallFontSize">歌詞小型字大小</String>
 
     <String x:Key="Setting_Language">語言</String>
+    <String x:Key="Setting_NowLanguage">現在語言: </String>
     <String x:Key="Setting_Language_zh-tw">繁體中文 - 臺灣</String>
     <String x:Key="Setting_Language_en-us">English - US (英文 - 美國)</String>
     

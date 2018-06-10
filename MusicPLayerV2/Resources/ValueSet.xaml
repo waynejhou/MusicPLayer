@@ -6,10 +6,14 @@
     <SolidColorBrush x:Key="SecondaryColor" Color="#CC80FF80"/>
     <SolidColorBrush x:Key="SecondaryColorL" Color="#CC96CF80"/>
     <SolidColorBrush x:Key="ForegroundColor" Color="White"/>
-    <SolidColorBrush x:Key="Color25" Color="White" Opacity="0.10"/>
-    <SolidColorBrush x:Key="Color50" Color="White" Opacity="0.50"/>
-    <SolidColorBrush x:Key="Color75" Color="White" Opacity="0.75"/>
-    <DropShadowEffect x:Key="WordShadowEffect" BlurRadius="5" ShadowDepth="2"/>
+    <SolidColorBrush x:Key="PanelOpacity" Color="White" Opacity="0.10"/>
+    <SolidColorBrush x:Key="PanelOpacityL" Color="White" Opacity="0.50"/>
+
+    <SolidColorBrush x:Key="LyricForegroundColor" Color="White"/>
+    <SolidColorBrush x:Key="LyricHighlightColor" Color="#CC80FF80"/>
+
+    <DropShadowEffect x:Key="TextShadowEffect" BlurRadius="5" ShadowDepth="2"/>
+    <DropShadowEffect x:Key="LyricShadowEffect" BlurRadius="5" ShadowDepth="2"/>
 
     <sys:Double x:Key="TitleFontSize">20</sys:Double>
     <sys:Double x:Key="TabBarFontSize">20</sys:Double>

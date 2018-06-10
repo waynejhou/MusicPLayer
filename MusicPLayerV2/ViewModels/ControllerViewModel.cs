@@ -49,7 +49,7 @@ namespace MusicPLayerV2.ViewModels
         public double MusicPositionDouble { get => MusicPosition.TotalMilliseconds; set => MusicPosition = TimeSpan.FromMilliseconds(value); }
         public TimeSpan MusicLength => NPI.Length;
         public double MusicLengthDouble => NPI.Length.TotalMilliseconds;
-        public double MusicVolume { get => PM.Volume; set { PM.Volume = (float)value; } }
+        public double MusicVolume { get => PM.Volume; set { PM.Volume = (float)value; NotifyPropertyChanged(nameof(MusicVolume)); } }
         public string NextMusicMode
         {
             get

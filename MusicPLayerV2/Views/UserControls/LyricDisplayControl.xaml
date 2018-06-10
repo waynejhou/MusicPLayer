@@ -33,7 +33,7 @@
                            Foreground="{Binding ElementName=LyricOne, Path=Foreground}"
                            FontFamily="{Binding ElementName=LyricOne, Path=FontFamily}"
                            FontSize="{Binding ElementName=LyricOne, Path=FontSize}"
-                           Effect="{DynamicResource WordShadowEffect}"
+                           Effect="{DynamicResource LyricShadowEffect}"
                            HorizontalContentAlignment="Center" TextOptions.TextFormattingMode="Display">
                         <AccessText
                             Text="{Binding}"

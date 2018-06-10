@@ -38,18 +38,24 @@
     <String x:Key="Setting_SecondaryColor">Secondary Color</String>
     <String x:Key="Setting_SecondaryColorL">Secondary Color Ex</String>
     <String x:Key="Setting_ForegroundColor">Foreground Color</String>
-    
+    <String x:Key="Setting_PanelOpaticy">Panel Opaticy</String>
+
     <String x:Key="Setting_Font">Font</String>
     <String x:Key="Setting_PrimaryFont">Primary Font</String>
+    <String x:Key="Setting_TextShadowColor">Text Shadow Color</String>
     <String x:Key="Setting_TextMediumFontSize">Text Medium Font Size</String>
     <String x:Key="Setting_TextSmallFontSize">Text Small Font Size</String>
 
     <String x:Key="Setting_LyricDisplay">Lyric Display</String>
     <String x:Key="Setting_LyricFont">Lyric Font</String>
+    <String x:Key="Setting_LyricForegroundColor">Lyric Foreground Color</String>
+    <String x:Key="Setting_LyricHighlightColor">Lyric Highlight Color</String>
+    <String x:Key="Setting_LyricShadowColor">Lyric Shadow Color</String>
     <String x:Key="Setting_LyricMediumFontSize">Lyric Medium Font Size</String>
     <String x:Key="Setting_LyricSmallFontSize">Lyric Small Font Size</String>
 
     <String x:Key="Setting_Language">Language</String>
+    <String x:Key="Setting_NowLanguage">Now Language: </String>
     <String x:Key="Setting_Language_en-us">English - US</String>
     <String x:Key="Setting_Language_zh-tw">繁體中文-臺灣 (Traditional Chinese - Taiwan)</String>
 

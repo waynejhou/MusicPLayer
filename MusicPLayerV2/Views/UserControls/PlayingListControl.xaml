@@ -18,7 +18,7 @@
         <Style x:Key="LabelTriggerVisibleStyle" TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
-            <Setter Property="Effect" Value="{DynamicResource WordShadowEffect}"/>
+            <Setter Property="Effect" Value="{DynamicResource TextShadowEffect}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding WindowMode,
                     RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:MainWindow}}}"

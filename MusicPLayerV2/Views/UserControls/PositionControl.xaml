@@ -50,7 +50,7 @@
                         <ControlTemplate TargetType="Thumb">
                             <Grid>
                                 <Ellipse x:Name="BigC"
-                                     Fill="{DynamicResource Color25}"
+                                     Fill="{DynamicResource PanelOpacity}"
                                      Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"/>
                                 <Border Padding="5">
                                     <Ellipse x:Name="SmallC"
@@ -66,7 +66,7 @@
                    MouseEnter="ValueTooltip_MouseEnter" MouseLeave="ValueTooltip_MouseLeave" VerticalOffset="-30" AllowsTransparency="True" >
                     <Border BorderThickness="1" Padding="5"
                         BorderBrush="{DynamicResource PrimaryColor}"
-                        Background="{DynamicResource Color25}">
+                        Background="{DynamicResource PanelOpacity}">
                         <TextBlock x:Name="ValueText" Text="0"
                                Foreground="{DynamicResource ForegroundColor}"
                                FontSize="{Binding ElementName=uc, Path=FontSize}"/>
