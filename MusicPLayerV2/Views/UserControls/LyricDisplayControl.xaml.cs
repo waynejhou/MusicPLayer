@@ -36,6 +36,25 @@ namespace MusicPLayerV2.Views.UserControls
             timer.Elapsed += Timer_Elapsed;
         }
 
+        private void ReloadLyricFile(object sender, RoutedEventArgs e)
+        {
+            ReloadLyricFile();
+        }
+        private void ReloadLyricFile()
+        {
+            if (parser.IsLoaded)
+                OnFilePathSet(LyricFilePath);
+        }
+        private void OpenLyricFile(object sender, RoutedEventArgs e)
+        {
+            OpenLyricFile();
+        }
+        private void OpenLyricFile()
+        {
+            if (parser.IsLoaded)
+                Process.Start(parser.FileName);
+        }
+
         LRCParser parser = new LRCParser();
         public string LyricFilePath
         {
@@ -57,8 +76,6 @@ namespace MusicPLayerV2.Views.UserControls
                 LyricsItem.ItemsSource = LRCParser.NoLyricMessage;
             LinesHeight = null;
         }
-
-
 
         public Brush HighLight
         {
@@ -183,5 +200,6 @@ namespace MusicPLayerV2.Views.UserControls
                 Position = parser.GetPrevLyricFromTime(Position).Time;
             }
         }
+
     }
 }

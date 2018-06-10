@@ -13,6 +13,14 @@
              SizeChanged="LyricOne_SizeChanged">
     <UserControl.Resources>
     </UserControl.Resources>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="{DynamicResource Lyric_Menu_ReloadLyricFile}"
+                      Click="ReloadLyricFile"/>
+            <MenuItem Header="{DynamicResource Lyric_Menu_OpenLyricFile}"
+                      Click="OpenLyricFile"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <Border x:Name="border"
             ClipToBounds="True">
         <ItemsControl x:Name="LyricsItem"
