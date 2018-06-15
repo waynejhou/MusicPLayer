@@ -15,6 +15,7 @@
     <String x:Key="Menu_Edit_OpenLrcEditor">開啟 Lrc 編輯器 (_L)</String>
 
     <String x:Key="List_Menu_Remove_Selected_Item">從清單移除音樂項目 (_D)</String>
+    <String x:Key="List_Menu_Remove_All_Item">清空清單 (_C)</String>
 
     <String x:Key="Lyric_Menu_ReloadLyricFile">重新讀取歌詞檔案</String>
     <String x:Key="Lyric_Menu_OpenLyricFile">開啟歌詞檔案</String>

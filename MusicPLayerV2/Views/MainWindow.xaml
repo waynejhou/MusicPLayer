@@ -11,6 +11,7 @@
         xmlns:localModels="clr-namespace:MusicPLayerV2.Models"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        xmlns:root="clr-namespace:MusicPLayerV2"
         md:DialogServiceViews.IsRegistered="True"
         mc:Ignorable="d"
         Title="{Binding Title}" Height="700" Width="1000"
@@ -22,6 +23,7 @@
         LocationChanged="Window_LocationChanged"
         SizeChanged="MainWin_SizeChanged">
     <Window.Style>
+        
         <Style TargetType="{x:Type local:MainWindow}">
             <Setter Property="WindowChrome.WindowChrome">
                 <Setter.Value>
@@ -46,7 +48,8 @@
                                            FontSize="{DynamicResource TitleFontSize}"
                                            Foreground="{DynamicResource ForegroundColor}"
                                            HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
+                                           VerticalAlignment="Center"
+                                           Effect="{DynamicResource TextShadowEffect}"/>
                             </Border>
 
                             <Border x:Name="iconBorder"
@@ -246,7 +249,7 @@
                 </Menu>
                 <DockPanel>
                     <Border x:Name="InfoBorder" DockPanel.Dock="Bottom">
-                        <localuc:ControllerControl Width="auto"/>
+                        <localuc:ControllerControl Width="auto" DataContext="{x:Static root:App.Controller}"/>
                     </Border>
                     <Border DockPanel.Dock="Top" MinWidth="300">
                         <DockPanel>
@@ -303,16 +306,17 @@
                                         </TabItem>
                                         <TabItem>
                                             <localuc:LyricDisplayControl
-                                            x:Name="LyricP"
-                                            Style="{DynamicResource LyricStyle}"
-                                            LyricFilePath="{Binding LRCPath}"
-                                            Position="{Binding MusicPosition}"
+                                                x:Name="LyricP"
+                                                Style="{DynamicResource LyricStyle}"
+                                                LyricFilePath="{Binding LRCPath}"
+                                                Position="{Binding MusicPosition}"
                                             />
                                         </TabItem>
                                         <TabItem>
                                             <localuc:PlayingListControl
                                             x:Name="ListP"
-                                            Style="{DynamicResource PlayingListStyle}"/>
+                                            Style="{DynamicResource PlayingListStyle}"
+                                            DataContext="{x:Static root:App.PlayingList}"/>
                                         </TabItem>
                                         <TabItem/>
                                     </TabControl>

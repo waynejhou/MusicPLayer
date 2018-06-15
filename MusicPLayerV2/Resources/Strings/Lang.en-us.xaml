@@ -15,6 +15,7 @@
     <String x:Key="Menu_Edit_OpenLrcEditor">Open _Lrc Editor</String>
 
     <String x:Key="List_Menu_Remove_Selected_Item">_Remove Selected item from list</String>
+    <String x:Key="List_Menu_Remove_All_Item">_Clear All Items</String>
 
     <String x:Key="Lyric_Menu_ReloadLyricFile">Reload Lyric File</String>
     <String x:Key="Lyric_Menu_OpenLyricFile">Open Lyric File</String>

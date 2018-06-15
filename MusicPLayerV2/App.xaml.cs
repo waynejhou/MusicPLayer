@@ -23,8 +23,8 @@ namespace MusicPLayerV2
         public static MainWindow MainWin { get; set; }
         public static SettingsViewModel Settings { get; set; }
         public static MusicPlayer PlayerModel { get; set; } = new MusicPlayer();
-        public static ControllerViewModel Controller { get; set; }
-        public static PlayingListViewModel PlayingList { get; set; }
+        public static ControllerViewModel Controller { get; set; } = new ControllerViewModel();
+        public static PlayingListViewModel PlayingList { get; set; } = new PlayingListViewModel();
         public static MainViewModel MainModel { get; set; }
 
         private void Application_Startup(object sender, StartupEventArgs e)

@@ -188,7 +188,8 @@ namespace MusicPLayerV2.Views
 
         private void DockPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DragMove();
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+                DragMove();
         }
 
         internal void AlbumImage_SourceUpdated()

@@ -60,13 +60,12 @@ namespace MusicPLayerV2.ViewModels
 
         public TimeSpan MusicPosition { get => PM.Position; set => PM.Position = value; }
         #endregion
-
         #region Commands
         public ICommand OpenFileDialogCmd => new RelayCommand<string>(OnOpenFileDialog, (s) => true);
         public ICommand OpenFilesCmd => new RelayCommand<string[]>(OnOpenFiles, (string[] s) => true);
         public ICommand AddFilesCmd => L.AddFilesCmd;
         public ICommand AddFileCmd => L.AddFileCmd;
-
+        
 
         public ICommand ShowAboutDialogCmd => new RelayCommand(OnShowAboutDialog, () => true);
         public ICommand ShowSettingDialogCmd => new RelayCommand(OnShowSettingDialog, () => true);

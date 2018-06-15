@@ -22,6 +22,7 @@ namespace MusicPLayerV2.ViewModels
         public ICommand AddFilesCmd => new RelayCommand<string[]>((paths) => AddToList(paths), (paths) => true);
         public ICommand AddFileCmd => new RelayCommand<string>((path) => AddToList(path), (path) => true);
         public ICommand RemoveItemFromListCmd => new RelayCommand(RemoveSelectedItems, () => PlayingList.Count > 0 && SelectedItems != null && SelectedItems.Count > 0);
+        public ICommand RemoveAllItemFromListCmd => new RelayCommand(() => PlayingList?.Clear(), () => true);
 
         private void RemoveSelectedItems()
         {
@@ -32,8 +33,10 @@ namespace MusicPLayerV2.ViewModels
 
         public PlayingListViewModel()
         {
-            App.PlayingList = this;
+            if (App.PlayingList == null)
+                App.PlayingList = this;
         }
+
 
         public ObservableCollection<MusicItem> PlayingList { get; set; } = new ObservableCollection<MusicItem>();
 
@@ -82,7 +85,7 @@ namespace MusicPLayerV2.ViewModels
         public Stack<MusicItem> PlayingHistory { get; set; } = new Stack<MusicItem>();
         public NextOneMode NextModeType { get; set; } = NextOneMode.RepeatList;
         public bool CanGetLast => ((NextModeType == NextOneMode.Random) && PlayingHistory.Count > 0) || ((NextModeType == NextOneMode.RepeatList) && PlayingList.Count > 1 || (NextModeType == NextOneMode.RepeatOne));
-        public bool CanGetNext => ((NextModeType == NextOneMode.Random) && PlayingHistory.Count > 0) || (NextModeType == NextOneMode.RepeatList) || (NextModeType == NextOneMode.RepeatOne);
+        public bool CanGetNext => ((NextModeType == NextOneMode.Random) && PlayingHistory.Count > 0) || (NextModeType == NextOneMode.RepeatList) && PlayingList.Count > 1 || (NextModeType == NextOneMode.RepeatOne);
         Random _rnd = new Random();
         bool IsGetPrev = false;
         public IList SelectedItems { get; set; }

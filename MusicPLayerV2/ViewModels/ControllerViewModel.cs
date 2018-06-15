@@ -19,8 +19,8 @@ namespace MusicPLayerV2.ViewModels
             PM.PlaybackStateChangedChangedEvent += PM_PlaybackStateChangedChangedEvent;
             PM.WavePositionChangedEvent += PM_WavePositionChangedEvent;
             PM.StoppedEvent += PM_StoppedEvent;
-            App.Controller = this;
         }
+
 
         private MusicPlayer PM => App.PlayerModel;
         private MusicItem NPI => App.PlayerModel.NowPlayingItem;

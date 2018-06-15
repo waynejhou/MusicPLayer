@@ -11,9 +11,6 @@
              xmlns:Views="clr-namespace:MusicPLayerV2.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <vm:PlayingListViewModel/>
-    </UserControl.DataContext>
     <UserControl.Resources>
         <Style x:Key="LabelTriggerVisibleStyle" TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="{DynamicResource MediumFontSize}"/>
@@ -40,6 +37,9 @@
                 <ContextMenu>
                     <MenuItem Header="{DynamicResource List_Menu_Remove_Selected_Item}"
                               Command="{Binding RemoveItemFromListCmd}"
+                              />
+                    <MenuItem Header="{DynamicResource List_Menu_Remove_All_Item}"
+                              Command="{Binding RemoveAllItemFromListCmd}"
                               />
                 </ContextMenu>
             </ListView.ContextMenu>
