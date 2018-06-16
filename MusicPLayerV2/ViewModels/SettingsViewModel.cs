@@ -470,9 +470,16 @@ namespace MusicPLayerV2.ViewModels
     public partial class SettingsViewModel
     {
         [XmlIgnore]
-        public ICommand SaveSettingsCmd => new RelayCommand(SaveSettingAsXml, () => true);
+        public ICommand SaveSettingsCmd => new RelayCommand(()=> {
+            SaveSettingAsXml();
+            MessageBox.Show("Saved");
+            }, () => true);
         [XmlIgnore]
-        public ICommand ApplySettingsCmd => new RelayCommand(() => ApplySetting(), () => true);
+        public ICommand ApplySettingsCmd => new RelayCommand(() =>
+        {
+            ApplySetting();
+            MessageBox.Show("Applied");
+        }, () => true);
         public static string SaveFilePath { get; set; } = $@"{AppDomain.CurrentDomain.BaseDirectory}Setting.xml";
         public void SaveSettingAsXml()
         {
