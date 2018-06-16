@@ -4,11 +4,11 @@ Just a normal music player with LRC display function.
 
 Here's the [site](https://github.com/waynejhou/MusicPLayer).
 
+Here's the [release](https://github.com/waynejhou/MusicPLayer/releases)
+
 Here's the picture
 
-![pic](https://waynejhou.github.io/Img/LotOfMusicPLayer2.png)
-
-Check List  Complete 13 /27
+![pic](https://waynejhou.github.io/Img/MusicPLayerV2_Screenshot.png )
 
 - [ ] MusicPLayer
   - [x] Check List
@@ -16,7 +16,7 @@ Check List  Complete 13 /27
     - [x] Play Music by Open FIle Dialog
     - [x] Play Music by Open in File Explorer
     - [x] Player Only Open One Each time
-    - [x] Play Music by Drag and Drop
+    - [ ] Play Music by Drag and Drop
   - [ ] UI
     - [x] Basic UI
     - [x] MinMode
@@ -29,7 +29,7 @@ Check List  Complete 13 /27
         - [ ] Smart Random
       - [x] Repeat list
       - [x] Repeat One
-    - [ ] Delete Item
+    - [x] Delete Item
     - [ ] Sort Item
     - [ ] Multiple list
   - [ ] Lyric Display
@@ -44,15 +44,9 @@ Check List  Complete 13 /27
     - [ ] Basic Editor
     - [ ] Find-Replace
     - [ ] Support Regex at Find-Replace
-  - [ ] Setting
-    - [ ] Basic Setting
-    - [ ] Change Theme
+  - [x] Setting
+    - [x] Basic Setting
+    - [x] Change Theme
   - [ ] Music Library
     - [ ] Basic Music Library
-
-Bug Check List
-
-- [x] Sometime crash the player when playing lrc
-- [ ] Unable to show not unicode music tag
-- [ ] Sometime the lyric time sync will out of position
 
