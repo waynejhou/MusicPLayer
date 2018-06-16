@@ -15,9 +15,9 @@ namespace MusicPLayerV2.ViewModels
         {
             get
             {
-                return "MusicPLayerV2" + Environment.NewLine +
+                return "MusicPLayer" + Environment.NewLine +
                         "Created by wayne" + Environment.NewLine +
-                        "Address" + Environment.NewLine +
+                        "Address: jhouwayne@gmail.com" + Environment.NewLine +
                         "2018";
             }
         }
@@ -32,7 +32,7 @@ namespace MusicPLayerV2.ViewModels
                 // var ver2 = typeof(Assembly1.ClassOfAssembly1).Assembly.GetName().Version;
                 // var ver3 = typeof(Assembly2.ClassOfAssembly2).Assembly.GetName().Version;
 
-                return "MusicPLayerV2 v" + version1.ToString();
+                return "MusicPLayer v" + version1.ToString();
             }
         }
     }
