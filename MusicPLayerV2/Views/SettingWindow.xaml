@@ -124,7 +124,10 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="1" Content="儲存" Margin="5" Command="{Binding SaveSettingsCmd}"/>
+                    <StackPanel Grid.Column="1"  Orientation="Horizontal">
+                        <Button Content="套用" Margin="5" Padding="5 0 5 0" Command="{Binding ApplySettingsCmd}"/>
+                        <Button Content="儲存" Margin="5" Padding="5 0 5 0" Command="{Binding SaveSettingsCmd}"/>
+                    </StackPanel>
                 </Grid>
                 <TabControl x:Name="TagCtrl"
                             Background="{x:Null}"
@@ -139,26 +142,26 @@
                                     <Label AutomationProperties.Name="{DynamicResource Setting_PrimaryColor}" Style="{DynamicResource LabelStyle}">
                                         <xctk:ColorPicker
                                    Style="{DynamicResource ColorPickerStyle}"
-                                   SelectedColor="{Binding PrimaryColor}"/>
+                                   SelectedColor="{Binding PrimaryColor.Value}"/>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_SecondaryColor}" Style="{DynamicResource LabelStyle}">
                                         <xctk:ColorPicker
                                    Style="{DynamicResource ColorPickerStyle}"
-                                   SelectedColor="{Binding SecondaryColor}"/>
+                                   SelectedColor="{Binding SecondaryColor.Value}"/>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_SecondaryColorL}" Style="{DynamicResource LabelStyle}">
                                         <xctk:ColorPicker
                                    Style="{DynamicResource ColorPickerStyle}"
-                                   SelectedColor="{Binding SecondaryColorL}"/>
+                                   SelectedColor="{Binding SecondaryColorL.Value}"/>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_ForegroundColor}" Style="{DynamicResource LabelStyle}">
                                         <xctk:ColorPicker
                                    Style="{DynamicResource ColorPickerStyle}"
-                                   SelectedColor="{Binding ForegroundColor}"/>
+                                   SelectedColor="{Binding ForegroundColor.Value}"/>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_PanelOpacity}" Style="{DynamicResource LabelStyle}">
                                         <xctk:DoubleUpDown Style="{DynamicResource DoubleUpDownStyle}"
-                                                   Value="{Binding PanelOpacity}"
+                                                   Value="{Binding PanelOpacity.Value}"
                                                    Maximum="1" Minimum="0" Increment="0.05"
                                                    />
                                     </Label>
@@ -166,49 +169,50 @@
                                 <Label Content="{DynamicResource Setting_Font}" Style="{DynamicResource Separator}"/>
                                 <ItemsControl Style="{DynamicResource ItemsControlStyle}">
                                     <Label AutomationProperties.Name="{DynamicResource Setting_PrimaryFont}" Style="{DynamicResource LabelStyle}">
-                                        <ComboBox Width="100" ItemsSource="{Binding FontFamiliesList}" SelectedItem="{Binding PrimaryFont}">
+                                        <ComboBox Width="100" SelectedItem="{Binding PrimaryFont.Value}" ItemsSource="{Binding Source={x:Static vm:FontSetting.FontFamiliesList}}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock Text="{Binding Key}"/>
+                                                    <TextBlock Text="{Binding Name}"/>
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_TextShadowColor}" Style="{DynamicResource LabelStyle}">
-                                        <xctk:ColorPicker Style="{DynamicResource ColorPickerStyle}" SelectedColor="{Binding TextShadowColor}"/>
+                                        <xctk:ColorPicker Style="{DynamicResource ColorPickerStyle}" SelectedColor="{Binding TextShadowColor.Value}"/>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_TextMediumFontSize}" Style="{DynamicResource LabelStyle}">
-                                        <xctk:DoubleUpDown Value="{Binding TextMediumFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
+                                        <xctk:DoubleUpDown Value="{Binding TextMediumFontSize.Value}" Style="{DynamicResource DoubleUpDownStyle}" />
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_TextSmallFontSize}" Style="{DynamicResource LabelStyle}">
-                                        <xctk:DoubleUpDown Value="{Binding TextSmallFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
+                                        <xctk:DoubleUpDown Value="{Binding TextSmallFontSize.Value}" Style="{DynamicResource DoubleUpDownStyle}" />
                                     </Label>
                                 </ItemsControl>
                                 <Label Content="{DynamicResource Setting_LyricDisplay}" Style="{DynamicResource Separator}"/>
                                 <ItemsControl Style="{DynamicResource ItemsControlStyle}">
                                     <Label AutomationProperties.Name="{DynamicResource Setting_LyricFont}" Style="{DynamicResource LabelStyle}">
-                                        <ComboBox Width="100" ItemsSource="{Binding FontFamiliesList}" SelectedItem="{Binding LyricFont}">
+                                        <ComboBox Width="100" SelectedItem="{Binding LyricFont.Value}"
+                                                  ItemsSource="{Binding Source={x:Static vm:FontSetting.FontFamiliesList}}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock Text="{Binding Key}"/>
+                                                    <TextBlock Text="{Binding Name}"/>
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_LyricForegroundColor}" Style="{DynamicResource LabelStyle}">
-                                        <xctk:ColorPicker Style="{DynamicResource ColorPickerStyle}" SelectedColor="{Binding LyricForegroundColor}"/>
+                                        <xctk:ColorPicker Style="{DynamicResource ColorPickerStyle}" SelectedColor="{Binding LyricForegroundColor.Value}"/>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_LyricHighlightColor}" Style="{DynamicResource LabelStyle}">
-                                        <xctk:ColorPicker Style="{DynamicResource ColorPickerStyle}" SelectedColor="{Binding LyricHighlightColor}"/>
+                                        <xctk:ColorPicker Style="{DynamicResource ColorPickerStyle}" SelectedColor="{Binding LyricHighlightColor.Value}"/>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_LyricShadowColor}" Style="{DynamicResource LabelStyle}">
-                                        <xctk:ColorPicker Style="{DynamicResource ColorPickerStyle}" SelectedColor="{Binding LyricShadowColor}"/>
+                                        <xctk:ColorPicker Style="{DynamicResource ColorPickerStyle}" SelectedColor="{Binding LyricShadowColor.Value}"/>
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_LyricMediumFontSize}" Style="{DynamicResource LabelStyle}">
-                                        <xctk:DoubleUpDown Value="{Binding LyricMediumFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
+                                        <xctk:DoubleUpDown Value="{Binding LyricMediumFontSize.Value}" Style="{DynamicResource DoubleUpDownStyle}" />
                                     </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_LyricSmallFontSize}" Style="{DynamicResource LabelStyle}">
-                                        <xctk:DoubleUpDown Value="{Binding LyricSmallFontSize}" Style="{DynamicResource DoubleUpDownStyle}" />
+                                        <xctk:DoubleUpDown Value="{Binding LyricSmallFontSize.Value}" Style="{DynamicResource DoubleUpDownStyle}" />
                                     </Label>
 
                                 </ItemsControl>
@@ -231,12 +235,12 @@
                                     <Label>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{DynamicResource Setting_NowLanguage}"/>
-                                            <TextBlock Text="{Binding LanguageToHuman}"/>
+                                            <TextBlock Text="{Binding LanguageString}"/>
                                         </StackPanel>
                                     </Label>
                                 </ItemsControl>
-                                <ListView ItemsSource="{Binding LanguageList}"
-                                          SelectedValue="{Binding LanguageKeyValue}"
+                                <ListView ItemsSource="{Binding AppLanguage.LanguageList}"
+                                          SelectedValue="{Binding LanguagePair}"
                                           BorderThickness="0">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>

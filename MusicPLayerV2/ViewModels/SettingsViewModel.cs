@@ -17,7 +17,9 @@ using System.Xml.Serialization;
 
 namespace MusicPLayerV2.ViewModels
 {
-    public class SettingsViewModel : ViewModelBase
+    using SettingList = List<ISettingItem>;
+    using LanguagePair = KeyValuePair<XmlLanguage, string>;
+    public partial class SettingsViewModel : ViewModelBase
     {
         private ResourceDictionary R => App.Current.Resources;
         private MusicPlayer PM => App.PlayerModel;
@@ -25,224 +27,407 @@ namespace MusicPLayerV2.ViewModels
         private ControllerViewModel C => App.Controller;
         private PlayingListViewModel L => App.PlayingList;
 
-        private XmlLanguage _appLanguage = XmlLanguage.GetLanguage("zh-tw");
+        SettingList SettingList => new List<ISettingItem>()
+            {
+            AppLanguage,
+
+            PrimaryColor,
+            SecondaryColor,
+            SecondaryColorL,
+            ForegroundColor,
+            LyricForegroundColor,
+            LyricHighlightColor,
+            LyricShadowColor,
+            TextShadowColor,
+
+            PrimaryFont,
+            LyricFont,
+            TextMediumFontSize,
+            TextSmallFontSize,
+            LyricMediumFontSize,
+            LyricSmallFontSize,
+
+            PanelOpacity,
+
+            MusicVolume
+            };
+
+
+
+        public LanguageSetting AppLanguage { get; set; } = new LanguageSetting() { Name = nameof(AppLanguage) };
         [XmlIgnore]
-        public XmlLanguage AppLanguage
+        public LanguagePair LanguagePair { get => AppLanguage.Value; set => AppLanguage.Value = value; }
+        [XmlIgnore]
+        public string LanguageString => AppLanguage.Value.Value;
+
+        public ColorSetting PrimaryColor { get; set; } = new ColorSetting() { Name = nameof(PrimaryColor) };
+        public ColorSetting SecondaryColor { get; set; } = new ColorSetting() { Name = nameof(SecondaryColor) };
+        public ColorSetting SecondaryColorL { get; set; } = new ColorSetting() { Name = nameof(SecondaryColorL) };
+        public ColorSetting ForegroundColor { get; set; } = new ColorSetting() { Name = nameof(ForegroundColor) };
+        public ColorSetting LyricForegroundColor { get; set; } = new ColorSetting() { Name = nameof(LyricForegroundColor) };
+        public ColorSetting LyricHighlightColor { get; set; } = new ColorSetting() { Name = nameof(LyricHighlightColor) };
+        public ShadowColorSetting LyricShadowColor { get; set; } = new ShadowColorSetting() { Name = "LyricShadowEffect" };
+        public ShadowColorSetting TextShadowColor { get; set; } = new ShadowColorSetting() { Name = "TextShadowEffect" };
+
+        public FontSetting PrimaryFont { get; set; } = new FontSetting() { Name = nameof(PrimaryFont) };
+        public FontSetting LyricFont { get; set; } = new FontSetting() { Name = nameof(LyricFont) };
+
+        public DoubleSetting TextMediumFontSize { get; set; } = new DoubleSetting() { Name = nameof(TextMediumFontSize) };
+        public DoubleSetting TextSmallFontSize { get; set; } = new DoubleSetting() { Name = nameof(TextSmallFontSize) };
+        public DoubleSetting LyricMediumFontSize { get; set; } = new DoubleSetting() { Name = nameof(LyricMediumFontSize) };
+        public DoubleSetting LyricSmallFontSize { get; set; } = new DoubleSetting() { Name = nameof(LyricSmallFontSize) };
+
+        public OpacitySetting PanelOpacity { get; set; } = new OpacitySetting() { Name = nameof(PanelOpacity) };
+
+        public VolumeSetting MusicVolume { get; set; } = new VolumeSetting() { Name = nameof(MusicVolume) };
+
+        public void ApplySetting()
         {
-            get => _appLanguage;
-            set {
-                if (_appLanguage != value)
+            SettingList.ForEach(x => {
+                x.ApplyChange();
+            });
+            NotifyPropertyChanged(nameof(AppLanguage));
+            NotifyPropertyChanged(nameof(LanguagePair));
+            NotifyPropertyChanged(nameof(LanguageString));
+        }
+    }
+
+    public interface ISettingItem
+    {
+        string Name { get; set; }
+        string String { get; set; }
+        void ApplyChange();
+    }
+
+    public abstract class SettingItemStruct<T> : ISettingItem where T : struct
+    {
+        [XmlIgnore]
+        protected ResourceDictionary R => App.Current.Resources;
+        [XmlIgnore]
+        public bool IsValueChanged { get; private set; }
+        private T? _value;
+        [XmlIgnore]
+        public T Value
+        {
+            get
+            {
+                if (_value == null)
                 {
-                    _fontFamiliesList = null;
-                    App.Current.Resources.MergedDictionaries.Add(new ResourceDictionary()
-                    {
-                        Source = new Uri($@"Resources/Strings/Lang.{value}.xaml", UriKind.Relative)
-                    });
-                    App.Current.Resources.MergedDictionaries.Remove(
-                        App.Current.Resources.MergedDictionaries.
-                        First(x => x.Source.OriginalString == $@"Resources/Strings/Lang.{_appLanguage}.xaml"));
-                    _appLanguage = value;
-                    App.MainWin.Language = value;
-                    NotifyPropertyChanged(nameof(LanguageToHuman));
+                    Console.WriteLine("_value is null Try to Get Value");
+                    _value = GetValue();
+                    Console.WriteLine($"_value is {_value} After Try to Get Value");
                 }
+                return _value.Value;
+            }
+            set
+            {
+                _value = value;
+                IsValueChanged = true;
             }
         }
-        public string Language
+        public string Name { get; set; } = "SettingItem";
+        public string String
         {
-            get => AppLanguage.ToString();
-            set => AppLanguage = XmlLanguage.GetLanguage(value);
+            get
+            {
+                return ConvertToString(Value);
+            }
+            set
+            {
+                _value = ConvertFromString(value);
+            }
         }
-        public string LanguageToHuman => (string)R[$"Setting_Language_{Language}"];
-        [XmlIgnore]
-        public KeyValuePair<XmlLanguage, string> LanguageKeyValue
+
+        abstract public T GetValue();
+        abstract public void SetValue(T newValue);
+        abstract public string ConvertToString(T value);
+        abstract public T ConvertFromString(string valueString);
+        public void ApplyChange()
         {
-            get => LanguageList.First(x => x.Key == AppLanguage);
-            set => AppLanguage = (value.Key);
+            SetValue(Value);
         }
+    }
+    public abstract class SettingItemClass<T> : ISettingItem where T : new()
+    {
         [XmlIgnore]
-        public Dictionary<XmlLanguage, string> LanguageList => new Dictionary<XmlLanguage, string>()
+        protected ResourceDictionary R => App.Current.Resources;
+        [XmlIgnore]
+        public bool IsValueChanged { get; private set; }
+        private T _value;
+        [XmlIgnore]
+        public T Value
+        {
+            get
+            {
+                if (_value == null)
                 {
-                    { XmlLanguage.GetLanguage("zh-tw"), (string)R["Setting_Language_zh-tw"] },
-                    { XmlLanguage.GetLanguage("en-us"), (string)R["Setting_Language_en-us"] }
-                };
-
-        [XmlIgnore]
-        public Color PrimaryColor
-        {
-            get => (R["PrimaryColor"] as SolidColorBrush).Color;
+                    Console.WriteLine("_value is null Try to Get Value");
+                    _value = GetValue();
+                    Console.WriteLine($"_value is {_value} After Try to Get Value");
+                }
+                return _value;
+            }
             set
             {
-                R["PrimaryColor"] = new SolidColorBrush(value);
-                var invertCOlor = Color.FromRgb((byte)(255 - ((int)(value.R))), (byte)(255 - ((int)(value.G))), (byte)(255 - ((int)(value.B))));
-                R["PanelOpacity"] = new SolidColorBrush(invertCOlor) { Opacity = (R["PanelOpacity"] as SolidColorBrush).Opacity };
-                R["PanelOpacityL"] = new SolidColorBrush(invertCOlor) { Opacity = (R["PanelOpacityL"] as SolidColorBrush).Opacity };
+                _value = value;
+                IsValueChanged = true;
             }
         }
-        public string PrimaryColorHex
+        public string Name { get; set; } = "SettingItem";
+        public string String
         {
-            get => PrimaryColor.ToString();
-            set => PrimaryColor = (Color)ColorConverter.ConvertFromString(value);
-        }
-        [XmlIgnore]
-        public Color SecondaryColor { get => (R["SecondaryColor"] as SolidColorBrush).Color; set => R["SecondaryColor"] = new SolidColorBrush(value); }
-        public string SecondaryColorHex
-        {
-            get => SecondaryColor.ToString();
-            set => SecondaryColor = (Color)ColorConverter.ConvertFromString(value);
-        }
-        [XmlIgnore]
-        public Color SecondaryColorL { get => (R["SecondaryColorL"] as SolidColorBrush).Color; set => R["SecondaryColorL"] = new SolidColorBrush(value); }
-        public string SecondaryColorLHex
-        {
-            get => SecondaryColorL.ToString();
-            set => SecondaryColorL = (Color)ColorConverter.ConvertFromString(value);
-        }
-        [XmlIgnore]
-        public Color ForegroundColor
-        {
-            get => (R["ForegroundColor"] as SolidColorBrush).Color;
-            set => R["ForegroundColor"] = new SolidColorBrush(value);
-        }
-        public string ForegroundColorLHex
-        {
-            get => ForegroundColor.ToString();
-            set => ForegroundColor = (Color)ColorConverter.ConvertFromString(value);
-        }
-
-        [XmlIgnore]
-        public Color LyricForegroundColor
-        {
-            get => (R["LyricForegroundColor"] as SolidColorBrush).Color;
-            set => R["LyricForegroundColor"] = new SolidColorBrush(value);
-        }
-        public string LyricForegroundColorHex
-        {
-            get => LyricForegroundColor.ToString();
-            set => LyricForegroundColor = (Color)ColorConverter.ConvertFromString(value);
-        }
-        [XmlIgnore]
-        public Color LyricHighlightColor
-        {
-            get => (R["LyricHighlightColor"] as SolidColorBrush).Color;
-            set => R["LyricHighlightColor"] = new SolidColorBrush(value);
-        }
-        public string LyricHighlightColorHex
-        {
-            get => LyricHighlightColor.ToString();
-            set => LyricHighlightColor = (Color)ColorConverter.ConvertFromString(value);
-        }
-
-        [XmlIgnore]
-        public Color LyricShadowColor
-        {
-            get => (R["LyricShadowEffect"] as DropShadowEffect).Color;
+            get
+            {
+                return ConvertToString(Value);
+            }
             set
             {
-                var lse = R["LyricShadowEffect"] as DropShadowEffect;
-                R["LyricShadowEffect"] = new DropShadowEffect() { BlurRadius = lse.BlurRadius, ShadowDepth = lse.ShadowDepth, Color = value };
+                _value = ConvertFromString(value);
             }
         }
-        public string LyricShadowColorHex
+
+        abstract public T GetValue();
+        abstract public void SetValue(T newValue);
+        abstract public string ConvertToString(T value);
+        abstract public T ConvertFromString(string valueString);
+        public void ApplyChange()
         {
-            get => LyricShadowColor.ToString();
-            set => LyricShadowColor = (Color)ColorConverter.ConvertFromString(value);
+            SetValue(Value);
         }
-        [XmlIgnore]
-        public Color TextShadowColor
+    }
+
+    public class ColorSetting : SettingItemStruct<Color>
+    {
+        public override Color GetValue()
         {
-            get => (R["TextShadowEffect"] as DropShadowEffect).Color;
-            set
+            return (R[Name] as SolidColorBrush).Color;
+        }
+        public override void SetValue(Color value)
+        {
+            R[Name] = new SolidColorBrush() { Color = value };
+        }
+        public override Color ConvertFromString(string valueString)
+        {
+            return (Color)ColorConverter.ConvertFromString(valueString);
+        }
+        public override string ConvertToString(Color value)
+        {
+            return value.ToString();
+        }
+    }
+
+    public class ShadowColorSetting:SettingItemStruct<Color>
+    {
+        public override Color GetValue()
+        {
+            return (R[Name] as DropShadowEffect).Color;
+        }
+        public override void SetValue(Color value)
+        {
+            var dse = R[Name] as DropShadowEffect;
+            R[Name] = new DropShadowEffect() { BlurRadius = dse.BlurRadius, ShadowDepth = dse.ShadowDepth, Color = value };
+        }
+        public override Color ConvertFromString(string valueString)
+        {
+            return (Color)ColorConverter.ConvertFromString(valueString);
+        }
+        public override string ConvertToString(Color value)
+        {
+            return value.ToString();
+        }
+    }
+
+    public class LanguageSetting : SettingItemStruct<LanguagePair>
+    {
+        [XmlIgnore]
+        public List<LanguagePair> LanguageList => new List<LanguagePair>()
+        {
+            GetLanguagePair("zh-tw"),
+            GetLanguagePair("en-us")
+        };
+
+        public LanguageSetting()
+        {
+            Value = ConvertFromString("zh-tw");
+        }
+
+        LanguagePair GetLanguagePair(string language)
+        {
+            return new LanguagePair(XmlLanguage.GetLanguage(language), (string)R[$"Setting_Language_{language}"]);
+        }
+
+        public override LanguagePair ConvertFromString(string valueString)
+        {
+            return LanguageList.First(x => x.Key == XmlLanguage.GetLanguage(valueString));
+        }
+
+        public override string ConvertToString(LanguagePair value)
+        {
+            return value.Key.ToString();
+        }
+
+        public override LanguagePair GetValue()
+        {
+            return Value;
+        }
+
+        public override void SetValue(LanguagePair newValue)
+        {
+            if(newValue.Key!= App.MainWin.Language)
             {
-                var tse = R["TextShadowEffect"] as DropShadowEffect;
-                R["TextShadowEffect"] = new DropShadowEffect() { BlurRadius = tse.BlurRadius, ShadowDepth = tse.ShadowDepth, Color = value };
+                App.Current.Resources.MergedDictionaries.Add(new ResourceDictionary()
+                {
+                    Source = new Uri($@"Resources/Strings/Lang.{newValue.Key.ToString()}.xaml", UriKind.Relative)
+                });
+                App.Current.Resources.MergedDictionaries.Remove(
+                    App.Current.Resources.MergedDictionaries.
+                    First(x => x.Source.OriginalString == $@"Resources/Strings/Lang.{App.MainWin.Language.ToString()}.xaml"));
+                App.MainWin.Language = newValue.Key;
             }
         }
-        public string TextShadowColorHex
+
+        public override string ToString()
         {
-            get => TextShadowColor.ToString();
-            set => TextShadowColor = (Color)ColorConverter.ConvertFromString(value);
+            return Value.Value;
         }
+    }
+
+    public class FontSetting : SettingItemStruct<FontFamilyPair>
+    {
         [XmlIgnore]
-        private IEnumerable<KeyValuePair<string, FontFamily>> _fontFamiliesList;
+        static IEnumerable<FontFamilyPair> _fontFamiliesList;
         [XmlIgnore]
-        public IEnumerable<KeyValuePair<string, FontFamily>> FontFamiliesList
+        static public IEnumerable<FontFamilyPair> FontFamiliesList
         {
             get
             {
                 if (_fontFamiliesList != null)
                     return _fontFamiliesList;
+                _fontFamiliesList = Fonts.SystemFontFamilies.ToList().ConvertAll(font => new FontFamilyPair() { Source = font.Source, FontFamily = font })
+                    .OrderBy(x => x.Source);
+                return _fontFamiliesList;
+            }
+        }
+
+        public void ResetFontFamiliesList()
+        {
+            _fontFamiliesList = null;
+            var a = FontFamiliesList;
+        }
+        public override FontFamilyPair ConvertFromString(string valueString)
+        {
+            return FontFamiliesList.ToList().First(x => valueString == x.Source);
+        }
+
+        public override string ConvertToString(FontFamilyPair value)
+        {
+            return (R[Name] as FontFamily).Source;
+        }
+
+        public override FontFamilyPair GetValue()
+        {
+            return FontFamiliesList.ToList().First((font) => font.Source == (R[Name] as FontFamily).Source);
+        }
+
+        public override void SetValue(FontFamilyPair newValue)
+        {
+            R[Name] = newValue.FontFamily;
+        }
+    }
+
+    public struct FontFamilyPair
+    {
+        public string Source { get; set; }
+        public string Name
+        {
+            get
+            {
+                if (FontFamily.FamilyNames.Keys.Contains(App.MainWin.Language))
+                    return FontFamily.FamilyNames[App.MainWin.Language];
+                else if (FontFamily.FamilyNames.Keys.ToList().Exists(x => x != XmlLanguage.GetLanguage("en-us")))
+                    return FontFamily.FamilyNames.First(x => x.Key != XmlLanguage.GetLanguage("en-us")).Value;
                 else
-                    return _fontFamiliesList = Fonts.SystemFontFamilies.ToList().ConvertAll(font =>
-                    {
-                        if (font.FamilyNames.Keys.Contains(AppLanguage))
-                            return new KeyValuePair<string, FontFamily>(font.FamilyNames[AppLanguage], font);
-                        else if (font.FamilyNames.Keys.ToList().Exists(x => x != XmlLanguage.GetLanguage("en-us")))
-                            return new KeyValuePair<string, FontFamily>(font.FamilyNames.First(x => x.Key != XmlLanguage.GetLanguage("en-us")).Value, font);
-                        else
-                            return new KeyValuePair<string, FontFamily>(font.FamilyNames.First().Value, font);
-                    }).OrderBy(x => x.Key);
+                    return FontFamily.FamilyNames.First().Value;
             }
         }
-
-
-        public double TextMediumFontSize { get => (double)R[nameof(TextMediumFontSize)]; set => R[nameof(TextMediumFontSize)] = value; }
-        public double TextSmallFontSize { get => (double)R[nameof(TextSmallFontSize)]; set => R[nameof(TextSmallFontSize)] = value; }
-        public double LyricMediumFontSize { get => (double)R[nameof(LyricMediumFontSize)]; set => R[nameof(LyricMediumFontSize)] = value; }
-        public double LyricSmallFontSize { get => (double)R[nameof(LyricSmallFontSize)]; set => R[nameof(LyricSmallFontSize)] = value; }
-        public double PanelOpacity {
-            get => (R[nameof(PanelOpacity)] as SolidColorBrush).Opacity;
-            set => R[nameof(PanelOpacity)] = new SolidColorBrush((R[nameof(PanelOpacity)] as SolidColorBrush).Color) { Opacity = value };
-        }
-
-        public double MusicVolume { get => C.MusicVolume; set => C.MusicVolume = value; }
-
-        [XmlIgnore]
-        public KeyValuePair<string, FontFamily> PrimaryFont
+        public FontFamily FontFamily { get; set; }
+        public override bool Equals(object obj)
         {
-            get => FontFamiliesList.ToList().Find(x => x.Value.Source == (R[nameof(PrimaryFont)] as FontFamily).Source);
-            set => R[nameof(PrimaryFont)] = value.Value;
+            if (obj is FontFamilyPair)
+                if (((FontFamilyPair)obj).Source == Source)
+                    return true;
+            return false;
         }
-        public string PrimaryFontSource
+        public override int GetHashCode()
         {
-            get => PrimaryFont.Value.Source;
-            set
-            {
-                PrimaryFont = FontFamiliesList.ToList().Find(x => value == x.Value.Source);
-            }
+            return Source.GetHashCode();
         }
-        [XmlIgnore]
-        public KeyValuePair<string, FontFamily> LyricFont
+    }
+
+    public class DoubleSetting : SettingItemStruct<double>
+    {
+        public override double ConvertFromString(string valueString)
         {
-            get => FontFamiliesList.ToList().Find(x => x.Value.Source == (R[nameof(LyricFont)] as FontFamily).Source);
-            set => R[nameof(LyricFont)] = value.Value;
-        }
-        public string LyricFontFontSource
-        {
-            get => LyricFont.Value.Source;
-            set
-            {
-                LyricFont = FontFamiliesList.ToList().Find(x => value == x.Value.Source);
-            }
+            if (double.TryParse(valueString, out double result))
+                return result;
+            else
+                return GetValue();
         }
 
-
-        [XmlIgnore]
-        public ICommand SaveSettingsCmd => new RelayCommand(SaveSettingAsXml, () => true);
-        public static string SaveFilePath { get; set; } = $@"{AppDomain.CurrentDomain.BaseDirectory}Setting.xml";
-        public void SaveSettingAsXml()
+        public override string ConvertToString(double value)
         {
-            Console.WriteLine("saved");
-            SaveSettingAsXml(this, SaveFilePath);
+            return value.ToString("F");
         }
-        public static void SaveSettingAsXml(SettingsViewModel settings, string fileName)
+
+        public override double GetValue()
+        {
+            return (double)R[Name];
+        }
+
+        public override void SetValue(double newValue)
+        {
+            R[Name] = newValue;
+        }
+    }
+
+    public class OpacitySetting : DoubleSetting
+    {
+
+        public override double GetValue()
+        {
+            return (R[Name] as SolidColorBrush).Opacity;
+        }
+
+        public override void SetValue(double newValue)
+        {
+            R[Name] = new SolidColorBrush((R[Name] as SolidColorBrush).Color) { Opacity = newValue };
+        }
+    }
+
+    public class VolumeSetting: DoubleSetting
+    {
+        private ControllerViewModel C => App.Controller;
+        public override double GetValue()
+        {
+            return C.MusicVolume;
+        }
+        public override void SetValue(double newValue)
+        {
+            C.MusicVolume = newValue;
+        }
+    }
+
+    public static class ObjectSaveToXML<T> where T : new()
+    {
+        public static void SaveSettingAsXml(T @object, string fileName)
         {
             try
             {
                 XmlDocument xmlDocument = new XmlDocument();
-                XmlSerializer serializer = new XmlSerializer(settings.GetType());
+                XmlSerializer serializer = new XmlSerializer(@object.GetType());
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    serializer.Serialize(stream, settings);
+                    serializer.Serialize(stream, @object);
                     stream.Position = 0;
                     xmlDocument.Load(stream);
                     xmlDocument.Save(fileName);
@@ -251,13 +436,13 @@ namespace MusicPLayerV2.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{typeof(SettingsViewModel)}.SaveSettingAsXml: {ex}");
+                Console.WriteLine($"{typeof(T)}.SaveSettingAsXml: {ex}");
             }
         }
-        public static SettingsViewModel LoadSettingFromXml(string fileName)
+        public static T LoadSettingFromXml(string fileName)
         {
             if (string.IsNullOrEmpty(fileName)) { throw new ArgumentNullException("NameNull"); }
-            SettingsViewModel Setting = new SettingsViewModel();
+            T Setting = new T();
             try
             {
                 XmlDocument xmlDocument = new XmlDocument();
@@ -265,10 +450,10 @@ namespace MusicPLayerV2.ViewModels
                 string xmlString = xmlDocument.OuterXml;
                 using (StringReader read = new StringReader(xmlString))
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(SettingsViewModel));
+                    XmlSerializer serializer = new XmlSerializer(typeof(T));
                     using (XmlReader reader = new XmlTextReader(read))
                     {
-                        Setting = (SettingsViewModel)serializer.Deserialize(reader);
+                        Setting = (T)serializer.Deserialize(reader);
                         reader.Close();
                     }
                     read.Close();
@@ -276,19 +461,33 @@ namespace MusicPLayerV2.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{typeof(SettingsViewModel)}.LoadSettingFromXml: {ex}");
+                Console.WriteLine($"{typeof(T)}.LoadSettingFromXml: {ex}");
             }
             return Setting;
+        }
+    }
+
+    public partial class SettingsViewModel
+    {
+        [XmlIgnore]
+        public ICommand SaveSettingsCmd => new RelayCommand(SaveSettingAsXml, () => true);
+        [XmlIgnore]
+        public ICommand ApplySettingsCmd => new RelayCommand(() => ApplySetting(), () => true);
+        public static string SaveFilePath { get; set; } = $@"{AppDomain.CurrentDomain.BaseDirectory}Setting.xml";
+        public void SaveSettingAsXml()
+        {
+            ObjectSaveToXML<SettingsViewModel>.SaveSettingAsXml(this, SaveFilePath);
         }
         public static SettingsViewModel LoadOrNew()
         {
             SettingsViewModel Loadded = null, newone = new SettingsViewModel();
             if (File.Exists(SaveFilePath))
             {
-                return Loadded = LoadSettingFromXml(SaveFilePath);
+                Loadded = ObjectSaveToXML<SettingsViewModel>.LoadSettingFromXml(SaveFilePath);
+                Loadded.ApplySetting();
+                return Loadded;
             }
             return newone;
         }
     }
-
 }

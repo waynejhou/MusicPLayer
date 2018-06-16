@@ -198,12 +198,12 @@ namespace MusicPLayer.Models
         /// </summary>
         /// <param name="sender">事件當事者</param>
         /// <param name="e">是否人工中止/param>
-        public delegate void StoppedEventHandler(object sender);
+        //public delegate void StoppedEventHandler(object sender);
 
         /// <summary>
         /// 當音樂停止時觸發
         /// </summary>
-        public event StoppedEventHandler StoppedEvent;
+        //public event StoppedEventHandler StoppedEvent;
 
         /// <summary>
         /// 位置變化委派處理

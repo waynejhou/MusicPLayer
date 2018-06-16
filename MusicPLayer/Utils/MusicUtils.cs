@@ -176,6 +176,10 @@ namespace MusicPLayer.Utils
             if (Path != (obj as MusicItem).Path) return false;
             return true;
         }
+        public override int GetHashCode()
+        {
+            return Path.GetHashCode();
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         void NotifyPropertyChanged([CallerMemberName] string propertyName = "")

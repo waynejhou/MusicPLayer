@@ -18,7 +18,7 @@ namespace MusicPLayerV2.ViewModels
             PM.LoaddedEvent += PM_LoaddedEvent;
             PM.PlaybackStateChangedChangedEvent += PM_PlaybackStateChangedChangedEvent;
             PM.WavePositionChangedEvent += PM_WavePositionChangedEvent;
-            PM.StoppedEvent += PM_StoppedEvent;
+            //PM.StoppedEvent += PM_StoppedEvent;
         }
 
 

@@ -38,6 +38,7 @@ namespace MusicPLayerV2
             Log.Info("Starting App");
             LogMachineDetails();
             MainWin = new MainWindow();
+            App.MainWin.Language = XmlLanguage.GetLanguage("zh-tw");
             Settings = SettingsViewModel.LoadOrNew();
             Settings.SaveSettingAsXml();
             MainWin.Show();
