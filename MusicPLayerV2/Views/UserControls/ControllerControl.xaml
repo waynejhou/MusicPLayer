@@ -203,7 +203,7 @@
                                 <TextBlock Text="{DynamicResource SymbolCode_Volume}"/>
                                 <Popup x:Name="VolumnPopup" VerticalOffset="-60" MouseEnter="VolumnPopup_MouseEnter" MouseLeave="VolumnPopup_MouseLeave" AllowsTransparency="True">
                                     <Border Style="{DynamicResource CardBorderStyle}">
-                                        <local:PositionControl FontFamily="Microsoft JhengHei" FontSize="{DynamicResource SmallFontSize}"
+                                        <local:PositionControl FontFamily="Microsoft JhengHei" FontSize="{DynamicResource TextSmallFontSize}"
                                                                ThumbSize="20" Width="150" Height="30"  Style="{DynamicResource PositionControlStyle}"
                                                                Min="0" Max="1" NowValue="{Binding MusicVolume}"
                                                                IsSetValueOnlyUuholdThumb="False"
@@ -240,10 +240,10 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Content="{Binding MusicPosition}" ContentStringFormat="{}{0:mm\:ss}"
                                VerticalAlignment="Center"
-                               Foreground="{DynamicResource ForegroundColor}" FontSize="{DynamicResource SmallFontSize}"/>
+                               Foreground="{DynamicResource ForegroundColor}" FontSize="{DynamicResource TextSmallFontSize}"/>
                         <Label Grid.Column="2" Content="{Binding MusicLength}" ContentStringFormat="{}{0:mm\:ss}"
                                VerticalAlignment="Center"
-                               Foreground="{DynamicResource ForegroundColor}" FontSize="{DynamicResource SmallFontSize}"/>
+                               Foreground="{DynamicResource ForegroundColor}" FontSize="{DynamicResource TextSmallFontSize}"/>
                         <local:PositionControl x:Name="PosiC" Grid.Column="1"
                                        NowValue="{Binding MusicPositionDouble}"
                                        Min="0"
