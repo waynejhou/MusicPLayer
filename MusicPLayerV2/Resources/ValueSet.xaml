@@ -23,7 +23,7 @@
     <sys:Double x:Key="LyricSmallFontSize">16</sys:Double>
     <sys:Double x:Key="LyricMediumFontSize">25</sys:Double>
 
-    <sys:Double x:Key="LoadedCoverSize">500</sys:Double>
+    <sys:Double x:Key="LoadedCoverSize">2000</sys:Double>
 
     <Visibility x:Key="BackgroundCoverVisibility">Hidden</Visibility>
     <Visibility x:Key="MiniBackgroundCoverVisibility">Visible</Visibility>
