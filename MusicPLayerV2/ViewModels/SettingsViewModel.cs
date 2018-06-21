@@ -49,7 +49,9 @@ namespace MusicPLayerV2.ViewModels
 
             PanelOpacity,
 
-            MusicVolume
+            MusicVolume,
+            BackgroundCoverVisibility,
+            MiniBackgroundCoverVisibility
             };
 
 
@@ -80,6 +82,9 @@ namespace MusicPLayerV2.ViewModels
         public OpacitySetting PanelOpacity { get; set; } = new OpacitySetting() { Name = nameof(PanelOpacity) };
 
         public VolumeSetting MusicVolume { get; set; } = new VolumeSetting() { Name = nameof(MusicVolume) };
+
+        public VisibilitySetting BackgroundCoverVisibility { get; set; } = new VisibilitySetting() { Name = nameof(BackgroundCoverVisibility) };
+        public VisibilitySetting MiniBackgroundCoverVisibility { get; set; } = new VisibilitySetting() { Name = nameof(MiniBackgroundCoverVisibility) };
 
         public void ApplySetting()
         {
@@ -417,6 +422,44 @@ namespace MusicPLayerV2.ViewModels
         }
     }
 
+    public class BoolSetting : SettingItemStruct<bool>
+    {
+        public override bool ConvertFromString(string valueString)
+        {
+            if (bool.TryParse(valueString, out bool result))
+                return result;
+            else
+                return GetValue();
+        }
+        public override string ConvertToString(bool value)
+        {
+            return value.ToString();
+        }
+        public override bool GetValue()
+        {
+            return (bool)R[Name];
+        }
+        public override void SetValue(bool newValue)
+        {
+            R[Name] = newValue;
+        }
+    }
+    public class VisibilitySetting : BoolSetting
+    {
+        public override bool GetValue()
+        {
+            return ((Visibility)R[Name]) == Visibility.Visible;
+        }
+        public override void SetValue(bool newValue)
+        {
+            R[Name] = newValue ? Visibility.Visible : Visibility.Collapsed;
+            if (Name.StartsWith("Mini"))
+                App.MainWin.SetBackgroundCoverMode(Views.MainWindowMode.Mini);
+            else
+                App.MainWin.SetBackgroundCoverMode(Views.MainWindowMode.Normal);
+        }
+    }
+
     public static class ObjectSaveToXML<T> where T : new()
     {
         public static void SaveSettingAsXml(T @object, string fileName)
@@ -471,14 +514,14 @@ namespace MusicPLayerV2.ViewModels
     {
         [XmlIgnore]
         public ICommand SaveSettingsCmd => new RelayCommand(()=> {
+            ApplySetting();
             SaveSettingAsXml();
-            MessageBox.Show("Saved");
-            }, () => true);
+            MessageBox.Show((string)R["Setting_Saved"], App.MainWin.Title);
+        }, () => true);
         [XmlIgnore]
         public ICommand ApplySettingsCmd => new RelayCommand(() =>
         {
             ApplySetting();
-            MessageBox.Show("Applied");
         }, () => true);
         public static string SaveFilePath { get; set; } = $@"{AppDomain.CurrentDomain.BaseDirectory}Setting.xml";
         public void SaveSettingAsXml()

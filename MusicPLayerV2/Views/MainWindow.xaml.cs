@@ -113,9 +113,6 @@ namespace MusicPLayerV2.Views
                     WindowState = WindowState.Normal;
                     Height = 400;
                     Width = 300;
-                    BackImage.Visibility = Visibility.Visible;
-                    BackImage2.Visibility = Visibility.Visible;
-                    AlbumImage.Visibility = Visibility.Collapsed;
                     Topmost = true;
                     break;
                 case MainWindowMode.Normal:
@@ -128,9 +125,6 @@ namespace MusicPLayerV2.Views
                     Height = TSize.Height;
                     Width = TSize.Width;
                     WindowState = TState;
-                    BackImage.Visibility = Visibility.Collapsed;
-                    BackImage2.Visibility = Visibility.Collapsed;
-                    AlbumImage.Visibility = Visibility.Visible;
                     Topmost = false;
                     break;
                 case MainWindowMode.FullScreen:
@@ -138,6 +132,33 @@ namespace MusicPLayerV2.Views
                 default:
                     break;
             }
+            SetBackgroundCoverMode(value);
+        }
+
+        public void SetBackgroundCoverMode(MainWindowMode value)
+        {
+            if (WindowMode == value)
+                switch (value)
+                {
+                    case MainWindowMode.Mini:
+                        if (((Visibility)R["MiniBackgroundCoverVisibility"]) == Visibility.Visible)
+                            BackImage.Visibility = Visibility.Visible;
+                        else
+                            BackImage.Visibility = Visibility.Collapsed;
+                        BackImage2.Visibility = Visibility.Visible;
+                        AlbumImage.Visibility = Visibility.Collapsed;
+                        AlbumArtBorder.Visibility = Visibility.Collapsed;
+                        break;
+                    case MainWindowMode.Normal:
+                        BackImage.Visibility = Visibility.Collapsed;
+                        BackImage2.Visibility = Visibility.Collapsed;
+                        AlbumImage.Visibility = Visibility.Visible;
+                        if (((Visibility)R["BackgroundCoverVisibility"]) == Visibility.Visible)
+                            AlbumArtBorder.Visibility = Visibility.Visible;
+                        else
+                            AlbumArtBorder.Visibility = Visibility.Collapsed;
+                        break;
+                }
         }
 
         private void StateWinBtn_Click(object sender, RoutedEventArgs e)

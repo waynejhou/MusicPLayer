@@ -222,14 +222,14 @@
 
     <Border CornerRadius="10" Background="{DynamicResource PrimaryColor}" ClipToBounds="True">
         <Grid>
-            <Image x:Name="BackImage" Opacity="0.2" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center"
+            <Image x:Name="BackImage" Opacity="0.2" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center" 
                Source="{Binding MusicPicture}"
                Visibility="Collapsed">
                 <Image.Effect>
                     <BlurEffect Radius="15"/>
                 </Image.Effect>
             </Image>
-            <Border x:Name="BackImageBack" Background="Transparent" HorizontalAlignment="Center"  VerticalAlignment="Top" >
+            <Border x:Name="BackImageBack" Background="Transparent" HorizontalAlignment="Center"  VerticalAlignment="Top"  >
                 <Image x:Name="BackImage2" Opacity="0.4" Stretch="Uniform" HorizontalAlignment="Right"
                    Source="{Binding MusicPicture}"
                    Visibility="Collapsed"/>
@@ -282,7 +282,7 @@
                             </Border>
                             <Border Style="{DynamicResource CardBorderStyle}" >
                                 <Grid>
-                                    <Border x:Name="AlbumArtBorder">
+                                    <Border x:Name="AlbumArtBorder" >
                                         <Border.Effect>
                                             <BlurEffect Radius="30"/>
                                         </Border.Effect>

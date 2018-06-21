@@ -55,10 +55,18 @@
     <String x:Key="Setting_LyricMediumFontSize">歌詞中型字大小</String>
     <String x:Key="Setting_LyricSmallFontSize">歌詞小型字大小</String>
 
+    <String x:Key="Setting_CoverSetting">專輯封面</String>
+    <String x:Key="Setting_ShowBackgronndCover">背景放專輯封面</String>
+    <String x:Key="Setting_ShowBackgronndCoverAtMini">迷你模式下背景放專輯封面</String>
+
     <String x:Key="Setting_Language">語言</String>
     <String x:Key="Setting_NowLanguage">現在語言: </String>
     <String x:Key="Setting_Language_zh-tw">繁體中文 - 臺灣</String>
     <String x:Key="Setting_Language_en-us">English - US (英文 - 美國)</String>
     
     <String x:Key="Setting_PlayerSettings">撥放器設定調整</String>
+
+    <String x:Key="Setting_Apply">套用</String>
+    <String x:Key="Setting_ApplyAndSave">套用並存檔</String>
+    <String x:Key="Setting_Saved">已存檔</String>
 </wpf:ResourceDictionary>

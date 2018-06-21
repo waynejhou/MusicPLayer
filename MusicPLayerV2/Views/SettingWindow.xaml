@@ -125,8 +125,8 @@
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="1"  Orientation="Horizontal">
-                        <Button Content="套用" Margin="5" Padding="5 0 5 0" Command="{Binding ApplySettingsCmd}"/>
-                        <Button Content="儲存" Margin="5" Padding="5 0 5 0" Command="{Binding SaveSettingsCmd}"/>
+                        <Button Content="{DynamicResource Setting_Apply}" FontSize="15" Margin="5" Padding="10 0 10 0" Command="{Binding ApplySettingsCmd}"/>
+                        <Button Content="{DynamicResource Setting_ApplyAndSave}" FontSize="15" Margin="5" Padding="10 0 10 0" Command="{Binding SaveSettingsCmd}"/>
                     </StackPanel>
                 </Grid>
                 <TabControl x:Name="TagCtrl"
@@ -134,7 +134,7 @@
                             ItemContainerStyle="{DynamicResource TabItemStyle}"
                             Padding="0"
                             BorderThickness="0" TabStripPlacement="Left">
-                    <TabItem>
+                    <TabItem x:Name="UISettings">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
                                 <Label Content="{DynamicResource Setting_Colors}" Style="{DynamicResource Separator}"/>
@@ -187,6 +187,15 @@
                                         <xctk:DoubleUpDown Value="{Binding TextSmallFontSize.Value}" Style="{DynamicResource DoubleUpDownStyle}" />
                                     </Label>
                                 </ItemsControl>
+                                <Label Content="{DynamicResource Setting_CoverSetting}" Style="{DynamicResource Separator}"/>
+                                <ItemsControl Style="{DynamicResource ItemsControlStyle}">
+                                    <Label AutomationProperties.Name="{DynamicResource Setting_ShowBackgronndCover}" Style="{DynamicResource LabelStyle}">
+                                        <CheckBox IsChecked="{Binding BackgroundCoverVisibility.Value}"/>
+                                    </Label>
+                                    <Label AutomationProperties.Name="{DynamicResource Setting_ShowBackgronndCoverAtMini}" Style="{DynamicResource LabelStyle}">
+                                        <CheckBox IsChecked="{Binding MiniBackgroundCoverVisibility.Value}"/>
+                                    </Label>
+                                </ItemsControl>
                                 <Label Content="{DynamicResource Setting_LyricDisplay}" Style="{DynamicResource Separator}"/>
                                 <ItemsControl Style="{DynamicResource ItemsControlStyle}">
                                     <Label AutomationProperties.Name="{DynamicResource Setting_LyricFont}" Style="{DynamicResource LabelStyle}">
@@ -216,6 +225,7 @@
                                     </Label>
 
                                 </ItemsControl>
+                                
                             </StackPanel>
                         </ScrollViewer>
                     </TabItem>

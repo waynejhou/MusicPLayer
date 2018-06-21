@@ -55,10 +55,18 @@
     <String x:Key="Setting_LyricMediumFontSize">Lyric Medium Font Size</String>
     <String x:Key="Setting_LyricSmallFontSize">Lyric Small Font Size</String>
 
+    <String x:Key="Setting_CoverSetting">Cover</String>
+    <String x:Key="Setting_ShowBackgronndCover">Show Cover at Backgronnd</String>
+    <String x:Key="Setting_ShowBackgronndCoverAtMini">Show Cover at Backgronnd in Mini Mode</String>
+
     <String x:Key="Setting_Language">Language</String>
     <String x:Key="Setting_NowLanguage">Now Language: </String>
     <String x:Key="Setting_Language_en-us">English - US</String>
     <String x:Key="Setting_Language_zh-tw">繁體中文-臺灣 (Traditional Chinese - Taiwan)</String>
 
     <String x:Key="Setting_PlayerSettings">Music Player Settings</String>
+
+    <String x:Key="Setting_Apply">Apply</String>
+    <String x:Key="Setting_ApplyAndSave">Apply And Save</String>
+    <String x:Key="Setting_Saved">Saved</String>
 </wpf:ResourceDictionary>
