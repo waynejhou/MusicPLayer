@@ -197,8 +197,8 @@ namespace MusicPLayerV2.Views
                 return;
             if (NPI.Picture == null)
                 return;
-            ImageBorder.MaxWidth = NPI.Picture.PixelWidth;
-            ImageBorder.MaxHeight = NPI.Picture.PixelHeight;
+            ImageBorder.MaxHeight = NPI.PictureSize.Height;
+            ImageBorder.MaxWidth = NPI.PictureSize.Width;
         }
 
         private void MainWin_SizeChanged(object sender, SizeChangedEventArgs e)

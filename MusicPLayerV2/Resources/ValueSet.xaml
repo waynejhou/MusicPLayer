@@ -23,6 +23,8 @@
     <sys:Double x:Key="LyricSmallFontSize">16</sys:Double>
     <sys:Double x:Key="LyricMediumFontSize">25</sys:Double>
 
+    <sys:Double x:Key="LoadedCoverSize">500</sys:Double>
+
     <FontFamily x:Key="PrimaryFont">Arial</FontFamily>
     <FontFamily x:Key="LyricFont">Consolas</FontFamily>
     <FontFamily x:Key="SymbolFont">/MusicPLayerV2;component/Resources/Fonts/#Segoe MDL2 Assets</FontFamily>

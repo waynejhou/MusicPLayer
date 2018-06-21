@@ -42,13 +42,13 @@ namespace MusicPLayerV2.ViewModels
 
         public void AddToList(string path)
         {
-            PlayingList.Add(MusicItem.CreatFromFile(path, false));
+            PlayingList.Add(MusicItem.CreateFromFile(path, false, (double)R["LoadedCoverSize"]));
         }
         public void AddToList(string[] paths)
         {
             foreach (var s in paths)
             {
-                PlayingList.Add(MusicItem.CreatFromFile(s, false));
+                PlayingList.Add(MusicItem.CreateFromFile(s, false, (double)R["LoadedCoverSize"]));
             }
         }
         public void AddToList(MusicItem musicItem)
@@ -66,7 +66,7 @@ namespace MusicPLayerV2.ViewModels
         {
             if (!MusicPlayer.SupportCheck(path, (string)R["Filter_AudioFile"]))
                 return;
-            MusicItem newone = MusicItem.CreatFromFile(path);
+            MusicItem newone = MusicItem.CreateFromFile(path, true, (double)R["LoadedCoverSize"]);
             AddToList(newone);
             PM.LoadFromMusicItem(newone);
         }

@@ -24,6 +24,7 @@ namespace MusicPLayerV2.Models
         TimeSpan _position = TimeSpan.Zero;
         Thread _wavePostionUpdThd;
         bool _manualStop = false;
+        System.Windows.ResourceDictionary R => App.Current.Resources;
         #endregion
 
         #region 屬性
@@ -155,7 +156,7 @@ namespace MusicPLayerV2.Models
         /// <param name="fileName">檔案路徑</param>
         public void LoadFromPath(string fileName)
         {
-            LoadFromMusicItem(MusicItem.CreatFromFile(fileName));
+            LoadFromMusicItem(MusicItem.CreateFromFile(fileName, true, (double)R["LoadedCoverSize"]));
         }
 
         /// <summary>
@@ -169,7 +170,7 @@ namespace MusicPLayerV2.Models
             Dispose();
             NowPlayingItem = musicItem;
             if (musicItem.Picture == null)
-                musicItem.TryUpdatePicture();
+                musicItem.TryUpdatePicture((double)R["LoaddedCoverSize"]);
             _waveSource = CodecFactory.Instance.GetCodec(musicItem.Path)
                 .ToSampleSource()
                 .ToStereo()

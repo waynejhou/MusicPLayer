@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 
@@ -19,121 +20,79 @@ namespace MusicPLayerV2.Utils
     /// </summary>
     public class MusicItem: INotifyPropertyChanged
     {
-        #region 內部變數
-
-        string _path;
-        string _title;
-        string _album;
-        string _artist;
-        string _albumArtist;
-        string _pictureBase64;
-        DateTime _fileLastModded;
-        uint _year;
-        uint _track;
-        string _genre;
-        TimeSpan _length;
-        BitmapImage _picture;
-
-        #endregion
-
         #region 屬性
 
         /// <summary>
         /// 音樂檔案路徑
         /// </summary>
-        public string Path { get => _path; set => _path = value; }
+        public string Path { get; set; }
 
         /// <summary>
         /// 音樂標題
-        /// (空白標題會直接引用檔名)
         /// </summary>
-        public string Title
-        {
-            get => string.IsNullOrWhiteSpace(_title) ? new FileInfo(Path).Name : _title;
-            set => _title = value;
-        }
+        public string Title { get; set; }
 
         /// <summary>
         /// 音樂專輯
         /// </summary>
-        public string Album
-        {
-            get => string.IsNullOrWhiteSpace(_album) ? UnknowItem._album : _album;
-            set => _album = value;
-        }
+        public string Album { get; set; }
 
         /// <summary>
         /// 音樂演出者
         /// </summary>
-        public string Artist
-        {
-            get => string.IsNullOrWhiteSpace(_artist) ? UnknowItem._artist : _artist;
-            set => _artist = value;
-        }
+        public string Artist { get; set; }
 
         /// <summary>
         /// 音樂專輯演出者
         /// </summary>
-        public string AlbumArtist
-        {
-            get => string.IsNullOrWhiteSpace(_albumArtist) ? UnknowItem._albumArtist : _albumArtist;
-            set => _albumArtist = value;
-        }
+        public string AlbumArtist { get; set; }
 
         /// <summary>
         /// 音樂分類
         /// </summary>
-        public string Genre
-        {
-            get => string.IsNullOrWhiteSpace(_genre) ? UnknowItem._genre : _genre;
-            set => _genre = value;
-        }
+        public string Genre { get; set; }
 
         /// <summary>
         /// 音樂年分
         /// </summary>
-        public uint Year { get => _year; set => _year = value; }
+        public uint Year { get; set; }
 
         /// <summary>
         /// 音樂軌數
         /// </summary>
-        public uint Track { get => _track; set => _track = value; }
+        public uint Track { get; set; }
 
         /// <summary>
         /// 檔案最後修改日期
         /// </summary>
-        public DateTime FileLastModded { get => _fileLastModded; set => _fileLastModded = value; }
+        public DateTime FileLastModded { get; set; }
 
         /// <summary>
         /// 音樂長度
         /// </summary>
-        public TimeSpan Length { get => _length; set => _length = value; }
+        public TimeSpan Length { get; set; }
 
         /// <summary>
         /// 音樂長度字串
         /// 給懶得打 ToString(@"mm\:ss") 人用的
         /// </summary>
+        [XmlIgnore]
         public string LengthString => Length.ToString(@"mm\:ss");
 
         /// <summary>
         /// 音樂專輯圖片字串
         /// (Base64)
         /// </summary>
-        public string PictureBase64
-        {
-            get => string.IsNullOrWhiteSpace(_pictureBase64) ? null : _pictureBase64;
-            set => _pictureBase64 = value;
-        }
+        public string PictureBase64 { get; set; }
 
         /// <summary>
         /// 音樂專輯圖片
         /// </summary>
         [XmlIgnore]
-        public BitmapImage Picture
-        {
-            get => _picture;
-            set => _picture = value;
-        }
+        public ImageSource Picture { get; set; }
+
+        [XmlIgnore]
+        public Size PictureSize { get; private set; }
 
         bool _isNowPlaying;
         public bool IsNowPlaying
@@ -149,7 +108,7 @@ namespace MusicPLayerV2.Utils
         /// <summary>
         /// 未知的音樂項目
         /// </summary>
-        public static MusicItem UnknowItem => new MusicItem
+        public static MusicItem UnknowItem { get; } = new MusicItem
         {
             Title = "Unknow Title",
             Album = "Unknow Album",
@@ -181,13 +140,12 @@ namespace MusicPLayerV2.Utils
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
         public void NotifyMusicItem()
         {
             NotifyPropertyChanged(nameof(IsNowPlaying));
         }
 
-        public void TryUpdatePicture()
+        public void TryUpdatePicture(double imgSize = 500)
         {
             using (var t = TagLib.File.Create(Path))
             {
@@ -207,7 +165,7 @@ namespace MusicPLayerV2.Utils
                         Picture = new BitmapImage(new Uri(picPath));
                 }
                 else
-                    Picture = ImageData2BitmapImage(tag.Pictures[0].Data.Data);
+                    Picture = FormatImage(tag.Pictures[0].Data.Data, imgSize);
             }
         }
         #endregion
@@ -219,27 +177,53 @@ namespace MusicPLayerV2.Utils
         /// </summary>
         /// <param name="data">影像資料</param>
         /// <returns></returns>
-        public static BitmapImage ImageData2BitmapImage(byte[] data)
+        private ImageSource FormatImage(byte[] data, double imgSize)
         {
             if (data == null)
                 return null;
             BitmapImage ret = new BitmapImage();
-            using (MemoryStream ms = new MemoryStream(data))
+            using (MemoryStream ms = new MemoryStream(data, 0, data.Length, true, true))
+            using (System.Drawing.Image image = System.Drawing.Image.FromStream(ms))
             {
-                ret.BeginInit();
-                ret.StreamSource = ms;
-                ret.CacheOption = BitmapCacheOption.OnLoad;
-                ret.EndInit();
+                System.Drawing.Bitmap bmp;
+                if(Math.Max(image.Height, image.Width)>imgSize)
+                {
+                    if (image.Width > image.Height)
+                    {
+                        var newWidth = (int)imgSize;
+                        var newHeight = (int)Math.Round(image.Height * ((float)imgSize / image.Width));
+                        bmp = new System.Drawing.Bitmap(image, newWidth, newHeight);
+                    }
+                    else
+                    {
+                        var newHeight = (int)imgSize;
+                        var newWidth = (int)Math.Round(image.Width * ((float)imgSize / image.Height));
+                        bmp = new System.Drawing.Bitmap(image, newWidth, newHeight);
+                    }
+                }
+                else
+                {
+                    bmp = new System.Drawing.Bitmap(image, image.Width, image.Height);
+                }
+                PictureSize = new Size(bmp.Width, bmp.Height);
+                using (var newms = new MemoryStream())
+                {
+                    bmp.Save(newms, System.Drawing.Imaging.ImageFormat.Png);
+                    newms.Position = 0;
+                    ret.BeginInit();
+                    ret.StreamSource = newms;
+                    ret.CacheOption = BitmapCacheOption.OnLoad;
+                    ret.EndInit();
+                }
             }
             return ret;
         }
-
         /// <summary>
         /// 讀取檔案回傳
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns>音樂項目</returns>
-        public static MusicItem CreatFromFile(string fileName, bool loadImage = true)
+        public static MusicItem CreateFromFile(string fileName, bool loadImage = true, double imgSize = 500d)
         {
 
             MusicItem ret;
@@ -247,27 +231,6 @@ namespace MusicPLayerV2.Utils
             using (var t = TagLib.File.Create(fileName,rs))
             {
                 var tag = t.Tag;
-                BitmapImage pic=null;
-                if (loadImage)
-                {
-                    if (tag.Pictures.Length <= 0)
-                    {
-                        var picPath =
-                            new FileInfo(fileName).Directory.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
-                            .Where(x => x.Name.Contains("Cover"))
-                            .Where(x => x.Name.EndsWith(".png")
-                            || x.Name.EndsWith(".jpg")
-                            || x.Name.EndsWith(".PNG")
-                            || x.Name.EndsWith(".JPG")
-                            || x.Name.EndsWith(".jpeg")
-                            || x.Name.EndsWith(".JPEG")).Select(x => x.FullName).FirstOrDefault();
-                        if (!string.IsNullOrWhiteSpace(picPath))
-                            pic = new BitmapImage(new Uri(picPath));
-                    }
-                    else
-                        pic = ImageData2BitmapImage(tag.Pictures[0].Data.Data);
-                }
-
                 ret = new MusicItem()
                 {
                     Title = tag.Title,
@@ -278,10 +241,10 @@ namespace MusicPLayerV2.Utils
                     Path = fileName,
                     Year = tag.Year,
                     Track = tag.Track,
-                    Length = CSCore.Codecs.CodecFactory.Instance.GetCodec(fileName).GetLength(),
-                    Picture = pic
+                    Length = CSCore.Codecs.CodecFactory.Instance.GetCodec(fileName).GetLength()
                 };
             }
+            ret.TryUpdatePicture(imgSize);
             return ret;
         }
 
