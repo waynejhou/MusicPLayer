@@ -23,13 +23,13 @@ namespace MusicPLayerV2.ViewModels
 
 
         private MusicPlayer PM => App.PlayerModel;
-        private MusicItem NPI => App.PlayerModel.NowPlayingItem;
+        private SongEntity NPI => App.PlayerModel.NowPlayingItem;
         private ResourceDictionary R => App.Current.Resources;
         private ControllerViewModel C => App.Controller;
         private PlayingListViewModel L => App.PlayingList;
 
-        public string MusicTitle => PM.NowPlayingItem.Title;
-        public string MusicArtistAlbum => $"{NPI.Artist}\n{NPI.Album}";
+        public string MusicTitle => NPI == null ? "unknown" : PM.NowPlayingItem.Title;
+        public string MusicArtistAlbum => NPI == null ? "unknown" : $"{NPI.Artists}\n{NPI.Album}";
         public string MusicPlayPauseBtnStr =>
             (PM.PlaybackState == CSCore.SoundOut.PlaybackState.Playing) ? (string)R["SymbolCode_Pause"] : (string)R["SymbolCode_Play"];
         public TimeSpan MusicPosition
@@ -47,8 +47,8 @@ namespace MusicPLayerV2.ViewModels
             set => PM.Position = value;
         }
         public double MusicPositionDouble { get => MusicPosition.TotalMilliseconds; set => MusicPosition = TimeSpan.FromMilliseconds(value); }
-        public TimeSpan MusicLength => NPI.Length;
-        public double MusicLengthDouble => NPI.Length.TotalMilliseconds;
+        public TimeSpan MusicLength => NPI == null ? TimeSpan.FromSeconds(10) : NPI.Length;
+        public double MusicLengthDouble => NPI == null ? TimeSpan.FromSeconds(10).TotalMilliseconds : NPI.Length.TotalMilliseconds;
         public double MusicVolume { get => PM.Volume; set { PM.Volume = (float)value; NotifyPropertyChanged(nameof(MusicVolume)); } }
         public string NextMusicMode
         {

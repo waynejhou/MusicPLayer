@@ -44,7 +44,7 @@
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.ItemTemplate>
-                <DataTemplate DataType="{x:Type util:MusicItem}">
+                <DataTemplate DataType="{x:Type util:SongEntity}">
                     <Label Style="{DynamicResource LabelTriggerVisibleStyle}"
                            Width="{Binding  ActualWidth, ElementName=UserControl}"
                            HorizontalContentAlignment="Stretch"
@@ -59,7 +59,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" x:Name="IsPlayingBlock" FontFamily="{DynamicResource SymbolFont}"
                                        Text="{DynamicResource SymbolCode_PlayBadge}" Visibility="Collapsed"
-                                       FontSize="{DynamicResource SmallFontSize}"
+                                       FontSize="{DynamicResource TextSmallFontSize}"
                                        VerticalAlignment="Center" HorizontalAlignment="Center" Padding="5"/>
                             <TextBlock Grid.Column="1" Text="{Binding Title}"/>
                             <TextBlock x:Name="AlbumBlock" Grid.Column="2" Text="{Binding Album}"/>

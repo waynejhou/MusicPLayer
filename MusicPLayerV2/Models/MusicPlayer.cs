@@ -19,7 +19,7 @@ namespace MusicPLayerV2.Models
 
         IWaveSource _waveSource = null;
         ISoundOut _soundOut = null;
-        MusicItem _nowPlayingItem = MusicItem.UnknowItem;
+        SongEntity _nowPlayingItem;
         float _volume = 0.5f;
         TimeSpan _position = TimeSpan.Zero;
         Thread _wavePostionUpdThd;
@@ -32,12 +32,12 @@ namespace MusicPLayerV2.Models
         /// <summary>
         /// 現正撥放的音樂項目
         /// </summary>
-        public MusicItem NowPlayingItem { get => _nowPlayingItem; set => _nowPlayingItem = value; }
+        public SongEntity NowPlayingItem { get => _nowPlayingItem; set => _nowPlayingItem = value; }
 
         /// <summary>
         /// 是否有載入音樂
         /// </summary>
-        public bool IsLoadded => !string.IsNullOrWhiteSpace(NowPlayingItem.Path);
+        public bool IsLoadded => NowPlayingItem == null ? false : !string.IsNullOrWhiteSpace(NowPlayingItem.Path);
 
         /// <summary>
         /// 播放音量
@@ -156,21 +156,20 @@ namespace MusicPLayerV2.Models
         /// <param name="fileName">檔案路徑</param>
         public void LoadFromPath(string fileName)
         {
-            LoadFromMusicItem(MusicItem.CreateFromFile(fileName, true, (double)R["LoadedCoverSize"]));
+            LoadFromMusicItem(SongEntity.CreateFromFile(fileName));
         }
 
         /// <summary>
         /// MusicItem 讀取音樂檔案
         /// </summary>
         /// <param name="musicItem">MusicItem</param>
-        public void LoadFromMusicItem(MusicItem musicItem)
+        public void LoadFromMusicItem(SongEntity musicItem)
         {
-            NowPlayingItem.IsNowPlaying = false;
+            if (NowPlayingItem != null)
+                NowPlayingItem.IsNowPlaying = false;
             Stop();
             Dispose();
             NowPlayingItem = musicItem;
-            if (musicItem.Picture == null)
-                musicItem.TryUpdatePicture((double)R["LoaddedCoverSize"]);
             _waveSource = CodecFactory.Instance.GetCodec(musicItem.Path)
                 .ToSampleSource()
                 .ToStereo()
@@ -203,7 +202,7 @@ namespace MusicPLayerV2.Models
         {
             _wavePostionUpdThd?.Abort();
             _wavePostionUpdThd = null;
-            NowPlayingItem = MusicItem.UnknowItem;
+            NowPlayingItem = null;
             _waveSource?.Dispose();
             _waveSource = null;
             _soundOut?.Dispose();

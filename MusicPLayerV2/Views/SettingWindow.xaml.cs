@@ -33,6 +33,11 @@ namespace MusicPLayerV2.Views
                 return;
             TagCtrl.SelectedIndex = (sender as ListView).SelectedIndex;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.MusicDatabase.ExportTables( @"DB.json", Utils.ExportType.JSON);
+        }
     }
 
 }

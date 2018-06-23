@@ -30,7 +30,7 @@ namespace MusicPLayerV2.Views
         private static readonly ILog Log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private ResourceDictionary R => App.Current.Resources;
         private MusicPlayer PM => App.PlayerModel;
-        private MusicItem NPI => App.PlayerModel.NowPlayingItem;
+        private SongEntity NPI => App.PlayerModel.NowPlayingItem;
 
         public MainWindow()
         {
@@ -216,10 +216,10 @@ namespace MusicPLayerV2.Views
         {
             if (NPI == null)
                 return;
-            if (NPI.Picture == null)
+            if (NPI.AlbumEntity.Cover == null)
                 return;
-            ImageBorder.MaxHeight = NPI.PictureSize.Height;
-            ImageBorder.MaxWidth = NPI.PictureSize.Width;
+            ImageBorder.MaxHeight = NPI.AlbumEntity.CoverSize.Height;
+            ImageBorder.MaxWidth = NPI.AlbumEntity.CoverSize.Width;
         }
 
         private void MainWin_SizeChanged(object sender, SizeChangedEventArgs e)

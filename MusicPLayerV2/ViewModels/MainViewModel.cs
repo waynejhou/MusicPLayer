@@ -27,14 +27,14 @@ namespace MusicPLayerV2.ViewModels
         private readonly IDialogService DialogService;
         private  ResourceDictionary R => App.Current.Resources;
         private MusicPlayer PM => App.PlayerModel;
-        private MusicItem NPI => App.PlayerModel.NowPlayingItem;
+        private SongEntity NPI => App.PlayerModel.NowPlayingItem;
         private ControllerViewModel C => App.Controller;
         private PlayingListViewModel L => App.PlayingList;
 
         /// <summary>
         /// Title of the application, as displayed in the top bar of the window
         /// </summary>
-        public string Title => $"{NPI.Title} - MusicPLayer";
+        public string Title => NPI == null ? "MusicPLayer" : $"{NPI.Title} - MusicPLayer";
         #endregion
 
         #region Constructors
@@ -54,7 +54,7 @@ namespace MusicPLayerV2.ViewModels
         #endregion
 
         #region Property
-        public ImageSource MusicPicture => NPI.Picture ?? (BitmapImage)R["NoImage"];
+        public ImageSource MusicPicture =>  NPI==null? (BitmapImage)R["NoImage"] : NPI.AlbumEntity.Cover ?? (BitmapImage)R["NoImage"];
 
         public string LRCPath => (PM.IsLoadded) ? NPI.Path.Replace(new FileInfo(NPI.Path).Extension, ".lrc") : "";
 

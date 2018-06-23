@@ -27,7 +27,7 @@ namespace MusicPLayerV2.Views.UserControls
 
         private ResourceDictionary R => App.Current.Resources;
         private MusicPlayer PM => App.PlayerModel;
-        private MusicItem NPI => App.PlayerModel.NowPlayingItem;
+        private SongEntity NPI => App.PlayerModel.NowPlayingItem;
         private ControllerViewModel C => App.Controller;
         private PlayingListViewModel L => App.PlayingList;
 
@@ -38,7 +38,7 @@ namespace MusicPLayerV2.Views.UserControls
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            L.Load(ListViewL.SelectedItem as MusicItem);
+            L.Load(ListViewL.SelectedItem as SongEntity);
             C.PlayCmd.Execute(null);
         }
 

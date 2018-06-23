@@ -26,11 +26,12 @@ namespace MusicPLayerV2
         public static ControllerViewModel Controller { get; set; } = new ControllerViewModel();
         public static PlayingListViewModel PlayingList { get; set; } = new PlayingListViewModel();
         public static MainViewModel MainModel { get; set; }
+        public static string LocalAppData = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\MusicPLayer";
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Log.Info("Application Startup");
-
+            MusicPLayerV2.Utils.MusicDatabase.ImportTables(@"DB.json", Utils.ExportType.JSON);
             // For catching Global uncaught exception
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionOccured);
@@ -53,8 +54,7 @@ namespace MusicPLayerV2
         static void UnhandledExceptionOccured(object sender, UnhandledExceptionEventArgs args)
         {
             // Here change path to the log.txt file
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-                                                    + "\\wayne\\MusicPLayerV2\\log.txt";
+            var path = LocalAppData + @"\log.txt";
 
             // Show a message before closing application
             var dialogService = new MvvmDialogs.DialogService();

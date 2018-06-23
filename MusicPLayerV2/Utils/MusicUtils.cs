@@ -4,9 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -22,7 +24,7 @@ namespace MusicPLayerV2.Utils
     /// <summary>
     /// 音樂項目
     /// </summary>
-
+    /*
     public class MusicItem : INotifyPropertyChanged
     {
         #region 屬性
@@ -255,7 +257,7 @@ namespace MusicPLayerV2.Utils
 
         #endregion
     }
-
+    */
     #endregion
 
     public class LyricWithTime : DependencyObject, INotifyPropertyChanged
@@ -297,7 +299,6 @@ namespace MusicPLayerV2.Utils
     {
         static MusicDatabase()
         {
-
         }
         public static Dictionary<Type, IList> Tables => new Dictionary<Type, IList>()
         {
@@ -310,58 +311,223 @@ namespace MusicPLayerV2.Utils
         public static List<AlbumEntity> Albums { get; set; } = new List<AlbumEntity>() { };
         public static List<PerformerEntity> Performers { get; set; } = new List<PerformerEntity>() { };
         public static List<GenreEntity> Genres { get; set; } = new List<GenreEntity>() { };
-        public static void ExportTables(ExportType type)
+        static Regex lcbRegex = new Regex(@"\{", RegexOptions.Compiled);
+        static Regex rcbRegex = new Regex(@"\}", RegexOptions.Compiled);
+        static Regex jsonUnitRegex = new Regex("\"([^\"]+)\"[' ']*:[' ']*\"([^\"]*)\"");
+        static Regex jsonObjectRegex = new Regex("\"([^\"]+)\"[' ']*:[' '\\s]*\\[");
+        public static void ImportTables(string path, ExportType type, bool isCompression = true)
+        {
+            string allText;
+            if (isCompression)
+            {
+                if (!File.Exists(path + ".bin"))
+                    return;
+                using (var fs = File.OpenRead(path + ".bin"))
+                using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
+                using (var sd = new StreamReader(ds))
+                {
+                    allText = sd.ReadToEnd();
+                }
+            }
+            else
+                allText = File.ReadAllText(path);
+            Stack<int> poses = new Stack<int>();
+            int indent = -1;
+            string arrayName = "";
+            List <Dictionary<string, object>> tables = new List<Dictionary<string, object>>();
+            Stack<Dictionary<string, object>> tableStack = new Stack<Dictionary<string, object>>();
+            string str = "";
+            for (int i = 0; i < allText.Length; i++)
+            {
+                str += allText[i];
+                if (jsonObjectRegex.IsMatch(str))
+                {
+                    var m = jsonObjectRegex.Match(str);
+                    var n = new List<Dictionary<string, object>>();
+                    tableStack.Peek().Add(m.Groups[1].Value, n);
+                    arrayName = m.Groups[1].Value;
+                    Console.WriteLine("array[");
+                }
+                else if (lcbRegex.IsMatch(str))
+                {
+                    indent += 1;
+                    if (indent == 0)
+                    {
+                        var n = new Dictionary<string, object>();
+                        tables.Add(n);
+                        tableStack.Push(n);
+                    }
+                    else
+                    {
+                        var n = new Dictionary<string, object>();
+                        (tableStack.Peek()[arrayName] as List<Dictionary<string, object>>).Add(n);
+                        tableStack.Push(n);
+                    }
+                    Console.WriteLine($"push() {indent}");
+                }
+                else if (rcbRegex.IsMatch(str))
+                {
+                    indent -= 1;
+                    tableStack.Pop();
+                    Console.WriteLine($"pop() {indent}");
+                }
+                else if (jsonUnitRegex.IsMatch(str))
+                {
+                    var m = jsonUnitRegex.Match(str);
+                    tableStack.Peek().Add(m.Groups[1].Value, m.Groups[2].Value);
+                    //Console.WriteLine($"{m.Groups[1]}  --  {m.Groups[2]}");
+                }
+                else
+                    continue;
+                str = "";
+                continue;
+            }
+            var items = tables[3]["Items"] as List<Dictionary<string, object>>;
+            foreach(var genre in items)
+            {
+                Genres.Add(new GenreEntity()
+                {
+                    Id = Int32.Parse((string)genre["Id"]),
+                    Name = (string)genre["GenreName"]
+                });
+            }
+            items = tables[2]["Items"] as List<Dictionary<string, object>>;
+            foreach (var performers in items)
+            {
+                Performers.Add(new PerformerEntity()
+                {
+                    Id = Int32.Parse((string)performers["Id"]),
+                    Name = (string)performers["PerformName"]
+                });
+            }
+            items = tables[1]["Items"] as List<Dictionary<string, object>>;
+            foreach (var album in items)
+            {
+                Albums.Add(new AlbumEntity()
+                {
+                    Id = Int32.Parse((string)album["Id"]),
+                    Name = (string)album["AlbumName"],
+                    ArtistEntities = Performers.SplitHashesToEntity((string)album["Artists"]),
+                    GenreEntities = Genres.SplitHashesToEntity((string)album["Genre"]),
+                    CoverBase64String = (string)album["CoverBase64String"],
+                    CoverPath = (string)album["CoverPath"],
+                });
+            }
+            items = tables[0]["Items"] as List<Dictionary<string, object>>;
+            foreach (var song in items)
+            {
+                Songs.Add(new SongEntity()
+                {
+                    Id = Int32.Parse((string)song["Id"]),
+                    Name = (string)song["Path"],
+                    Title = (string)song["Title"],
+                    AlbumEntity = Albums.FindEntityByHash(int.Parse((string)song["Album"])),
+                    ArtistEntities = Performers.SplitHashesToEntity((string)song["Artists"]),
+                    GenreEntity = Genres.FindEntityByHash(int.Parse((string)song["Genre"])),
+                    Track = uint.Parse((string)song["Track"]),
+                    Year = uint.Parse((string)song["Year"]),
+                    Length = TimeSpan.Parse((string)song["Length"]),
+                    FileLastModded = DateTime.Parse((string)song["FileLastModded"]),
+                });
+            }
+            Console.WriteLine(tables.Count);
+        }
+        public static void ExportTables(string path, ExportType type, bool isCompression = true)
         {
             switch (type)
             {
                 case ExportType.JSON:
                     string exportString = "{\n";
+                    exportString +=
+                        $" {JsonUnitString("TableName", nameof(Songs))}\n" +
+                        $" \"Items\":[\n";
                     foreach (var column in Songs)
                     {
                         exportString +=
-                            $"{{\n" +
-                            $"\"Id\":{column.Id},\n" +
-                            $"\"Path\":{column.Name},\n" +
-                            $"\"Title\":{column.Title},\n" +
-                            $"\"Album\":{column.AlbumId},\n" +
-                            $"\"Artists\":[{column.ArtistIds.ConcatListIds()}],\n" +
-                            $"\"Genre\":[{column.Genre}],\n" +
-                            $"\"Track\":[{column.Track}],\n" +
-                            $"\"Year\":[{column.Track}],\n" +
-                            $"\"Length\":[{column.Length}],\n" +
-                            $"\"FileLastModded\":[{column.FileLastModded}],\n" +
-                            $"}}\n";
+                             " {\n" +
+                            $"  {JsonUnitString("Id", column.Id)},\n" +
+                            $"  {JsonUnitString("Path", column.Name)},\n" +
+                            $"  {JsonUnitString("Title", column.Title)},\n" +
+                            $"  {JsonUnitString("Album", column.AlbumId)},\n" +
+                            $"  {JsonUnitString("Artists", column.ArtistIds.ConcatListIds(", "))},\n" +
+                            $"  {JsonUnitString("Genre", column.GenreId)},\n" +
+                            $"  {JsonUnitString("Track", column.Track)},\n" +
+                            $"  {JsonUnitString("Year", column.Track)},\n" +
+                            $"  {JsonUnitString("Length", column.Length)},\n" +
+                            $"  {JsonUnitString("FileLastModded", column.FileLastModded)},\n" +
+                             " }";
+                        if (column != Songs.Last())
+                            exportString += ",\n";
+                        else
+                            exportString += "]\n";
                     }
+                    exportString += "}\n";
+                    exportString += "{\n";
+                    exportString +=
+                        $" {JsonUnitString("TableName", nameof(Albums))}\n" +
+                        $" \"Items\":[\n";
                     foreach (var column in Albums)
                     {
                         exportString +=
-                             "{\n" +
-                            $"\"Id\":{column.Id},\n" +
-                            $"\"AlbumName\":{column.Name},\n" +
-                            $"\"Artists\":[{column.ArtistIds.ConcatListIds()}],\n" +
-                            $"\"Genre\":[{column.GenreIds.ConcatListIds()}],\n" +
-                            $"\"CoverBase64String\":[{column.CoverBase64String}],\n" +
-                            $"\"CoverPath\":[{column.CoverPath}],\n" +
-                             "}\n";
+                             " {\n" +
+                            $"  {JsonUnitString("Id", column.Id)},\n" +
+                            $"  {JsonUnitString("AlbumName", column.Name)},\n" +
+                            $"  {JsonUnitString("Artists", column.ArtistIds.ConcatListIds(", "))},\n" +
+                            $"  {JsonUnitString("Genre", column.GenreIds.ConcatListIds(", "))},\n" +
+                            $"  {JsonUnitString("CoverBase64String", column.CoverBase64String)},\n" +
+                            $"  {JsonUnitString("CoverPath", column.CoverPath)},\n" +
+                             " }";
+                        if (column != Albums.Last())
+                            exportString += ",\n";
+                        else
+                            exportString += "]\n";
                     }
+                    exportString += "}\n";
+                    exportString += "{\n";
+                    exportString +=
+                        $" {JsonUnitString("TableName", nameof(Performers))}\n" +
+                        $" \"Items\":[\n";
                     foreach (var column in Performers)
                     {
                         exportString +=
-                             "{\n" +
-                            $"\"Id\":{column.Id},\n" +
-                            $"\"PerformName\":{column.Name},\n" +
-                             "}\n";
+                             " {\n" +
+                            $"  {JsonUnitString("Id", column.Id)},\n" +
+                            $"  {JsonUnitString("PerformName", column.Name)},\n" +
+                             " }";
+                        if (column != Performers.Last())
+                            exportString += ",\n";
+                        else
+                            exportString += "]\n";
                     }
+                    exportString += "}\n";
+                    exportString += "{\n";
+                    exportString +=
+                        $" {JsonUnitString("TableName", nameof(Genres))}\n" +
+                        $" \"Items\":[\n";
                     foreach (var column in Genres)
                     {
                         exportString +=
-                             "{\n" +
-                            $"\"Id\":{column.Id},\n" +
-                            $"\"GenreName\":{column.Name},\n" +
-                             "}\n";
+                             " {\n" +
+                            $"  {JsonUnitString("Id", column.Id)},\n" +
+                            $"  {JsonUnitString("GenreName", column.Name)},\n" +
+                             " }";
+                        if (column != Genres.Last())
+                            exportString += ",\n";
+                        else
+                            exportString += "]\n";
                     }
-                    exportString = "}\n";
-                    File.WriteAllText("DB.json", exportString);
+                    exportString += "}\n";
+                    if (isCompression)
+                    {
+                        using (var fs = File.Create(path + ".bin"))
+                        using (var ds = new DeflateStream(fs, CompressionLevel.Optimal, true))
+                        using (var sw = new StreamWriter(ds))
+                        {
+                            sw.Write(exportString);
+                        }
+                    }
+                    else
+                        File.WriteAllText(path, exportString);
                     break;
                 case ExportType.XML:
                     throw new NotImplementedException();
@@ -370,14 +536,28 @@ namespace MusicPLayerV2.Utils
                 default:
                     break;
             }
-
         }
+        static string JsonUnitString(string key, object value, JsonValueType type = JsonValueType.Value)
+        {
+            switch (type)
+            {
+                case JsonValueType.Value:
+                    return $"\"{key}\":\"{value}\"";
+                case JsonValueType.Array:
+                    return $"\"{key}\":[{value}]";
+                default:
+                    return "";
+            }
+        }
+        enum JsonValueType { Value, Array }
     }
     public enum ExportType { JSON, XML, MultipleCSVs }
 
-    public class SongEntity: MusicEntity, INotifyPropertyChanged
+    public class SongEntity : MusicEntity, INotifyPropertyChanged
     {
         public bool IsRelativePath { get; set; } = false;
+
+        public string Path { get => Name; set => Name = value; }
 
         public string Title { get; set; }
 
@@ -385,7 +565,7 @@ namespace MusicPLayerV2.Utils
         public int AlbumId => AlbumEntity.Id;
         public string Album => AlbumEntity.Name;
 
-        public List<PerformerEntity> ArtistEntities { get; set; }
+        public List<PerformerEntity> ArtistEntities { get; set; } = new List<PerformerEntity>();
         public List<int> ArtistIds => ArtistEntities.Select(x => x.Id).ToList();
         public string Artists =>
             ArtistEntities.ConcatListNames();
@@ -421,27 +601,22 @@ namespace MusicPLayerV2.Utils
 
         public static SongEntity CreateFromFile(string fileName)
         {
-            SongEntity ret ;
+            SongEntity ret;
             using (var w = CSCore.Codecs.CodecFactory.Instance.GetCodec(fileName))
             using (var t = TagLib.File.Create(fileName, TagLib.ReadStyle.None))
             {
                 var tag = t.Tag;
                 var f = new FileInfo(fileName);
                 if (TryFindOrCreateEntity(fileName, out ret)) return ret;
-                ret = new SongEntity()
+                ret.Title = string.IsNullOrEmpty(tag.Title) ? f.Name : tag.Title;
+                ret.Track = tag.Track;
+                ret.Year = tag.Year;
+                ret.Length = w.GetLength();
+                ret.FileLastModded = f.LastWriteTimeUtc;
+                TryFindOrCreateEntity(tag.FirstGenre, out GenreEntity genre);
+                ret.GenreEntity = genre;
+                if (!TryFindOrCreateAlbum(tag.Album, SplitNamesToEntity<PerformerEntity>(tag.FirstAlbumArtist), out AlbumEntity album))
                 {
-                    Name = fileName,
-                    Id = fileName.GetHashCode(),
-                    Title = string.IsNullOrEmpty(tag.Title) ? tag.Title : f.Name,
-                    Track = tag.Track,
-                    Year = tag.Year,
-                    Length = w.GetLength(),
-                    FileLastModded = f.LastWriteTimeUtc
-                };
-                if (TryFindOrCreateEntity(tag.FirstGenre, out GenreEntity genre)) ret.GenreEntity = genre;
-                if (TryFindOrCreateEntity(tag.Album, out AlbumEntity album))
-                {
-                    album.ArtistEntities = SplitNamesToEntity<PerformerEntity>(tag.FirstAlbumArtist);
                     if (!album.GenreEntities.Contains(ret.GenreEntity))
                         album.GenreEntities.Add(ret.GenreEntity);
                     if (tag.Pictures.Length >= 1)
@@ -449,25 +624,25 @@ namespace MusicPLayerV2.Utils
                         album.CoverPath = f.FullName;
                         album.CoverPathType = CoverPathType.FromAudioFile;
                     }
-                    ret.AlbumEntity = album;
                 }
-
+                Console.WriteLine(album);
+                ret.AlbumEntity = album;
                 ret.ArtistEntities = SplitNamesToEntity<PerformerEntity>(tag.FirstPerformer);
 
             }
             return ret;
         }
-        
+
     }
 
     public class AlbumEntity : MusicEntity
     {
-        public List<PerformerEntity> ArtistEntities { get; set; }
+        public List<PerformerEntity> ArtistEntities { get; set; } = new List<PerformerEntity>();
         public List<int> ArtistIds => ArtistEntities.Select(x => x.Id).ToList();
         public string Artists =>
             ArtistEntities.ConcatListNames();
 
-        public List<GenreEntity> GenreEntities { get; set; }
+        public List<GenreEntity> GenreEntities { get; set; } = new List<GenreEntity>();
         public List<int> GenreIds => GenreEntities.Select(x => x.Id).ToList();
         public string Genre =>
             GenreEntities.ConcatListNames();
@@ -475,7 +650,12 @@ namespace MusicPLayerV2.Utils
         public string CoverBase64String { get; set; }
         public CoverPathType CoverPathType { get; set; } = CoverPathType.NoneCover;
         public string CoverPath { get; set; }
-
+        public ImageSource Cover { get; set; }
+        public Size CoverSize { get; set; }
+        public override int GetHashCode()
+        {
+            return DateTime.UtcNow.ToString().GetHashCode() ^ Name.GetHashCode() ^ Artists.GetHashCode();
+        }
 
     }
     public enum CoverPathType { NoneCover, FromAudioFile, FromImageFile };
@@ -510,14 +690,33 @@ namespace MusicPLayerV2.Utils
         }
         public override int GetHashCode()
         {
-            return Name.GetHashCode();
+            return DateTime.UtcNow.ToString().GetHashCode()^Name.GetHashCode();
         }
-
-        protected static bool TryFindOrCreateEntity<T>(string name, out T　entity) where T : MusicEntity, new()
+        protected static bool TryFindOrCreateAlbum(string name, List<PerformerEntity> performers, out AlbumEntity entity)
         {
+            var n = new AlbumEntity()
+            {
+                Name = name,
+                ArtistEntities = performers
+            };
+            var hash = n.GetHashCode();
+            if (Albums.Exists(x => x.Id == hash))
+            {
+                entity = Albums.Find(x => x.Id == hash);
+                return true;
+            }
+            entity = n;
+            entity.Id = entity.GetHashCode();
+            Albums.Add(entity);
+            return false;
+        }
+        protected static bool TryFindOrCreateEntity<T>(string name, out T entity) where T : MusicEntity, new()
+        {
+            if (typeof(T)==typeof(AlbumEntity))
+                throw new Exception();
             if (Tables[typeof(T)] is List<T> table)
             {
-                if(table.Exists(x => x.Name == name))
+                if (table.Exists(x => x.Name == name))
                 {
                     entity = table.Find(x => x.Name == name);
                     return true;
@@ -526,21 +725,24 @@ namespace MusicPLayerV2.Utils
                 {
                     entity = new T()
                     {
-                        Name = name,
-                        Id = name.GetHashCode()
+                        Name = name
                     };
+                    entity.Id = entity.GetHashCode();
                     table.Add(entity);
-                    return true;
+                    return false;
                 }
             }
             throw new Exception("Database Type Match false");
         }
-        protected static List<T> SplitNamesToEntity<T>(string namesString, string splitString = ",;|") where T : MusicEntity, new()
+        protected static List<T> SplitNamesToEntity<T>(string namesString, string splitString = ",;|，、") where T : MusicEntity, new()
         {
             var ret = new List<T>();
             var names = namesString.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            foreach(var n in names)
-                if (TryFindOrCreateEntity(n, out T entity)) ret.Add(entity);
+            foreach (var n in names)
+            {
+                TryFindOrCreateEntity(n, out T entity);
+                ret.Add(entity);
+            }
             return ret;
         }
     }
@@ -557,13 +759,25 @@ namespace MusicPLayerV2.Utils
             else
                 throw new KeyNotFoundException();
         }
-        public static string ConcatListNames<T>(this List<T> list, string splitString = ", ") where T : MusicEntity
+        public static List<T> SplitHashesToEntity<T>(this List<T> list, string hasheString, string splitString = ",;|，、") where T : MusicEntity, new()
         {
-            return string.Concat(list.Select(x => x.Name + splitString)).Trim(splitString.ToCharArray());
+            var ret = new List<T>();
+            var ids = hasheString.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            foreach (var n in ids)
+            {
+                ret.Add(list.FindEntityByHash(int.Parse(n)));
+            }
+            return ret;
         }
-        public static string ConcatListIds(this List<int> list, string splitString = ", ")
+        public static string ConcatListNames<T>(this List<T> list, string splitString = ", ", string leftBracket = "", string rightBracket = "") where T : MusicEntity
         {
-            return string.Concat(list.Select(x => x + splitString)).Trim(splitString.ToCharArray());
+            if (list == null)
+                return "";
+            return string.Concat(list.Select(x => $"{leftBracket}{x.Name}{rightBracket}" + splitString)).Trim(splitString.ToCharArray());
+        }
+        public static string ConcatListIds(this List<int> list, string splitString = ", ", string leftBracket = "", string rightBracket = "")
+        {
+            return string.Concat(list.Select(x => $"{leftBracket}{x}{rightBracket}" + splitString)).Trim(splitString.ToCharArray());
         }
     }
 

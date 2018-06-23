@@ -23,7 +23,7 @@ namespace MusicPLayerV2.ViewModels
     {
         private ResourceDictionary R => App.Current.Resources;
         private MusicPlayer PM => App.PlayerModel;
-        private MusicItem NPI => App.PlayerModel.NowPlayingItem;
+        private SongEntity NPI => App.PlayerModel.NowPlayingItem;
         private ControllerViewModel C => App.Controller;
         private PlayingListViewModel L => App.PlayingList;
 

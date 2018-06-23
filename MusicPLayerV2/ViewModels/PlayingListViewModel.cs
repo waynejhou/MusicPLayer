@@ -16,7 +16,7 @@ namespace MusicPLayerV2.ViewModels
     {
         private ResourceDictionary R => App.Current.Resources;
         private MusicPlayer PM => App.PlayerModel;
-        private MusicItem NPI => App.PlayerModel.NowPlayingItem;
+        private SongEntity NPI => App.PlayerModel.NowPlayingItem;
 
         public ICommand LoadFileCmd => new RelayCommand<string>(OnLoadFile, (string s) => true);
         public ICommand AddFilesCmd => new RelayCommand<string[]>((paths) => AddToList(paths), (paths) => true);
@@ -26,7 +26,7 @@ namespace MusicPLayerV2.ViewModels
 
         private void RemoveSelectedItems()
         {
-            var values = SelectedItems.Cast<MusicItem>().ToList().ConvertAll(x => PlayingList.IndexOf(x)).OrderByDescending(x => x).ToList();
+            var values = SelectedItems.Cast<SongEntity>().ToList().ConvertAll(x => PlayingList.IndexOf(x)).OrderByDescending(x => x).ToList();
             foreach (int mi in values)
                 PlayingList.RemoveAt(mi);
         }
@@ -38,24 +38,24 @@ namespace MusicPLayerV2.ViewModels
         }
 
 
-        public ObservableCollection<MusicItem> PlayingList { get; set; } = new ObservableCollection<MusicItem>();
+        public ObservableCollection<SongEntity> PlayingList { get; set; } = new ObservableCollection<SongEntity>();
 
         public void AddToList(string path)
         {
-            PlayingList.Add(MusicItem.CreateFromFile(path, false, (double)R["LoadedCoverSize"]));
+            PlayingList.Add(SongEntity.CreateFromFile(path));
         }
         public void AddToList(string[] paths)
         {
             foreach (var s in paths)
             {
-                PlayingList.Add(MusicItem.CreateFromFile(s, false, (double)R["LoadedCoverSize"]));
+                PlayingList.Add(SongEntity.CreateFromFile(s));
             }
         }
-        public void AddToList(MusicItem musicItem)
+        public void AddToList(SongEntity musicItem)
         {
             PlayingList.Add(musicItem);
         }
-        public void AddToList(MusicItem[] musicItems)
+        public void AddToList(SongEntity[] musicItems)
         {
             foreach(var mi in musicItems)
             {
@@ -66,11 +66,11 @@ namespace MusicPLayerV2.ViewModels
         {
             if (!MusicPlayer.SupportCheck(path, (string)R["Filter_AudioFile"]))
                 return;
-            MusicItem newone = MusicItem.CreateFromFile(path, true, (double)R["LoadedCoverSize"]);
+            SongEntity newone = SongEntity.CreateFromFile(path);
             AddToList(newone);
             PM.LoadFromMusicItem(newone);
         }
-        public void Load(MusicItem musicItem)
+        public void Load(SongEntity musicItem)
         {
             if (!IsGetPrev)
             {
@@ -82,7 +82,7 @@ namespace MusicPLayerV2.ViewModels
             PM.LoadFromMusicItem(musicItem);
         }
 
-        public Stack<MusicItem> PlayingHistory { get; set; } = new Stack<MusicItem>();
+        public Stack<SongEntity> PlayingHistory { get; set; } = new Stack<SongEntity>();
         public NextOneMode NextModeType { get; set; } = NextOneMode.RepeatList;
         public bool CanGetLast => ((NextModeType == NextOneMode.Random) && PlayingHistory.Count > 0) || ((NextModeType == NextOneMode.RepeatList) && PlayingList.Count > 1 || (NextModeType == NextOneMode.RepeatOne));
         public bool CanGetNext => ((NextModeType == NextOneMode.Random) && PlayingHistory.Count > 0) || (NextModeType == NextOneMode.RepeatList) && PlayingList.Count > 1 || (NextModeType == NextOneMode.RepeatOne);
@@ -91,7 +91,7 @@ namespace MusicPLayerV2.ViewModels
         public IList SelectedItems { get; set; }
 
         int NowPlayIndex => PlayingList.Contains(NPI) ? PlayingList.IndexOf(NPI) : -1;
-        public MusicItem GetNextMusic()
+        public SongEntity GetNextMusic()
         {
             switch (NextModeType)
             {
@@ -110,7 +110,7 @@ namespace MusicPLayerV2.ViewModels
                     throw new FormatException();
             }
         }
-        public MusicItem GetPrevMusic()
+        public SongEntity GetPrevMusic()
         {
             switch (NextModeType)
             {
