@@ -460,56 +460,6 @@ namespace MusicPLayerV2.ViewModels
         }
     }
 
-    public static class ObjectSaveToXML<T> where T : new()
-    {
-        public static void SaveSettingAsXml(T @object, string fileName)
-        {
-            try
-            {
-                XmlDocument xmlDocument = new XmlDocument();
-                XmlSerializer serializer = new XmlSerializer(@object.GetType());
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    serializer.Serialize(stream, @object);
-                    stream.Position = 0;
-                    xmlDocument.Load(stream);
-                    xmlDocument.Save(fileName);
-                    stream.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"{typeof(T)}.SaveSettingAsXml: {ex}");
-            }
-        }
-        public static T LoadSettingFromXml(string fileName)
-        {
-            if (string.IsNullOrEmpty(fileName)) { throw new ArgumentNullException("NameNull"); }
-            T Setting = new T();
-            try
-            {
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.Load(fileName);
-                string xmlString = xmlDocument.OuterXml;
-                using (StringReader read = new StringReader(xmlString))
-                {
-                    XmlSerializer serializer = new XmlSerializer(typeof(T));
-                    using (XmlReader reader = new XmlTextReader(read))
-                    {
-                        Setting = (T)serializer.Deserialize(reader);
-                        reader.Close();
-                    }
-                    read.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"{typeof(T)}.LoadSettingFromXml: {ex}");
-            }
-            return Setting;
-        }
-    }
-
     public partial class SettingsViewModel
     {
         [XmlIgnore]

@@ -1,5 +1,6 @@
 ﻿using CSCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -11,14 +12,18 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xml;
 using System.Xml.Serialization;
+using static MusicPLayerV2.Utils.MusicDatabase;
 
 namespace MusicPLayerV2.Utils
 {
+    #region oldMusicItem
     /// <summary>
     /// 音樂項目
     /// </summary>
-    public class MusicItem: INotifyPropertyChanged
+
+    public class MusicItem : INotifyPropertyChanged
     {
         #region 屬性
 
@@ -186,7 +191,7 @@ namespace MusicPLayerV2.Utils
             using (System.Drawing.Image image = System.Drawing.Image.FromStream(ms))
             {
                 System.Drawing.Bitmap bmp;
-                if(Math.Max(image.Height, image.Width)>imgSize)
+                if (Math.Max(image.Height, image.Width) > imgSize)
                 {
                     if (image.Width > image.Height)
                     {
@@ -227,8 +232,8 @@ namespace MusicPLayerV2.Utils
         {
 
             MusicItem ret;
-            TagLib.ReadStyle rs = loadImage?TagLib.ReadStyle.Average:TagLib.ReadStyle.None;
-            using (var t = TagLib.File.Create(fileName,rs))
+            TagLib.ReadStyle rs = loadImage ? TagLib.ReadStyle.Average : TagLib.ReadStyle.None;
+            using (var t = TagLib.File.Create(fileName, rs))
             {
                 var tag = t.Tag;
                 ret = new MusicItem()
@@ -250,6 +255,9 @@ namespace MusicPLayerV2.Utils
 
         #endregion
     }
+
+    #endregion
+
     public class LyricWithTime : DependencyObject, INotifyPropertyChanged
     {
         public string Lyric { get; set; }
@@ -263,7 +271,7 @@ namespace MusicPLayerV2.Utils
         }
         public static readonly DependencyProperty IsHightLightedProperty =
             DependencyProperty.Register("IsHightLighted", typeof(bool), typeof(LyricWithTime),
-                new FrameworkPropertyMetadata((DependencyObject obj, DependencyPropertyChangedEventArgs args)=>
+                new FrameworkPropertyMetadata((DependencyObject obj, DependencyPropertyChangedEventArgs args) =>
                 {
                     (obj as LyricWithTime).OnSetHighlighted((bool)args.NewValue);
                 }));
@@ -282,6 +290,331 @@ namespace MusicPLayerV2.Utils
         void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public static class MusicDatabase
+    {
+        static MusicDatabase()
+        {
+
+        }
+        public static Dictionary<Type, IList> Tables => new Dictionary<Type, IList>()
+        {
+            { typeof(SongEntity), Songs },
+            { typeof(AlbumEntity), Albums },
+            { typeof(PerformerEntity), Performers },
+            { typeof(GenreEntity), Genres }
+        };
+        public static List<SongEntity> Songs { get; set; } = new List<SongEntity>() { };
+        public static List<AlbumEntity> Albums { get; set; } = new List<AlbumEntity>() { };
+        public static List<PerformerEntity> Performers { get; set; } = new List<PerformerEntity>() { };
+        public static List<GenreEntity> Genres { get; set; } = new List<GenreEntity>() { };
+        public static void ExportTables(ExportType type)
+        {
+            switch (type)
+            {
+                case ExportType.JSON:
+                    string exportString = "{\n";
+                    foreach (var column in Songs)
+                    {
+                        exportString +=
+                            $"{{\n" +
+                            $"\"Id\":{column.Id},\n" +
+                            $"\"Path\":{column.Name},\n" +
+                            $"\"Title\":{column.Title},\n" +
+                            $"\"Album\":{column.AlbumId},\n" +
+                            $"\"Artists\":[{column.ArtistIds.ConcatListIds()}],\n" +
+                            $"\"Genre\":[{column.Genre}],\n" +
+                            $"\"Track\":[{column.Track}],\n" +
+                            $"\"Year\":[{column.Track}],\n" +
+                            $"\"Length\":[{column.Length}],\n" +
+                            $"\"FileLastModded\":[{column.FileLastModded}],\n" +
+                            $"}}\n";
+                    }
+                    foreach (var column in Albums)
+                    {
+                        exportString +=
+                             "{\n" +
+                            $"\"Id\":{column.Id},\n" +
+                            $"\"AlbumName\":{column.Name},\n" +
+                            $"\"Artists\":[{column.ArtistIds.ConcatListIds()}],\n" +
+                            $"\"Genre\":[{column.GenreIds.ConcatListIds()}],\n" +
+                            $"\"CoverBase64String\":[{column.CoverBase64String}],\n" +
+                            $"\"CoverPath\":[{column.CoverPath}],\n" +
+                             "}\n";
+                    }
+                    foreach (var column in Performers)
+                    {
+                        exportString +=
+                             "{\n" +
+                            $"\"Id\":{column.Id},\n" +
+                            $"\"PerformName\":{column.Name},\n" +
+                             "}\n";
+                    }
+                    foreach (var column in Genres)
+                    {
+                        exportString +=
+                             "{\n" +
+                            $"\"Id\":{column.Id},\n" +
+                            $"\"GenreName\":{column.Name},\n" +
+                             "}\n";
+                    }
+                    exportString = "}\n";
+                    File.WriteAllText("DB.json", exportString);
+                    break;
+                case ExportType.XML:
+                    throw new NotImplementedException();
+                case ExportType.MultipleCSVs:
+                    throw new NotImplementedException();
+                default:
+                    break;
+            }
+
+        }
+    }
+    public enum ExportType { JSON, XML, MultipleCSVs }
+
+    public class SongEntity: MusicEntity, INotifyPropertyChanged
+    {
+        public bool IsRelativePath { get; set; } = false;
+
+        public string Title { get; set; }
+
+        public AlbumEntity AlbumEntity { get; set; }
+        public int AlbumId => AlbumEntity.Id;
+        public string Album => AlbumEntity.Name;
+
+        public List<PerformerEntity> ArtistEntities { get; set; }
+        public List<int> ArtistIds => ArtistEntities.Select(x => x.Id).ToList();
+        public string Artists =>
+            ArtistEntities.ConcatListNames();
+
+        public GenreEntity GenreEntity { get; set; }
+        public int GenreId => GenreEntity.Id;
+        public string Genre => GenreEntity.Name;
+
+        public uint Track { get; set; }
+
+        public uint Year { get; set; }
+
+        public TimeSpan Length { get; set; }
+        public string LengthString => Length.ToString(@"mm\:ss");
+
+        public DateTime FileLastModded { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        bool _isNowPlaying;
+        public bool IsNowPlaying
+        {
+            get => _isNowPlaying;
+            set
+            {
+                _isNowPlaying = value;
+                NotifyPropertyChanged(nameof(IsNowPlaying));
+            }
+        }
+
+        public static SongEntity CreateFromFile(string fileName)
+        {
+            SongEntity ret ;
+            using (var w = CSCore.Codecs.CodecFactory.Instance.GetCodec(fileName))
+            using (var t = TagLib.File.Create(fileName, TagLib.ReadStyle.None))
+            {
+                var tag = t.Tag;
+                var f = new FileInfo(fileName);
+                if (TryFindOrCreateEntity(fileName, out ret)) return ret;
+                ret = new SongEntity()
+                {
+                    Name = fileName,
+                    Id = fileName.GetHashCode(),
+                    Title = string.IsNullOrEmpty(tag.Title) ? tag.Title : f.Name,
+                    Track = tag.Track,
+                    Year = tag.Year,
+                    Length = w.GetLength(),
+                    FileLastModded = f.LastWriteTimeUtc
+                };
+                if (TryFindOrCreateEntity(tag.FirstGenre, out GenreEntity genre)) ret.GenreEntity = genre;
+                if (TryFindOrCreateEntity(tag.Album, out AlbumEntity album))
+                {
+                    album.ArtistEntities = SplitNamesToEntity<PerformerEntity>(tag.FirstAlbumArtist);
+                    if (!album.GenreEntities.Contains(ret.GenreEntity))
+                        album.GenreEntities.Add(ret.GenreEntity);
+                    if (tag.Pictures.Length >= 1)
+                    {
+                        album.CoverPath = f.FullName;
+                        album.CoverPathType = CoverPathType.FromAudioFile;
+                    }
+                    ret.AlbumEntity = album;
+                }
+
+                ret.ArtistEntities = SplitNamesToEntity<PerformerEntity>(tag.FirstPerformer);
+
+            }
+            return ret;
+        }
+        
+    }
+
+    public class AlbumEntity : MusicEntity
+    {
+        public List<PerformerEntity> ArtistEntities { get; set; }
+        public List<int> ArtistIds => ArtistEntities.Select(x => x.Id).ToList();
+        public string Artists =>
+            ArtistEntities.ConcatListNames();
+
+        public List<GenreEntity> GenreEntities { get; set; }
+        public List<int> GenreIds => GenreEntities.Select(x => x.Id).ToList();
+        public string Genre =>
+            GenreEntities.ConcatListNames();
+
+        public string CoverBase64String { get; set; }
+        public CoverPathType CoverPathType { get; set; } = CoverPathType.NoneCover;
+        public string CoverPath { get; set; }
+
+
+    }
+    public enum CoverPathType { NoneCover, FromAudioFile, FromImageFile };
+
+    public class PerformerEntity : MusicEntity
+    {
+    }
+    public class GenreEntity : MusicEntity
+    {
+    }
+
+    public abstract class MusicEntity
+    {
+        protected MusicEntity()
+        {
+        }
+        public int Id { get; set; } = -1;
+        public string Name { get; set; } = "Unknown";
+        public override string ToString()
+        {
+            return Name;
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+            if (obj.GetType() != GetType())
+                return false;
+            if ((obj as MusicEntity).Id != Id)
+                return false;
+            return true;
+        }
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+
+        protected static bool TryFindOrCreateEntity<T>(string name, out T　entity) where T : MusicEntity, new()
+        {
+            if (Tables[typeof(T)] is List<T> table)
+            {
+                if(table.Exists(x => x.Name == name))
+                {
+                    entity = table.Find(x => x.Name == name);
+                    return true;
+                }
+                else
+                {
+                    entity = new T()
+                    {
+                        Name = name,
+                        Id = name.GetHashCode()
+                    };
+                    table.Add(entity);
+                    return true;
+                }
+            }
+            throw new Exception("Database Type Match false");
+        }
+        protected static List<T> SplitNamesToEntity<T>(string namesString, string splitString = ",;|") where T : MusicEntity, new()
+        {
+            var ret = new List<T>();
+            var names = namesString.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            foreach(var n in names)
+                if (TryFindOrCreateEntity(n, out T entity)) ret.Add(entity);
+            return ret;
+        }
+    }
+
+    public static class MusicEntityExtentionMethods
+    {
+        static Predicate<MusicEntity> compareId = (x => x.Id == comparedHash);
+        static int comparedHash = 0;
+        public static T FindEntityByHash<T>(this List<T> list, int hash) where T : MusicEntity
+        {
+            comparedHash = hash;
+            if (list.Exists(compareId))
+                return list.Find(compareId);
+            else
+                throw new KeyNotFoundException();
+        }
+        public static string ConcatListNames<T>(this List<T> list, string splitString = ", ") where T : MusicEntity
+        {
+            return string.Concat(list.Select(x => x.Name + splitString)).Trim(splitString.ToCharArray());
+        }
+        public static string ConcatListIds(this List<int> list, string splitString = ", ")
+        {
+            return string.Concat(list.Select(x => x + splitString)).Trim(splitString.ToCharArray());
+        }
+    }
+
+
+    public static class ObjectSaveToXML<T> where T : new()
+    {
+        public static void SaveSettingAsXml(T @object, string fileName)
+        {
+            try
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                XmlSerializer serializer = new XmlSerializer(@object.GetType());
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    serializer.Serialize(stream, @object);
+                    stream.Position = 0;
+                    xmlDocument.Load(stream);
+                    xmlDocument.Save(fileName);
+                    stream.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{typeof(T)}.SaveSettingAsXml: {ex}");
+            }
+        }
+        public static T LoadSettingFromXml(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName)) { throw new ArgumentNullException("NameNull"); }
+            T Setting = new T();
+            try
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.Load(fileName);
+                string xmlString = xmlDocument.OuterXml;
+                using (StringReader read = new StringReader(xmlString))
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(T));
+                    using (XmlReader reader = new XmlTextReader(read))
+                    {
+                        Setting = (T)serializer.Deserialize(reader);
+                        reader.Close();
+                    }
+                    read.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{typeof(T)}.LoadSettingFromXml: {ex}");
+            }
+            return Setting;
         }
     }
 }
