@@ -211,6 +211,10 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="LibraryStyle" TargetType="localuc:LibraryControl">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
+        </Style>
     </Window.Resources>
     <Window.InputBindings>
         <!-- Example of Keyboard shortcuts -->
@@ -273,7 +277,7 @@
                                          ToolTip="{DynamicResource ToolTip_NowPlaying}"
                                          Checked="RadioButton_Checked"
                                          GroupName="tab"/>
-                                    <RadioButton x:Name="ViewLibrary"
+                                    <RadioButton x:Name="ViewLibraryTab"
                                                  Content="{DynamicResource SymbolCode_ToLibrary}" Style="{DynamicResource RadioButtonStyle}"
                                                  ToolTip="{DynamicResource ToolTip_Library}"
                                                  Checked="RadioButton_Checked"
@@ -318,7 +322,14 @@
                                             Style="{DynamicResource PlayingListStyle}"
                                             DataContext="{x:Static root:App.PlayingList}"/>
                                         </TabItem>
-                                        <TabItem/>
+                                        <TabItem>
+                                            <localuc:LibraryControl
+                                                x:Name="LibraryC"
+                                                Style="{DynamicResource LibraryStyle}"
+                                                >
+                                                
+                                            </localuc:LibraryControl>
+                                        </TabItem>
                                     </TabControl>
                                 </Grid>
                             </Border>

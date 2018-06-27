@@ -32,6 +32,7 @@
                   ItemsSource="{Binding PlayingList, Mode=TwoWay}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   SelectionChanged="ListViewL_SelectionChanged"
+                  
                   >
             <ListView.ContextMenu>
                 <ContextMenu>

@@ -51,7 +51,22 @@ namespace MusicPLayerV2.Views.UserControls
         private void ListViewL_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (L != null)
+            {
                 L.SelectedItems = ListViewL.SelectedItems;
+                foreach(SongEntity ee in ListViewL.SelectedItems)
+                {
+                    Console.WriteLine(ee.Name);
+                }
+            }
+            Console.WriteLine(
+                $"Left shift: {Keyboard.IsKeyDown(Key.LeftShift)}\n" +
+                $"Right Shift: {Keyboard.IsKeyDown(Key.RightShift)}\n" +
+                $"Left Crtl: {Keyboard.IsKeyDown(Key.LeftCtrl)}\n" +
+                $"Right Crtl: { Keyboard.IsKeyDown(Key.RightCtrl)}\n"+
+                $"Left shift: {Keyboard.IsKeyToggled(Key.LeftShift)}\n" +
+                $"Right Shift: {Keyboard.IsKeyToggled(Key.RightShift)}\n" +
+                $"Left Crtl: {Keyboard.IsKeyToggled(Key.LeftCtrl)}\n" +
+                $"Right Crtl: { Keyboard.IsKeyToggled(Key.RightCtrl)}\n");
         }
     }
 }

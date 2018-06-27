@@ -88,7 +88,13 @@ namespace MusicPLayerV2.ViewModels
         public bool CanGetNext => ((NextModeType == NextOneMode.Random) && PlayingHistory.Count > 0) || (NextModeType == NextOneMode.RepeatList) && PlayingList.Count > 1 || (NextModeType == NextOneMode.RepeatOne);
         Random _rnd = new Random();
         bool IsGetPrev = false;
-        public IList SelectedItems { get; set; }
+        public IList _selectItems;
+        public IList SelectedItems { get=>_selectItems; set
+            {
+                _selectItems = value;
+                NotifyPropertyChanged(nameof(PlayingList));
+            }
+        }
 
         int NowPlayIndex => PlayingList.Contains(NPI) ? PlayingList.IndexOf(NPI) : -1;
         public SongEntity GetNextMusic()

@@ -26,6 +26,7 @@ namespace MusicPLayerV2
         public static ControllerViewModel Controller { get; set; } = new ControllerViewModel();
         public static PlayingListViewModel PlayingList { get; set; } = new PlayingListViewModel();
         public static MainViewModel MainModel { get; set; }
+        public static LibraryViewModel Library { get; set; }
         public static string LocalAppData = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\MusicPLayer";
 
         private void Application_Startup(object sender, StartupEventArgs e)

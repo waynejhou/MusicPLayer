@@ -20,246 +20,6 @@ using static MusicPLayerV2.Utils.MusicDatabase;
 
 namespace MusicPLayerV2.Utils
 {
-    #region oldMusicItem
-    /// <summary>
-    /// 音樂項目
-    /// </summary>
-    /*
-    public class MusicItem : INotifyPropertyChanged
-    {
-        #region 屬性
-
-        /// <summary>
-        /// 音樂檔案路徑
-        /// </summary>
-        public string Path { get; set; }
-
-        /// <summary>
-        /// 音樂標題
-        /// </summary>
-        public string Title { get; set; }
-
-        /// <summary>
-        /// 音樂專輯
-        /// </summary>
-        public string Album { get; set; }
-
-        /// <summary>
-        /// 音樂演出者
-        /// </summary>
-        public string Artist { get; set; }
-
-        /// <summary>
-        /// 音樂專輯演出者
-        /// </summary>
-        public string AlbumArtist { get; set; }
-
-        /// <summary>
-        /// 音樂分類
-        /// </summary>
-        public string Genre { get; set; }
-
-        /// <summary>
-        /// 音樂年分
-        /// </summary>
-        public uint Year { get; set; }
-
-        /// <summary>
-        /// 音樂軌數
-        /// </summary>
-        public uint Track { get; set; }
-
-        /// <summary>
-        /// 檔案最後修改日期
-        /// </summary>
-        public DateTime FileLastModded { get; set; }
-
-        /// <summary>
-        /// 音樂長度
-        /// </summary>
-        public TimeSpan Length { get; set; }
-
-        /// <summary>
-        /// 音樂長度字串
-        /// 給懶得打 ToString(@"mm\:ss") 人用的
-        /// </summary>
-        [XmlIgnore]
-        public string LengthString => Length.ToString(@"mm\:ss");
-
-        /// <summary>
-        /// 音樂專輯圖片字串
-        /// (Base64)
-        /// </summary>
-        public string PictureBase64 { get; set; }
-
-        /// <summary>
-        /// 音樂專輯圖片
-        /// </summary>
-        [XmlIgnore]
-        public ImageSource Picture { get; set; }
-
-        [XmlIgnore]
-        public Size PictureSize { get; private set; }
-
-        bool _isNowPlaying;
-        public bool IsNowPlaying
-        {
-            get => _isNowPlaying;
-            set
-            {
-                _isNowPlaying = value;
-                NotifyPropertyChanged(nameof(IsNowPlaying));
-            }
-        }
-
-        /// <summary>
-        /// 未知的音樂項目
-        /// </summary>
-        public static MusicItem UnknowItem { get; } = new MusicItem
-        {
-            Title = "Unknow Title",
-            Album = "Unknow Album",
-            Artist = "Unknow Artist",
-            AlbumArtist = "Unknow Album Artist",
-            Genre = "Unknow Genre",
-            Year = 0,
-            Track = 0,
-            FileLastModded = DateTime.MinValue,
-            Length = TimeSpan.Zero,
-            Picture = null
-        };
-
-        #endregion
-
-        #region 成員函式
-
-        /// <summary>
-        /// 阿...就 ToString阿
-        /// </summary>
-        /// <returns>string</returns>
-        public override string ToString()
-        {
-            return $"{Path}";
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        public void NotifyMusicItem()
-        {
-            NotifyPropertyChanged(nameof(IsNowPlaying));
-        }
-
-        public void TryUpdatePicture(double imgSize = 500)
-        {
-            using (var t = TagLib.File.Create(Path))
-            {
-                var tag = t.Tag;
-                if (tag.Pictures.Length <= 0)
-                {
-                    var picPath =
-                        new FileInfo(Path).Directory.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
-                        .Where(x => x.Name.Contains("Cover"))
-                        .Where(x => x.Name.EndsWith(".png")
-                        || x.Name.EndsWith(".jpg")
-                        || x.Name.EndsWith(".PNG")
-                        || x.Name.EndsWith(".JPG")
-                        || x.Name.EndsWith(".jpeg")
-                        || x.Name.EndsWith(".JPEG")).Select(x => x.FullName).FirstOrDefault();
-                    if (!string.IsNullOrWhiteSpace(picPath))
-                        Picture = new BitmapImage(new Uri(picPath));
-                }
-                else
-                    Picture = FormatImage(tag.Pictures[0].Data.Data, imgSize);
-            }
-        }
-        #endregion
-
-        #region 靜態函式
-
-        /// <summary>
-        /// 影像資料轉 BitmapImage
-        /// </summary>
-        /// <param name="data">影像資料</param>
-        /// <returns></returns>
-        private ImageSource FormatImage(byte[] data, double imgSize)
-        {
-            if (data == null)
-                return null;
-            BitmapImage ret = new BitmapImage();
-            using (MemoryStream ms = new MemoryStream(data, 0, data.Length, true, true))
-            using (System.Drawing.Image image = System.Drawing.Image.FromStream(ms))
-            {
-                System.Drawing.Bitmap bmp;
-                if (Math.Max(image.Height, image.Width) > imgSize)
-                {
-                    if (image.Width > image.Height)
-                    {
-                        var newWidth = (int)imgSize;
-                        var newHeight = (int)Math.Round(image.Height * ((float)imgSize / image.Width));
-                        bmp = new System.Drawing.Bitmap(image, newWidth, newHeight);
-                    }
-                    else
-                    {
-                        var newHeight = (int)imgSize;
-                        var newWidth = (int)Math.Round(image.Width * ((float)imgSize / image.Height));
-                        bmp = new System.Drawing.Bitmap(image, newWidth, newHeight);
-                    }
-                }
-                else
-                {
-                    bmp = new System.Drawing.Bitmap(image, image.Width, image.Height);
-                }
-                PictureSize = new Size(bmp.Width, bmp.Height);
-                using (var newms = new MemoryStream())
-                {
-                    bmp.Save(newms, System.Drawing.Imaging.ImageFormat.Png);
-                    newms.Position = 0;
-                    ret.BeginInit();
-                    ret.StreamSource = newms;
-                    ret.CacheOption = BitmapCacheOption.OnLoad;
-                    ret.EndInit();
-                }
-            }
-            return ret;
-        }
-        /// <summary>
-        /// 讀取檔案回傳
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns>音樂項目</returns>
-        public static MusicItem CreateFromFile(string fileName, bool loadImage = true, double imgSize = 500d)
-        {
-
-            MusicItem ret;
-            TagLib.ReadStyle rs = loadImage ? TagLib.ReadStyle.Average : TagLib.ReadStyle.None;
-            using (var t = TagLib.File.Create(fileName, rs))
-            {
-                var tag = t.Tag;
-                ret = new MusicItem()
-                {
-                    Title = tag.Title,
-                    Album = tag.Album,
-                    Artist = tag.FirstPerformer,
-                    AlbumArtist = tag.FirstAlbumArtist,
-                    Genre = tag.FirstGenre,
-                    Path = fileName,
-                    Year = tag.Year,
-                    Track = tag.Track,
-                    Length = CSCore.Codecs.CodecFactory.Instance.GetCodec(fileName).GetLength()
-                };
-            }
-            ret.TryUpdatePicture(imgSize);
-            return ret;
-        }
-
-        #endregion
-    }
-    */
-    #endregion
-
     public class LyricWithTime : DependencyObject, INotifyPropertyChanged
     {
         public string Lyric { get; set; }
@@ -409,8 +169,10 @@ namespace MusicPLayerV2.Utils
                     Name = (string)album["AlbumName"],
                     ArtistEntities = Performers.SplitHashesToEntity((string)album["Artists"]),
                     GenreEntities = Genres.SplitHashesToEntity((string)album["Genre"]),
-                    CoverBase64String = (string)album["CoverBase64String"],
                     CoverPath = (string)album["CoverPath"],
+                    CoverPathType = (CoverPathType)Enum.Parse(typeof(CoverPathType),(string)album["CoverPathType"]),
+                    CoverSize = Size.Parse((string)album["CoverSize"]),
+                    CoverTrack = uint.Parse((string)album["CoverTrack"])
                 });
             }
             items = tables[0]["Items"] as List<Dictionary<string, object>>;
@@ -428,6 +190,9 @@ namespace MusicPLayerV2.Utils
                     Year = uint.Parse((string)song["Year"]),
                     Length = TimeSpan.Parse((string)song["Length"]),
                     FileLastModded = DateTime.Parse((string)song["FileLastModded"]),
+                    CoverPath = (string)song["CoverPath"],
+                    CoverPathType = (CoverPathType)Enum.Parse(typeof(CoverPathType), (string)song["CoverPathType"]),
+                    CoverSize = Size.Parse((string)song["CoverSize"])
                 });
             }
             Console.WriteLine(tables.Count);
@@ -454,6 +219,9 @@ namespace MusicPLayerV2.Utils
                             $"  {JsonUnitString("Track", column.Track)},\n" +
                             $"  {JsonUnitString("Year", column.Track)},\n" +
                             $"  {JsonUnitString("Length", column.Length)},\n" +
+                            $"  {JsonUnitString("CoverPath", column.CoverPath)},\n" +
+                            $"  {JsonUnitString("CoverPathType", column.CoverPathType)},\n" +
+                            $"  {JsonUnitString("CoverSize", column.CoverSize)},\n" +
                             $"  {JsonUnitString("FileLastModded", column.FileLastModded)},\n" +
                              " }";
                         if (column != Songs.Last())
@@ -474,8 +242,10 @@ namespace MusicPLayerV2.Utils
                             $"  {JsonUnitString("AlbumName", column.Name)},\n" +
                             $"  {JsonUnitString("Artists", column.ArtistIds.ConcatListIds(", "))},\n" +
                             $"  {JsonUnitString("Genre", column.GenreIds.ConcatListIds(", "))},\n" +
-                            $"  {JsonUnitString("CoverBase64String", column.CoverBase64String)},\n" +
                             $"  {JsonUnitString("CoverPath", column.CoverPath)},\n" +
+                            $"  {JsonUnitString("CoverSize", column.CoverSize)},\n" +
+                            $"  {JsonUnitString("CoverTrack", column.CoverTrack)},\n" +
+                            $"  {JsonUnitString("CoverPathType", column.CoverPathType)},\n" +
                              " }";
                         if (column != Albums.Last())
                             exportString += ",\n";
@@ -525,15 +295,19 @@ namespace MusicPLayerV2.Utils
                         {
                             sw.Write(exportString);
                         }
+                        File.WriteAllText(path, exportString);
                     }
                     else
                         File.WriteAllText(path, exportString);
-                    break;
+                    goto default;
                 case ExportType.XML:
                     throw new NotImplementedException();
                 case ExportType.MultipleCSVs:
                     throw new NotImplementedException();
                 default:
+                    ObjectSaveToXML<List<CoverBase64XmlStruct>>.SaveSettingAsXml(
+                        Albums.Select(x => new CoverBase64XmlStruct() { Id = x.Id, Base64 = x.CoverBase64String }).ToList()
+                        , "Covers.xml");
                     break;
             }
         }
@@ -550,6 +324,11 @@ namespace MusicPLayerV2.Utils
             }
         }
         enum JsonValueType { Value, Array }
+        public struct CoverBase64XmlStruct
+        {
+            public int Id { get; set; }
+            public string Base64 { get; set; }
+        }
     }
     public enum ExportType { JSON, XML, MultipleCSVs }
 
@@ -599,6 +378,77 @@ namespace MusicPLayerV2.Utils
             }
         }
 
+        static double FormatSize { get; set; } = 500d;
+        public CoverPathType CoverPathType { get; set; } = CoverPathType.NoneCover;
+        public string CoverPath { get; set; }
+        public ImageSource Cover { get; set; }
+        public Size CoverSize { get; set; }
+
+        private ImageSource FormatCover(byte[] data, out string base64String)
+        {
+            if (data == null)
+            {
+                base64String = "";
+                return null;
+            }
+            BitmapImage ret = new BitmapImage();
+            using (MemoryStream ms = new MemoryStream(data, 0, data.Length, true, true))
+            using (System.Drawing.Image image = System.Drawing.Image.FromStream(ms))
+            {
+                System.Drawing.Bitmap bmp;
+                if (Math.Max(image.Height, image.Width) > FormatSize)
+                {
+                    if (image.Width > image.Height)
+                    {
+                        var newWidth = (int)FormatSize;
+                        var newHeight = (int)Math.Round(image.Height * ((float)FormatSize / image.Width));
+                        bmp = new System.Drawing.Bitmap(image, newWidth, newHeight);
+                    }
+                    else
+                    {
+                        var newHeight = (int)FormatSize;
+                        var newWidth = (int)Math.Round(image.Width * ((float)FormatSize / image.Height));
+                        bmp = new System.Drawing.Bitmap(image, newWidth, newHeight);
+                    }
+                }
+                else
+                {
+                    bmp = new System.Drawing.Bitmap(image, image.Width, image.Height);
+                }
+                CoverSize = new Size(bmp.Width, bmp.Height);
+                using (var newms = new MemoryStream())
+                {
+                    bmp.Save(newms, System.Drawing.Imaging.ImageFormat.Png);
+                    newms.Position = 0;
+                    base64String = Convert.ToBase64String(newms.GetBuffer());
+                    newms.Position = 0;
+                    ret.BeginInit();
+                    ret.StreamSource = newms;
+                    ret.CacheOption = BitmapCacheOption.OnLoad;
+                    ret.EndInit();
+                }
+            }
+            return ret;
+        }
+        public void LoadCover()
+        {
+            if (CoverPathType == CoverPathType.FromImageFile)
+                using (var fs = File.OpenRead(CoverPath))
+                {
+                    byte[] data = new byte[fs.Length];
+                    fs.Read(data, 0, (int)fs.Length);
+                    Cover = FormatCover(data, out string base64);
+                }
+            else if (CoverPathType == CoverPathType.FromAudioFile)
+                using (var t = TagLib.File.Create(CoverPath))
+                {
+                    byte[] data = t.Tag.Pictures[0].Data.Data;
+                    Cover = FormatCover(data, out string base64);
+                }
+            else
+                return;
+        }
+
         public static SongEntity CreateFromFile(string fileName)
         {
             SongEntity ret;
@@ -615,24 +465,62 @@ namespace MusicPLayerV2.Utils
                 ret.FileLastModded = f.LastWriteTimeUtc;
                 TryFindOrCreateEntity(tag.FirstGenre, out GenreEntity genre);
                 ret.GenreEntity = genre;
-                if (!TryFindOrCreateAlbum(tag.Album, SplitNamesToEntity<PerformerEntity>(tag.FirstAlbumArtist), out AlbumEntity album))
+                if (tag.Pictures.Length >= 1)
+                {
+                    ret.CoverPath = f.FullName;
+                    ret.CoverPathType = CoverPathType.FromAudioFile;
+                }
+                else if (TryFindCover(f, tag, out string path))
+                {
+                    ret.CoverPath = path;
+                    ret.CoverPathType = CoverPathType.FromImageFile;
+                }
+                if (!AlbumEntity.TryFindOrCreateAlbum(tag.Album, SplitNamesToEntity<PerformerEntity>(tag.FirstAlbumArtist), out AlbumEntity album))
                 {
                     if (!album.GenreEntities.Contains(ret.GenreEntity))
                         album.GenreEntities.Add(ret.GenreEntity);
-                    if (tag.Pictures.Length >= 1)
+                    if(tag.Track < album.CoverTrack)
                     {
-                        album.CoverPath = f.FullName;
-                        album.CoverPathType = CoverPathType.FromAudioFile;
+                        album.CoverPath = ret.CoverPath;
+                        album.CoverPathType = ret.CoverPathType;
+                        album.CoverTrack = tag.Track;
                     }
                 }
-                Console.WriteLine(album);
+                else
+                {
+                    album.CoverPath = ret.CoverPath;
+                    album.CoverPathType = ret.CoverPathType;
+                    album.CoverTrack = tag.Track;
+                }
                 ret.AlbumEntity = album;
                 ret.ArtistEntities = SplitNamesToEntity<PerformerEntity>(tag.FirstPerformer);
 
             }
             return ret;
         }
+        static bool TryFindCover(FileInfo file, TagLib.Tag tag, out string path,
+            string possibleName = "Cover;cover;AlbumArt;", string possibleEx = ".png;.jpg;.jpeg")
+        {
+            var extensions = possibleEx.Split(new char[]{';'},StringSplitOptions.RemoveEmptyEntries);
+            var names = possibleName.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var f in file.Directory.EnumerateFiles().Where(x => extensions.Contains(x.Extension)))
+            {
+                if (names.Contains(f.Name))
+                {
+                    path = f.FullName;
+                    return true;
+                }
+            }
+            path = "";
+            return false;
+        }
 
+        public override int GetHashCode()
+        {
+            if (Id != -1)
+                return Id;
+            return (Id = (DateTime.UtcNow.GetHashCode() ^ Name.GetHashCode()));
+        }
     }
 
     public class AlbumEntity : MusicEntity
@@ -652,11 +540,103 @@ namespace MusicPLayerV2.Utils
         public string CoverPath { get; set; }
         public ImageSource Cover { get; set; }
         public Size CoverSize { get; set; }
+        public uint CoverTrack { get; set; }
         public override int GetHashCode()
         {
-            return DateTime.UtcNow.ToString().GetHashCode() ^ Name.GetHashCode() ^ Artists.GetHashCode();
+            if (Id != -1)
+                return Id;
+            return (Id = Name.GetHashCode() ^ Artists.GetHashCode());
         }
+        static double FormatSize { get; set; } = 500d;
+        private ImageSource FormatCover(byte[] data, out string base64String)
+        {
+            if (data == null)
+            {
+                base64String = "";
+                return null;
+            }
+            BitmapImage ret = new BitmapImage();
+            using (MemoryStream ms = new MemoryStream(data, 0, data.Length, true, true))
+            using (System.Drawing.Image image = System.Drawing.Image.FromStream(ms))
+            {
+                System.Drawing.Bitmap bmp;
+                if (Math.Max(image.Height, image.Width) > FormatSize)
+                {
+                    if (image.Width > image.Height)
+                    {
+                        var newWidth = (int)FormatSize;
+                        var newHeight = (int)Math.Round(image.Height * ((float)FormatSize / image.Width));
+                        bmp = new System.Drawing.Bitmap(image, newWidth, newHeight);
+                    }
+                    else
+                    {
+                        var newHeight = (int)FormatSize;
+                        var newWidth = (int)Math.Round(image.Width * ((float)FormatSize / image.Height));
+                        bmp = new System.Drawing.Bitmap(image, newWidth, newHeight);
+                    }
+                }
+                else
+                {
+                    bmp = new System.Drawing.Bitmap(image, image.Width, image.Height);
+                }
+                CoverSize = new Size(bmp.Width, bmp.Height);
+                using (var newms = new MemoryStream())
+                {
+                    bmp.Save(newms, System.Drawing.Imaging.ImageFormat.Png);
+                    newms.Position = 0;
+                    base64String = Convert.ToBase64String(newms.GetBuffer());
+                    newms.Position = 0;
+                    ret.BeginInit();
+                    ret.StreamSource = newms;
+                    ret.CacheOption = BitmapCacheOption.OnLoad;
+                    ret.EndInit();
+                }
+            }
+            return ret;
+        }
+        public void LoadCover()
+        {
+            if (!string.IsNullOrWhiteSpace(CoverBase64String))
+            {
+                Cover = FormatCover(Convert.FromBase64String(CoverBase64String), out string base64);
+            }
+            else if (CoverPathType == CoverPathType.FromImageFile)
+                using (var fs = File.OpenRead(CoverPath))
+                {
+                    byte[] data = new byte[fs.Length];
+                    fs.Read(data, 0, (int)fs.Length);
+                    Cover = FormatCover(data, out string base64);
+                    CoverBase64String = base64;
+                }
+            else if (CoverPathType == CoverPathType.FromAudioFile)
+                using(var t = TagLib.File.Create(CoverPath))
+                {
+                    byte[] data = t.Tag.Pictures[0].Data.Data;
+                    Cover = FormatCover(data, out string base64);
+                    CoverBase64String = base64;
+                }
+            else
+                return;
+        }
+        public static bool TryFindOrCreateAlbum(string name, List<PerformerEntity> performers, out AlbumEntity entity)
+        {
+            var n = new AlbumEntity()
+            {
+                Name = name,
+                ArtistEntities = performers
+            };
+            var hash = n.GetHashCode();
 
+            if (Albums.Exists(x => x.Id == hash))
+            {
+                entity = Albums.Find(x => x.Id == hash);
+                return true;
+            }
+            entity = n;
+            entity.Id = entity.GetHashCode();
+            Albums.Add(entity);
+            return false;
+        }
     }
     public enum CoverPathType { NoneCover, FromAudioFile, FromImageFile };
 
@@ -685,30 +665,16 @@ namespace MusicPLayerV2.Utils
             if (obj.GetType() != GetType())
                 return false;
             if ((obj as MusicEntity).Id != Id)
+            {
                 return false;
+            }
             return true;
         }
         public override int GetHashCode()
         {
-            return DateTime.UtcNow.ToString().GetHashCode()^Name.GetHashCode();
-        }
-        protected static bool TryFindOrCreateAlbum(string name, List<PerformerEntity> performers, out AlbumEntity entity)
-        {
-            var n = new AlbumEntity()
-            {
-                Name = name,
-                ArtistEntities = performers
-            };
-            var hash = n.GetHashCode();
-            if (Albums.Exists(x => x.Id == hash))
-            {
-                entity = Albums.Find(x => x.Id == hash);
-                return true;
-            }
-            entity = n;
-            entity.Id = entity.GetHashCode();
-            Albums.Add(entity);
-            return false;
+            if (Id != -1)
+                return Id;
+            return (Id =  Name.GetHashCode());
         }
         protected static bool TryFindOrCreateEntity<T>(string name, out T entity) where T : MusicEntity, new()
         {
@@ -740,7 +706,7 @@ namespace MusicPLayerV2.Utils
             var names = namesString.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             foreach (var n in names)
             {
-                TryFindOrCreateEntity(n, out T entity);
+                TryFindOrCreateEntity(n.Trim(), out T entity);
                 ret.Add(entity);
             }
             return ret;

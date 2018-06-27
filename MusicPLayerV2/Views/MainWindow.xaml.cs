@@ -70,6 +70,10 @@ namespace MusicPLayerV2.Views
                 {
                     TagCtrl.SelectedIndex = 2;
                 }
+                else if ((sender as RadioButton) == ViewLibraryTab)
+                {
+                    TagCtrl.SelectedIndex = 3;
+                }
             }
         }
 
@@ -216,10 +220,10 @@ namespace MusicPLayerV2.Views
         {
             if (NPI == null)
                 return;
-            if (NPI.AlbumEntity.Cover == null)
+            if (NPI.Cover == null)
                 return;
-            ImageBorder.MaxHeight = NPI.AlbumEntity.CoverSize.Height;
-            ImageBorder.MaxWidth = NPI.AlbumEntity.CoverSize.Width;
+            ImageBorder.MaxHeight = NPI.CoverSize.Height;
+            ImageBorder.MaxWidth = NPI.CoverSize.Width;
         }
 
         private void MainWin_SizeChanged(object sender, SizeChangedEventArgs e)

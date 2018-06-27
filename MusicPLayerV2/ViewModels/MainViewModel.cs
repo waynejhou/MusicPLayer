@@ -54,7 +54,7 @@ namespace MusicPLayerV2.ViewModels
         #endregion
 
         #region Property
-        public ImageSource MusicPicture =>  NPI==null? (BitmapImage)R["NoImage"] : NPI.AlbumEntity.Cover ?? (BitmapImage)R["NoImage"];
+        public ImageSource MusicPicture =>  NPI==null? (BitmapImage)R["NoImage"] : NPI.Cover ?? (BitmapImage)R["NoImage"];
 
         public string LRCPath => (PM.IsLoadded) ? NPI.Path.Replace(new FileInfo(NPI.Path).Extension, ".lrc") : "";
 
