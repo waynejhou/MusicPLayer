@@ -18,6 +18,8 @@ using MusicPLayerV2.Models;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Threading;
+using System.ComponentModel;
 
 namespace MusicPLayerV2.ViewModels
 {
@@ -62,7 +64,13 @@ namespace MusicPLayerV2.ViewModels
         #endregion
         #region Commands
         public ICommand OpenFileDialogCmd => new RelayCommand<string>(OnOpenFileDialog, (s) => true);
-        public ICommand OpenFilesCmd => new RelayCommand<string[]>(OnOpenFiles, (string[] s) => true);
+        public ICommand OpenFilesCmd => new RelayCommand<string[]>((s)=>
+        {
+            
+        }, (string[] s) => true);
+
+       
+
         public ICommand AddFilesCmd => L.AddFilesCmd;
         public ICommand AddFileCmd => L.AddFileCmd;
         
@@ -99,20 +107,20 @@ namespace MusicPLayerV2.ViewModels
                 Log.Info("Opening file: " + settings.FileName);
             }
         }
-        private void OnOpenFiles(string[] fileNames)
+        private void asdsadOnOpenFiles(string[] fileNames)
         {
-            for (int i = 0; i < fileNames.Count(); i++)
+            for (int i = 0; i < fileNames.Length; i++)
             {
                 if (i == 0)
                 {
                     L.LoadFileCmd.Execute(fileNames[i]);
-                    C.PlayCmd.Execute(null);
                 }
                 else
                 {
                     L.AddFileCmd.Execute(fileNames[i]);
                 }
             }
+            C.PlayCmd.Execute(null);
         }
 
         private void OnShowAboutDialog()
@@ -138,7 +146,7 @@ namespace MusicPLayerV2.ViewModels
         {
             NotifyPropertyChanged(nameof(LRCPath));
             NotifyPropertyChanged(nameof(MusicPicture));
-            App.MainWin.AlbumImage_SourceUpdated();
+            App.MainWin.Dispatcher.Invoke(()=> { App.MainWin.AlbumImage_SourceUpdated(); });
             NotifyPropertyChanged(nameof(Title));
         }
 

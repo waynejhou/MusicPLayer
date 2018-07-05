@@ -125,8 +125,12 @@
     <Compile Include="Utils\SingleInstance.cs" />
     <Compile Include="ViewModels\ControllerViewModel.cs" />
     <Compile Include="ViewModels\LibraryViewModel.cs" />
+    <Compile Include="ViewModels\LoadingViewModel.cs" />
     <Compile Include="ViewModels\PlayingListViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\LoadingWindow.xaml.cs">
+      <DependentUpon>LoadingWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
@@ -162,6 +166,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoadingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

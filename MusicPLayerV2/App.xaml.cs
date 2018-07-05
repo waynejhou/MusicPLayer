@@ -27,6 +27,7 @@ namespace MusicPLayerV2
         public static PlayingListViewModel PlayingList { get; set; } = new PlayingListViewModel();
         public static MainViewModel MainModel { get; set; }
         public static LibraryViewModel Library { get; set; }
+        public static LoadingWindow Loading { get; set; } = new LoadingWindow();
         public static string LocalAppData = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\MusicPLayer";
 
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -35,7 +36,7 @@ namespace MusicPLayerV2
             MusicPLayerV2.Utils.MusicDatabase.ImportTables(@"DB.json", Utils.ExportType.JSON);
             // For catching Global uncaught exception
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionOccured);
+            //currentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionOccured);
 
             Log.Info("Starting App");
             LogMachineDetails();

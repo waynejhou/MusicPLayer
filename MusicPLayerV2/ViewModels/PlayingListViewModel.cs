@@ -22,7 +22,10 @@ namespace MusicPLayerV2.ViewModels
         public ICommand AddFilesCmd => new RelayCommand<string[]>((paths) => AddToList(paths), (paths) => true);
         public ICommand AddFileCmd => new RelayCommand<string>((path) => AddToList(path), (path) => true);
         public ICommand RemoveItemFromListCmd => new RelayCommand(RemoveSelectedItems, () => PlayingList.Count > 0 && SelectedItems != null && SelectedItems.Count > 0);
-        public ICommand RemoveAllItemFromListCmd => new RelayCommand(() => PlayingList?.Clear(), () => true);
+        public ICommand RemoveAllItemFromListCmd => new RelayCommand(() =>
+        {
+            PlayingList?.Clear();
+        }, () => true);
 
         private void RemoveSelectedItems()
         {
