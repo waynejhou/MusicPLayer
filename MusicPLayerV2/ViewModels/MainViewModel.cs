@@ -47,10 +47,8 @@ namespace MusicPLayerV2.ViewModels
             this.DialogService = new MvvmDialogs.DialogService();
             PM.LoaddedEvent += PM_LoaddedEvent;
             PM.WavePositionChangedEvent += PM_WavePositionChangedEvent;
-            loadFileToEntities.DoWork += LoadFileToEntities_DoWork;
-            loadFileToEntities.ProgressChanged += LoadFileToEntities_ProgressChanged;
-            loadFileToEntities.RunWorkerCompleted += LoadFileToEntities_RunWorkerCompleted;
         }
+
         #endregion
 
         #region Methods
@@ -111,51 +109,42 @@ namespace MusicPLayerV2.ViewModels
             public SongEntity[] Entities { get; set; }
             public bool? PlayFirstWhenComplete { get; set; }
         }
-        private LoadingViewModel LoadingVM = new LoadingViewModel()
+        private LoadingViewModel<LoadFileToEntitiesArgsAndResult> LoadingFileVM = new LoadingViewModel<LoadFileToEntitiesArgsAndResult>()
         {
             Min = 0, Max = 100, Title = "Loading", Value = 0
         };
         public void LoadingFiles(LoadFileToEntitiesArgsAndResult args)
         {
-            loadFileToEntities.RunWorkerAsync(args);
-            if (args.Files.Length > 10)
+            var LoadingFileVM = new LoadingViewModel<LoadFileToEntitiesArgsAndResult>()
             {
-                LoadingVM.Value = 0;
-                DialogService.ShowDialog<LoadingWindow>(this, LoadingVM);
-            }
-        }
-        private readonly BackgroundWorker loadFileToEntities = new BackgroundWorker() {
-            WorkerReportsProgress = true
-        };
-        private void LoadFileToEntities_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var bg = (sender as BackgroundWorker);
-            var argsAndresult = (e.Argument as LoadFileToEntitiesArgsAndResult);
-            var files = argsAndresult.Files;
-            var entities = argsAndresult.Entities = new SongEntity[files.Length];
-            for (int i = 0; i < files.Length; i++)
+                Min = 0,
+                Max = 100,
+                Title = "Loading",
+                Value = 0
+            };
+            LoadingFileVM.DoWork += (bgw, vm, a, e) =>
             {
-                entities[i] = SongEntity.CreateFromFile(files[i]);
-                bg.ReportProgress((int)(i / (double)(files.Length) * 100d),files[i]);
-            }
-            e.Result = argsAndresult;
-        }
-        private void LoadFileToEntities_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            LoadingVM.Message = e.UserState as string;
-            LoadingVM.Value = e.ProgressPercentage;
-        }
-        private void LoadFileToEntities_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            LoadingVM.Value = LoadingVM.Max;
-            var argsAndresult = (e.Result as LoadFileToEntitiesArgsAndResult);
-            var entities = argsAndresult.Entities;
-            L.AddEntityToList(entities);
-            if (argsAndresult.PlayFirstWhenComplete.Value == true)
+                var files = a.Files;
+                var entities = a.Entities = new SongEntity[files.Length];
+                for (int i = 0; i < files.Length; i++)
+                {
+                    entities[i] = SongEntity.CreateFromFile(files[i]);
+                    bgw.ReportProgress((int)(i / (double)(files.Length) * 100d), files[i]);
+                }
+                e.Result = a;
+            };
+            LoadingFileVM.RunWorkerCompleted += (bgw, vm, result, e) =>
             {
-                L.LoadEntity(entities[0]);
-                C.PlayCmd.Execute(null);
-            }
+                vm.Value = vm.Max;
+                var entities = result.Entities;
+                L.AddEntityToList(entities);
+                if (result.PlayFirstWhenComplete.Value == true)
+                {
+                    L.LoadEntity(entities[0]);
+                    C.PlayCmd.Execute(null);
+                }
+            };
+            LoadingFileVM.RunWorkerAsync(args, (a) => a.Files.Length > 10);
         }
 
 
