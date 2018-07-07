@@ -154,9 +154,6 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <UserControl.DataContext>
-        <localvm:ControllerViewModel/>
-    </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>

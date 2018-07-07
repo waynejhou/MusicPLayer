@@ -48,6 +48,7 @@ namespace MusicPLayerV2.Views
                     return;
                 }
             */
+            App.Settings.ApplySetting();
             App.Settings.SaveSettingAsXml();
             App.PlayerModel.Dispose();
             Log.Info("Closing App");

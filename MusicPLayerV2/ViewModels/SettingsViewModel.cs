@@ -411,14 +411,14 @@ namespace MusicPLayerV2.ViewModels
 
     public class VolumeSetting: DoubleSetting
     {
-        private ControllerViewModel C => App.Controller;
+        private MusicPlayer PM => App.PlayerModel;
         public override double GetValue()
         {
-            return C.MusicVolume;
+            return PM.Volume;
         }
         public override void SetValue(double newValue)
         {
-            C.MusicVolume = newValue;
+            PM.Volume = (float)newValue;
         }
     }
 

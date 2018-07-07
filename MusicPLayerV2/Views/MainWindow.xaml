@@ -326,9 +326,8 @@
                                             <localuc:LibraryControl
                                                 x:Name="LibraryC"
                                                 Style="{DynamicResource LibraryStyle}"
-                                                >
-                                                
-                                            </localuc:LibraryControl>
+                                                />
+
                                         </TabItem>
                                     </TabControl>
                                 </Grid>
