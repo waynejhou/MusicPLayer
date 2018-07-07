@@ -27,7 +27,7 @@ namespace MusicPLayerV2
         public static PlayingListViewModel PlayingList { get; set; } = new PlayingListViewModel();
         public static MainViewModel MainModel { get; set; }
         public static LibraryViewModel Library { get; set; }
-        public static LoadingWindow Loading { get; set; } = new LoadingWindow();
+        public static LoadingWindow LoadingWin { get; set; } = new LoadingWindow();
         public static string LocalAppData = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\MusicPLayer";
 
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -48,7 +48,11 @@ namespace MusicPLayerV2
 
             if (e.Args.Length > 0)
             {
-                MainModel.OpenFilesCmd.Execute(e.Args);
+                MainModel.LoadingFiles(new MainViewModel.LoadFileToEntitiesArgsAndResult
+                {
+                    Files = e.Args,
+                    PlayFirstWhenComplete = false
+                });
                 Controller.PlayCmd.Execute(null);
             }
         }
@@ -103,7 +107,11 @@ namespace MusicPLayerV2
             {
                 string[] a = new string[args.Count];
                 args.CopyTo(a, 0);
-                MainModel.OpenFilesCmd.Execute(a);
+                MainModel.LoadingFiles(new MainViewModel.LoadFileToEntitiesArgsAndResult
+                {
+                    Files = a,
+                    PlayFirstWhenComplete = false
+                });
                 Controller.PlayCmd.Execute(null);
             }
             return true;

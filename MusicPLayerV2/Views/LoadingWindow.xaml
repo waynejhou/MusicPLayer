@@ -7,16 +7,21 @@
         xmlns:vm="clr-namespace:MusicPLayerV2.ViewModels"
         mc:Ignorable="d"
         Title="{Binding Title}" Height="150" Width="500" ResizeMode="NoResize">
-    <StackPanel VerticalAlignment="Bottom">
-        <Border>
-            <Label Content="{Binding Message}"/>
-        </Border>
-        <Border>
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom">
             <ProgressBar x:Name="PB" Height="25" Margin="10"
                          Maximum="{Binding Max}"
                          Minimum="{Binding Min}"
                          Value="{Binding Value}"
                          ValueChanged="ProgressBar_ValueChanged"/>
         </Border>
-    </StackPanel>
+        <Label DockPanel.Dock="Top">
+            Now Loading ...
+        </Label>
+        <Border>
+            <Label>
+                <AccessText Text="{Binding Message}" TextWrapping="WrapWithOverflow"/>
+            </Label>
+        </Border>
+    </DockPanel>
 </Window>

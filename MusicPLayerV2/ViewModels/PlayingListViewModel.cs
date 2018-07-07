@@ -18,9 +18,6 @@ namespace MusicPLayerV2.ViewModels
         private MusicPlayer PM => App.PlayerModel;
         private SongEntity NPI => App.PlayerModel.NowPlayingItem;
 
-        public ICommand LoadFileCmd => new RelayCommand<string>(OnLoadFile, (string s) => true);
-        public ICommand AddFilesCmd => new RelayCommand<string[]>((paths) => AddToList(paths), (paths) => true);
-        public ICommand AddFileCmd => new RelayCommand<string>((path) => AddToList(path), (path) => true);
         public ICommand RemoveItemFromListCmd => new RelayCommand(RemoveSelectedItems, () => PlayingList.Count > 0 && SelectedItems != null && SelectedItems.Count > 0);
         public ICommand RemoveAllItemFromListCmd => new RelayCommand(() =>
         {
@@ -43,37 +40,18 @@ namespace MusicPLayerV2.ViewModels
 
         public ObservableCollection<SongEntity> PlayingList { get; set; } = new ObservableCollection<SongEntity>();
 
-        public void AddToList(string path)
-        {
-            PlayingList.Add(SongEntity.CreateFromFile(path));
-        }
-        public void AddToList(string[] paths)
-        {
-            foreach (var s in paths)
-            {
-                PlayingList.Add(SongEntity.CreateFromFile(s));
-            }
-        }
-        public void AddToList(SongEntity musicItem)
+        public void AddEntityToList(SongEntity musicItem)
         {
             PlayingList.Add(musicItem);
         }
-        public void AddToList(SongEntity[] musicItems)
+        public void AddEntityToList(SongEntity[] musicItems)
         {
             foreach(var mi in musicItems)
             {
                 PlayingList.Add(mi);
             }
         }
-        private void OnLoadFile(string path)
-        {
-            if (!MusicPlayer.SupportCheck(path, (string)R["Filter_AudioFile"]))
-                return;
-            SongEntity newone = SongEntity.CreateFromFile(path);
-            AddToList(newone);
-            PM.LoadFromMusicItem(newone);
-        }
-        public void Load(SongEntity musicItem)
+        public void LoadEntity(SongEntity musicItem)
         {
             if (!IsGetPrev)
             {
@@ -81,9 +59,11 @@ namespace MusicPLayerV2.ViewModels
                 IsGetPrev = false;
             }
             if (!PlayingList.Contains(musicItem))
-                AddToList(musicItem);
+                AddEntityToList(musicItem);
             PM.LoadFromMusicItem(musicItem);
         }
+
+
 
         public Stack<SongEntity> PlayingHistory { get; set; } = new Stack<SongEntity>();
         public NextOneMode NextModeType { get; set; } = NextOneMode.RepeatList;

@@ -38,7 +38,7 @@ namespace MusicPLayerV2.Views.UserControls
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            L.Load(ListViewL.SelectedItem as SongEntity);
+            L.LoadEntity(ListViewL.SelectedItem as SongEntity);
             C.PlayCmd.Execute(null);
         }
 

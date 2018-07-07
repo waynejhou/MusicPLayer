@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MvvmDialogs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MusicPLayerV2.ViewModels
 {
-    public class LoadingViewModel: ViewModelBase
+    public class LoadingViewModel: ViewModelBase, IModalDialogViewModel
     {
         string _title = "Loading";
         public string Title { get=>_title; set
@@ -51,5 +52,7 @@ namespace MusicPLayerV2.ViewModels
                 NotifyPropertyChanged(nameof(Value));
             }
         }
+
+        public bool? DialogResult => true;
     }
 }

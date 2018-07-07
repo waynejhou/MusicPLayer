@@ -97,7 +97,7 @@ namespace MusicPLayerV2.ViewModels
 
         private void OnPlayNext()
         {
-            L.Load(L.GetNextMusic());
+            L.LoadEntity(L.GetNextMusic());
             PlayCmd.Execute(null);
         }
 
@@ -105,7 +105,7 @@ namespace MusicPLayerV2.ViewModels
 
         private void OnPlayPrev()
         {
-            L.Load(L.GetPrevMusic());
+            L.LoadEntity(L.GetPrevMusic());
             PlayCmd.Execute(null);
         }
 

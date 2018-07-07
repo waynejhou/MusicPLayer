@@ -47,8 +47,10 @@ namespace MusicPLayerV2.ViewModels
             this.DialogService = new MvvmDialogs.DialogService();
             PM.LoaddedEvent += PM_LoaddedEvent;
             PM.WavePositionChangedEvent += PM_WavePositionChangedEvent;
+            loadFileToEntities.DoWork += LoadFileToEntities_DoWork;
+            loadFileToEntities.ProgressChanged += LoadFileToEntities_ProgressChanged;
+            loadFileToEntities.RunWorkerCompleted += LoadFileToEntities_RunWorkerCompleted;
         }
-
         #endregion
 
         #region Methods
@@ -64,20 +66,8 @@ namespace MusicPLayerV2.ViewModels
         #endregion
         #region Commands
         public ICommand OpenFileDialogCmd => new RelayCommand<string>(OnOpenFileDialog, (s) => true);
-        public ICommand OpenFilesCmd => new RelayCommand<string[]>((s)=>
-        {
-            
-        }, (string[] s) => true);
-
-       
-
-        public ICommand AddFilesCmd => L.AddFilesCmd;
-        public ICommand AddFileCmd => L.AddFileCmd;
-        
-
         public ICommand ShowAboutDialogCmd => new RelayCommand(OnShowAboutDialog, () => true);
         public ICommand ShowSettingDialogCmd => new RelayCommand(OnShowSettingDialog, () => true);
-
         public ICommand ExitCmd => new RelayCommand(OnExitApp, () => true);
 
 
@@ -97,31 +87,77 @@ namespace MusicPLayerV2.ViewModels
             {
                 if (arg == "Open")
                 {
-                    OpenFilesCmd.Execute(settings.FileNames);
-                    C.PlayCmd.Execute(null);
+                    LoadingFiles(new LoadFileToEntitiesArgsAndResult
+                    {
+                        Files = settings.FileNames,
+                        PlayFirstWhenComplete = true
+                    });
                 }
                 if (arg == "Add")
                 {
-                    L.AddFilesCmd.Execute(settings.FileNames);
+                    LoadingFiles(new LoadFileToEntitiesArgsAndResult
+                    {
+                        Files = settings.FileNames,
+                        PlayFirstWhenComplete = false
+                    });
                 }
                 Log.Info("Opening file: " + settings.FileName);
             }
         }
-        private void asdsadOnOpenFiles(string[] fileNames)
+
+        public class LoadFileToEntitiesArgsAndResult
         {
-            for (int i = 0; i < fileNames.Length; i++)
-            {
-                if (i == 0)
-                {
-                    L.LoadFileCmd.Execute(fileNames[i]);
-                }
-                else
-                {
-                    L.AddFileCmd.Execute(fileNames[i]);
-                }
-            }
-            C.PlayCmd.Execute(null);
+            public string[] Files { get; set; }
+            public SongEntity[] Entities { get; set; }
+            public bool? PlayFirstWhenComplete { get; set; }
         }
+        private LoadingViewModel LoadingVM = new LoadingViewModel()
+        {
+            Min = 0, Max = 100, Title = "Loading", Value = 0
+        };
+        public void LoadingFiles(LoadFileToEntitiesArgsAndResult args)
+        {
+            loadFileToEntities.RunWorkerAsync(args);
+            if (args.Files.Length > 10)
+            {
+                LoadingVM.Value = 0;
+                DialogService.ShowDialog<LoadingWindow>(this, LoadingVM);
+            }
+        }
+        private readonly BackgroundWorker loadFileToEntities = new BackgroundWorker() {
+            WorkerReportsProgress = true
+        };
+        private void LoadFileToEntities_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var bg = (sender as BackgroundWorker);
+            var argsAndresult = (e.Argument as LoadFileToEntitiesArgsAndResult);
+            var files = argsAndresult.Files;
+            var entities = argsAndresult.Entities = new SongEntity[files.Length];
+            for (int i = 0; i < files.Length; i++)
+            {
+                entities[i] = SongEntity.CreateFromFile(files[i]);
+                bg.ReportProgress((int)(i / (double)(files.Length) * 100d),files[i]);
+            }
+            e.Result = argsAndresult;
+        }
+        private void LoadFileToEntities_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            LoadingVM.Message = e.UserState as string;
+            LoadingVM.Value = e.ProgressPercentage;
+        }
+        private void LoadFileToEntities_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            LoadingVM.Value = LoadingVM.Max;
+            var argsAndresult = (e.Result as LoadFileToEntitiesArgsAndResult);
+            var entities = argsAndresult.Entities;
+            L.AddEntityToList(entities);
+            if (argsAndresult.PlayFirstWhenComplete.Value == true)
+            {
+                L.LoadEntity(entities[0]);
+                C.PlayCmd.Execute(null);
+            }
+        }
+
 
         private void OnShowAboutDialog()
         {
