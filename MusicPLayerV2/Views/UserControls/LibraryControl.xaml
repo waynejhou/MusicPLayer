@@ -322,10 +322,74 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <DataTemplate x:Key="ImageDataTemplate">
+            <Border ToolTip="{Binding Artists}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="1"
+                                           TextWrapping="WrapWithOverflow"
+                                           Width="150"
+                                           Height="32"
+                                           Text="{Binding Name}"/>
+                    <Image Grid.Row="0" x:Name="AlbumImg" Height="150" Width="150" Source="{Binding Cover}"/>
+                    <StackPanel x:Name="BtnPanel" Grid.Row="0" Height="50" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Visibility="Collapsed">
+                        <Button x:Name="PlayBtn" Width="50" Background="#7FDDDDDD" BorderBrush="{x:Null}"
+                                Command="{Binding DataContext.PlayCmd, ElementName=window}" CommandParameter="{Binding}">
+                            <Label FontSize="20">
+                                <Label.Effect>
+                                    <DropShadowEffect Color="White" BlurRadius="10"/>
+                                </Label.Effect> play
+                            </Label>
+                        </Button>
+                        <Button x:Name="AddBtn" Width="50" Background="#7FDDDDDD" BorderBrush="{x:Null}"
+                                Command="{Binding DataContext.AddCmd, ElementName=window}" CommandParameter="{Binding}">
+                            <Label FontSize="20">
+                                <Label.Effect>
+                                    <DropShadowEffect Color="White" BlurRadius="10"/>
+                                </Label.Effect> add
+                            </Label>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="AlbumImg" Property="Effect">
+                        <Setter.Value>
+                            <BlurEffect/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter TargetName="BtnPanel" Property="Visibility" Value="Visible"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        <Style x:Key="FileItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="Margin" Value="5,5,5,5"/>
+            <Setter Property="Padding" Value="0,0,0,0"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate  TargetType="{x:Type ListViewItem}">
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" >
+                            <Border x:Name="border"
+                                        BorderBrush="{x:Null}" BorderThickness="0" HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" CornerRadius="2.5"/>
+                            <StackPanel HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+                                <ContentPresenter/>
+                            </StackPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ItemsPanelTemplate x:Key="WrapPanel">
+            <WrapPanel/>
+        </ItemsPanelTemplate>
     </UserControl.Resources>
-    <UserControl.DataContext>
-        <vm:LibraryViewModel/>
-    </UserControl.DataContext>
     <DockPanel>
         <Border DockPanel.Dock="Top" Style="{DynamicResource CardBorderStyle}">
             <StackPanel Orientation="Horizontal">
@@ -336,6 +400,36 @@
             </StackPanel>
         </Border>
 
-        <Border/>
+        <Border Style="{DynamicResource CardBorderStyle}">
+            <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                   Foreground="{DynamicResource ForegroundColor}">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <ListView x:Name="AlbumListView"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                          ItemContainerStyle="{StaticResource FileItemStyle}"
+                                          SelectionMode="Single"
+                                          BorderThickness="0" BorderBrush="{x:Null}"
+                                          ItemTemplate="{DynamicResource ImageDataTemplate}"
+                                          ItemsSource="{Binding AlbumList}"
+                                          ItemsPanel="{DynamicResource WrapPanel}">
+                                </ListView>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SongLibraryCount}" Value="0">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <TextBlock FontSize="{DynamicResource TextMediumFontSize}">NoItem</TextBlock>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+        </Border>
     </DockPanel>
 </UserControl>

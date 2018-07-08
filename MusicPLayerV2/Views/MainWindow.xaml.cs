@@ -50,6 +50,7 @@ namespace MusicPLayerV2.Views
             */
             App.Settings.ApplySetting();
             App.Settings.SaveSettingAsXml();
+            MusicDatabase.ExportTables(@"DB.json", Utils.ExportType.JSON);
             App.PlayerModel.Dispose();
             Log.Info("Closing App");
         }

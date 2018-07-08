@@ -10,6 +10,8 @@
         xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         xmlns:Themes="clr-namespace:Xceed.Wpf.Toolkit.Themes;assembly=Xceed.Wpf.Toolkit" x:Name="SettingWin" x:Class="MusicPLayerV2.Views.SettingWindow"
         mc:Ignorable="d"
+        xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        md:DialogServiceViews.IsRegistered="True"
         Title="SettingWindow" Height="450" Width="800">
     <Window.Resources>
         <DataTemplate x:Key="LeftPanelItemTemplate">
@@ -114,6 +116,7 @@
                       SelectionChanged="LeftPanel_SelectionChanged">
                 <TextBlock Text="{DynamicResource Setting_UISettings}"/>
                 <TextBlock Text="{DynamicResource Setting_PlayerSettings}"/>
+                <TextBlock Text="LibrarySetting"/>
                 <TextBlock Text="{DynamicResource Setting_Language}"/>
             </ListView>
         </Border>
@@ -235,6 +238,33 @@
                             <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
                                 <ItemsControl Style="{DynamicResource ItemsControlStyle}">
                                 </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <Label Content="Library Directories" Style="{DynamicResource Separator}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="+" Width="20" Height="20" Margin="2" Command="{Binding AddDirectoryCmd}"/>
+                                    <Button Content="-" Width="20" Height="20" Margin="2" Command="{Binding RemoveDirectoryCmd}"/>
+                                    <Button Content="Scan Folder" Height="20" Margin="2" Padding="2" Command="{Binding ScanDirectories}"/>
+                                </StackPanel>
+                                <ListView ItemsSource="{Binding LibraryDirectories.Value}"
+                                          BorderThickness="0"
+                                          SelectedIndex="{Binding DirectorySelectedIndex, Mode=TwoWay}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Label>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <CheckBox IsChecked="{Binding IsScanAllSubDirectories, Mode=TwoWay}" Command=""/>
+                                                    <TextBlock Text="{Binding FullName}"/>
+                                                </StackPanel>
+
+                                            </Label>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
                             </StackPanel>
                         </ScrollViewer>
                     </TabItem>

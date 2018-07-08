@@ -26,7 +26,6 @@ namespace MusicPLayerV2.Views
 
         private void LeftPanel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Console.WriteLine((sender as ListView).SelectedIndex);
             if ((sender as ListView).SelectedIndex == -1)
                 return;
             if ((sender as ListView).SelectedIndex >= TagCtrl.Items.Count)

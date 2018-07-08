@@ -135,7 +135,6 @@ namespace MusicPLayerV2.Utils
                 {
                     var m = jsonUnitRegex.Match(str);
                     tableStack.Peek().Add(m.Groups[1].Value, m.Groups[2].Value);
-                    //Console.WriteLine($"{m.Groups[1]}  --  {m.Groups[2]}");
                 }
                 else
                     continue;
@@ -195,7 +194,6 @@ namespace MusicPLayerV2.Utils
                     CoverSize = Size.Parse((string)song["CoverSize"])
                 });
             }
-            Console.WriteLine(tables.Count);
         }
         public static void ExportTables(string path, ExportType type, bool isCompression = true)
         {
@@ -295,7 +293,10 @@ namespace MusicPLayerV2.Utils
                         {
                             sw.Write(exportString);
                         }
-                        File.WriteAllText(path, exportString);
+                        if (System.Diagnostics.Debugger.IsAttached)
+                        {
+                            File.WriteAllText(path, exportString);
+                        }
                     }
                     else
                         File.WriteAllText(path, exportString);
@@ -452,12 +453,12 @@ namespace MusicPLayerV2.Utils
         public static SongEntity CreateFromFile(string fileName)
         {
             SongEntity ret;
+            if (TryFindOrCreateEntity(fileName, out ret)) return ret;
             using (var w = CSCore.Codecs.CodecFactory.Instance.GetCodec(fileName))
             using (var t = TagLib.File.Create(fileName, TagLib.ReadStyle.None))
             {
                 var tag = t.Tag;
                 var f = new FileInfo(fileName);
-                if (TryFindOrCreateEntity(fileName, out ret)) return ret;
                 ret.Title = string.IsNullOrEmpty(tag.Title) ? f.Name : tag.Title;
                 ret.Track = tag.Track;
                 ret.Year = tag.Year;
@@ -479,18 +480,20 @@ namespace MusicPLayerV2.Utils
                 {
                     if (!album.GenreEntities.Contains(ret.GenreEntity))
                         album.GenreEntities.Add(ret.GenreEntity);
-                    if(tag.Track < album.CoverTrack)
+
+                    album.CoverPath = ret.CoverPath;
+                    album.CoverPathType = ret.CoverPathType;
+                    album.CoverTrack = tag.Track;
+
+                }
+                else
+                {
+                    if (tag.Track < album.CoverTrack)
                     {
                         album.CoverPath = ret.CoverPath;
                         album.CoverPathType = ret.CoverPathType;
                         album.CoverTrack = tag.Track;
                     }
-                }
-                else
-                {
-                    album.CoverPath = ret.CoverPath;
-                    album.CoverPathType = ret.CoverPathType;
-                    album.CoverTrack = tag.Track;
                 }
                 ret.AlbumEntity = album;
                 ret.ArtistEntities = SplitNamesToEntity<PerformerEntity>(tag.FirstPerformer);
@@ -747,7 +750,6 @@ namespace MusicPLayerV2.Utils
         }
     }
 
-
     public static class ObjectSaveToXML<T> where T : new()
     {
         public static void SaveSettingAsXml(T @object, string fileName)
@@ -795,6 +797,26 @@ namespace MusicPLayerV2.Utils
                 Console.WriteLine($"{typeof(T)}.LoadSettingFromXml: {ex}");
             }
             return Setting;
+        }
+    }
+
+    public class ScannedDirectoryInfo
+    {
+        public readonly DirectoryInfo DirectoryInfo;
+        public string FullName => DirectoryInfo.FullName;
+        public bool IsScanAllSubDirectories { get; set; } = true;
+        public ScannedDirectoryInfo(string path)
+        {
+            DirectoryInfo = new DirectoryInfo(path);
+        }
+        public ScannedDirectoryInfo(string path, bool ScanAllSubDirectories )
+        {
+            DirectoryInfo = new DirectoryInfo(path);
+            IsScanAllSubDirectories = ScanAllSubDirectories;
+        }
+        public override string ToString()
+        {
+            return FullName;
         }
     }
 }

@@ -326,7 +326,7 @@
                                             <localuc:LibraryControl
                                                 x:Name="LibraryC"
                                                 Style="{DynamicResource LibraryStyle}"
-                                                />
+                                                DataContext="{x:Static root:App.Library}"/>
 
                                         </TabItem>
                                     </TabControl>

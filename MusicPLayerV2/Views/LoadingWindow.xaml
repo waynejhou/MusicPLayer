@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MusicPLayerV2.Views"
         xmlns:vm="clr-namespace:MusicPLayerV2.ViewModels"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="150" Width="500" ResizeMode="NoResize">
+        Title="{Binding Title}" Height="150" Width="500" ResizeMode="NoResize" WindowStyle="None">
     <DockPanel>
         <Border DockPanel.Dock="Bottom">
             <ProgressBar x:Name="PB" Height="25" Margin="10"

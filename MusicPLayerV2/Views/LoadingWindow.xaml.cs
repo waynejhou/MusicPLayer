@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MusicPLayerV2.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +29,7 @@ namespace MusicPLayerV2.Views
         {
             if ((sender as ProgressBar).Maximum == e.NewValue)
                 Close();
+            (DataContext as IDisposable).Dispose();
         }
     }
 }

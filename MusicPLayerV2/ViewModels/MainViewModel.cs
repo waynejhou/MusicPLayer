@@ -77,6 +77,7 @@ namespace MusicPLayerV2.ViewModels
                 Filter = $"{R["Filter_AudioFile"]}|{R["Filter_AllFile"]}",
                 CheckFileExists = true,
                 Multiselect = true,
+                
             };
             if (PM.IsLoadded)
                 settings.InitialDirectory = new FileInfo(PM.NowPlayingItem.Path).Directory.FullName;

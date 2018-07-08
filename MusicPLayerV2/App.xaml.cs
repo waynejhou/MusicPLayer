@@ -12,6 +12,7 @@ using System.ComponentModel;
 using MusicPLayerV2.ViewModels;
 using MusicPLayerV2.Views;
 using MusicPLayerV2.Models;
+using MusicPLayerV2.Utils;
 using Microsoft.Shell;
 using System.Windows.Markup;
 
@@ -26,13 +27,14 @@ namespace MusicPLayerV2
         public static ControllerViewModel Controller { get; set; } = new ControllerViewModel();
         public static PlayingListViewModel PlayingList { get; set; } = new PlayingListViewModel();
         public static MainViewModel MainModel { get; set; }
-        public static LibraryViewModel Library { get; set; }
-        public static string LocalAppData = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\MusicPLayer";
+        public static LibraryViewModel Library { get; set; } = new LibraryViewModel();
+        public static string LocalAppData => $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\MusicPLayer";
+        public static string MyMusic => $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}";
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Log.Info("Application Startup");
-            MusicPLayerV2.Utils.MusicDatabase.ImportTables(@"DB.json", Utils.ExportType.JSON);
+            MusicDatabase.ImportTables(@"DB.json", Utils.ExportType.JSON);
             // For catching Global uncaught exception
             AppDomain currentDomain = AppDomain.CurrentDomain;
             //currentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionOccured);

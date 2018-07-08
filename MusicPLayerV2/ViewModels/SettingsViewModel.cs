@@ -1,7 +1,9 @@
 ﻿using MusicPLayerV2.Models;
 using MusicPLayerV2.Utils;
+using MvvmDialogs.FrameworkDialogs.OpenFile;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
@@ -26,6 +28,7 @@ namespace MusicPLayerV2.ViewModels
         private SongEntity NPI => App.PlayerModel.NowPlayingItem;
         private ControllerViewModel C => App.Controller;
         private PlayingListViewModel L => App.PlayingList;
+        private LibraryViewModel Lib = App.Library;
 
         SettingList SettingList => new List<ISettingItem>()
             {
@@ -51,7 +54,9 @@ namespace MusicPLayerV2.ViewModels
 
             MusicVolume,
             BackgroundCoverVisibility,
-            MiniBackgroundCoverVisibility
+            MiniBackgroundCoverVisibility,
+
+            LibraryDirectories
             };
 
 
@@ -86,6 +91,32 @@ namespace MusicPLayerV2.ViewModels
         public VisibilitySetting BackgroundCoverVisibility { get; set; } = new VisibilitySetting() { Name = nameof(BackgroundCoverVisibility) };
         public VisibilitySetting MiniBackgroundCoverVisibility { get; set; } = new VisibilitySetting() { Name = nameof(MiniBackgroundCoverVisibility) };
 
+        public DirectoriesSetting LibraryDirectories { get; set; } = new DirectoriesSetting() { Name = nameof(LibraryDirectories) };
+        public ICommand AddDirectoryCmd => new RelayCommand(AddDirectory, () => true);
+        public ICommand RemoveDirectoryCmd => new RelayCommand(RemoveDirectory, () => DirectorySelectedIndex >= 0);
+        public ICommand ScanDirectories => new RelayCommand(Lib.ScanDirectory, () => true);
+        [XmlIgnore]
+        public int DirectorySelectedIndex { get; set; } = 0;
+        public void AddDirectory()
+        {
+            var settings = new MvvmDialogs.FrameworkDialogs.FolderBrowser.FolderBrowserDialogSettings()
+            {
+                Description = "Choose directory",
+            };
+            var success = new MvvmDialogs.DialogService().ShowFolderBrowserDialog(this, settings);
+            if (success == true)
+            {
+                LibraryDirectories.Value.Add(new ScannedDirectoryInfo(settings.SelectedPath));
+                NotifyPropertyChanged(nameof(LibraryDirectories.Value));
+                LibraryDirectories.ApplyChange();
+            }
+        }
+        public void RemoveDirectory()
+        {
+            LibraryDirectories.Value.RemoveAt(DirectorySelectedIndex);
+            NotifyPropertyChanged(nameof(LibraryDirectories.Value));
+            LibraryDirectories.ApplyChange();
+        }
         public void ApplySetting()
         {
             SettingList.ForEach(x => {
@@ -97,13 +128,13 @@ namespace MusicPLayerV2.ViewModels
         }
     }
 
+    #region Setting base class
     public interface ISettingItem
     {
         string Name { get; set; }
         string String { get; set; }
         void ApplyChange();
     }
-
     public abstract class SettingItemStruct<T> : ISettingItem where T : struct
     {
         [XmlIgnore]
@@ -200,7 +231,9 @@ namespace MusicPLayerV2.ViewModels
             SetValue(Value);
         }
     }
+    #endregion
 
+    #region Color Related Setting CLass
     public class ColorSetting : SettingItemStruct<Color>
     {
         public override Color GetValue()
@@ -241,7 +274,9 @@ namespace MusicPLayerV2.ViewModels
             return value.ToString();
         }
     }
+    #endregion
 
+    #region Language Setting CLass
     public class LanguageSetting : SettingItemStruct<LanguagePair>
     {
         [XmlIgnore]
@@ -296,7 +331,9 @@ namespace MusicPLayerV2.ViewModels
             return Value.Value;
         }
     }
+    #endregion
 
+    #region Font Setting CLass
     public class FontSetting : SettingItemStruct<FontFamilyPair>
     {
         [XmlIgnore]
@@ -368,7 +405,9 @@ namespace MusicPLayerV2.ViewModels
             return Source.GetHashCode();
         }
     }
+    #endregion
 
+    #region Double Related Setting Class
     public class DoubleSetting : SettingItemStruct<double>
     {
         public override double ConvertFromString(string valueString)
@@ -421,7 +460,9 @@ namespace MusicPLayerV2.ViewModels
             PM.Volume = (float)newValue;
         }
     }
+    #endregion
 
+    #region Bool Related Setting Class
     public class BoolSetting : SettingItemStruct<bool>
     {
         public override bool ConvertFromString(string valueString)
@@ -459,6 +500,43 @@ namespace MusicPLayerV2.ViewModels
                 App.MainWin.SetBackgroundCoverMode(Views.MainWindowMode.Normal);
         }
     }
+    #endregion
+
+    #region Directories Setting Class
+    public class DirectoriesSetting : SettingItemClass<ObservableCollection<ScannedDirectoryInfo>>
+    {
+        [XmlIgnore]
+        protected LibraryViewModel L => App.Library;
+
+        public override ObservableCollection<ScannedDirectoryInfo> ConvertFromString(string valueString)
+        {
+            return new ObservableCollection<ScannedDirectoryInfo>(
+                valueString.Split(';').ToList().ConvertAll(
+                    x =>
+                    {
+                        var xsp = x.Split(new string[] { "::" }, StringSplitOptions.RemoveEmptyEntries);
+                        return new ScannedDirectoryInfo(
+                            xsp[0],
+                            bool.Parse(xsp[1]));
+                    }));
+        }
+
+        public override string ConvertToString(ObservableCollection<ScannedDirectoryInfo> value)
+        {
+            return string.Concat(value.Select(x => $"; {x.ToString()}::{x.IsScanAllSubDirectories.ToString()}")).Trim("; ".ToCharArray());
+        }
+
+        public override ObservableCollection<ScannedDirectoryInfo> GetValue()
+        {
+            return new ObservableCollection<ScannedDirectoryInfo>(L.ScannedDirectoryInfo);
+        }
+
+        public override void SetValue(ObservableCollection<ScannedDirectoryInfo> newValue)
+        {
+            L.ScannedDirectoryInfo = newValue.ToList();
+        }
+    }
+    #endregion
 
     public partial class SettingsViewModel
     {

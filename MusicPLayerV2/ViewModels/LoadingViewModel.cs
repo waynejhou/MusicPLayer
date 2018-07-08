@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MusicPLayerV2.ViewModels
 {
-    public class LoadingViewModel<T>: ViewModelBase where T :class
+    public class LoadingViewModel<T>: ViewModelBase, IDisposable where T :class
     {
         string _title = "Loading";
         public string Title { get=>_title; set
@@ -123,6 +123,11 @@ namespace MusicPLayerV2.ViewModels
         }
         private readonly Dictionary<RunWorkerCompletedEventHandler, System.ComponentModel.RunWorkerCompletedEventHandler>
             RunWorkerCompletedEventLog = new Dictionary<RunWorkerCompletedEventHandler, System.ComponentModel.RunWorkerCompletedEventHandler>();
+
+        public void Dispose()
+        {
+            BGWorker.Dispose();
+        }
     }
 
 }
