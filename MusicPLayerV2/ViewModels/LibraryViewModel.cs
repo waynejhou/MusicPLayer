@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace MusicPLayerV2.ViewModels
 {
     public class LibraryViewModel : ViewModelBase
@@ -114,5 +115,36 @@ namespace MusicPLayerV2.ViewModels
             }
         }
         public enum LibraryStyle { Grid, CoverFlow }
+        public void SaveLibrary()
+        {
+            string LibraryString = "";
+            LibraryString += string.Concat(SongLibrary.Select(x => $", {x.Id}")).Trim(", ".ToCharArray());
+            LibraryString += ";\n";
+            LibraryString += string.Concat(AlbumLibrary.Select(x => $", {x.Id}")).Trim(", ".ToCharArray());
+            LibraryString += ";\n";
+            LibraryString += string.Concat(PerformerLibrary.Select(x => $", {x.Id}")).Trim(", ".ToCharArray());
+            LibraryString += ";\n";
+            LibraryString += string.Concat(GenreLibrary.Select(x => $", {x.Id}")).Trim(", ".ToCharArray());
+            LibraryString += ";\n";
+            File.WriteAllText($"{App.ExecuteFilePath}Library.txt", LibraryString);
+        }
+        public void LoadLibrary()
+        {
+            if (!File.Exists($"{App.ExecuteFilePath}Library.txt"))
+                return;
+            string LibraryString = File.ReadAllText($"{App.ExecuteFilePath}Library.txt");
+            var strsplit = LibraryString.Split(new char[] { ';' }, StringSplitOptions.None);
+            for (int i = 0; i < strsplit.Length; i++)
+            {
+                if (i == 0)
+                    SongLibrary = new ObservableCollection<SongEntity>(MusicDatabase.Songs.SplitHashesToEntity(strsplit[0]));
+                if (i == 1)
+                    AlbumLibrary = new ObservableCollection<AlbumEntity>(MusicDatabase.Albums.SplitHashesToEntity(strsplit[1]));
+                if (i == 2)
+                    PerformerLibrary = new ObservableCollection<PerformerEntity>(MusicDatabase.Performers.SplitHashesToEntity(strsplit[2]));
+                if (i == 3)
+                    GenreLibrary = new ObservableCollection<GenreEntity>(MusicDatabase.Genres.SplitHashesToEntity(strsplit[3]));
+            }
+        }
     }
 }

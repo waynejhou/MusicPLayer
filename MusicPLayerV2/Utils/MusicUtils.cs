@@ -194,6 +194,24 @@ namespace MusicPLayerV2.Utils
                     CoverSize = Size.Parse((string)song["CoverSize"])
                 });
             }
+            if (File.Exists($"{App.ExecuteFilePath}Cover.bin"))
+            {
+                using (var fs = File.OpenRead($"{App.ExecuteFilePath}Cover.bin"))
+                {
+                    fs.Position = 0;
+                    while (fs.Position != fs.Length)
+                    {
+                        var idBytes = new byte[4];
+                        var coverDataLengthBytes = new byte[4];
+                        fs.Read(idBytes, 0, 4);
+                        fs.Read(coverDataLengthBytes, 0, 4);
+                        var coverDataLength = BitConverter.ToInt32(coverDataLengthBytes, 0);
+                        var coverData = new byte[coverDataLength];
+                        fs.Read(coverData, 0, coverDataLength);
+                        Albums.First(x => x.Id == BitConverter.ToInt32(idBytes, 0)).CoverData = coverData;
+                    }
+                }
+            }
         }
         public static void ExportTables(string path, ExportType type, bool isCompression = true)
         {
@@ -306,9 +324,21 @@ namespace MusicPLayerV2.Utils
                 case ExportType.MultipleCSVs:
                     throw new NotImplementedException();
                 default:
-                    ObjectSaveToXML<List<CoverBase64XmlStruct>>.SaveSettingAsXml(
-                        Albums.Select(x => new CoverBase64XmlStruct() { Id = x.Id, Base64 = x.CoverBase64String }).ToList()
-                        , "Covers.xml");
+                    if (File.Exists($"{App.ExecuteFilePath}Cover.bin"))
+                        File.Delete($"{App.ExecuteFilePath}Cover.bin");
+                    using (var fs = File.OpenWrite($"{App.ExecuteFilePath}Cover.bin"))
+                    {
+                        fs.Position = 0;
+                        foreach (var a in Albums.Where(x => x.CoverData != null))
+                        {
+                            var idBytes = BitConverter.GetBytes(a.Id);
+                            var coverDataLengthBytes = BitConverter.GetBytes(a.CoverData.Length);
+                            Console.WriteLine(a.CoverData.Length);
+                            fs.Write(idBytes, 0, idBytes.Length);
+                            fs.Write(coverDataLengthBytes, 0, coverDataLengthBytes.Length);
+                            fs.Write(a.CoverData, 0, a.CoverData.Length);
+                        }
+                    }
                     break;
             }
         }
@@ -325,13 +355,9 @@ namespace MusicPLayerV2.Utils
             }
         }
         enum JsonValueType { Value, Array }
-        public struct CoverBase64XmlStruct
-        {
-            public int Id { get; set; }
-            public string Base64 { get; set; }
-        }
     }
     public enum ExportType { JSON, XML, MultipleCSVs }
+    public enum BinaryTypeCode { }
 
     public class SongEntity : MusicEntity, INotifyPropertyChanged
     {
@@ -524,7 +550,26 @@ namespace MusicPLayerV2.Utils
                 return Id;
             return (Id = (DateTime.UtcNow.GetHashCode() ^ Name.GetHashCode()));
         }
+
+        /*public override byte[] GetBinaryObjectBytes()
+        {
+            byte[] idBytes = BitConverter.GetBytes(Id),         //int
+                   nameBytes = Encoding.UTF8.GetBytes(Name),    //string
+                   titleBytes = Encoding.UTF8.GetBytes(Title),  //string
+                   albumIdBytes = new byte[4],                  //int
+                   artistsBytes = new byte[4],                  //ints
+                   genreIdBytes = new byte[4],                  //int
+                   trackBytes = new byte[4],                    //uint
+                   yearBytes = new byte[4],                     //uint
+                   lengthBytes = new byte[8],                   //long
+                   lastModifiedBytes = new byte[8],             //long
+                   coverPathBytes = new byte[4],                //string
+                   coverType = new byte[4],                     //int
+                   coverSize = new byte[8];                     //double int
+
+        }*/
     }
+
 
     public class AlbumEntity : MusicEntity
     {
@@ -538,7 +583,7 @@ namespace MusicPLayerV2.Utils
         public string Genre =>
             GenreEntities.ConcatListNames();
 
-        public string CoverBase64String { get; set; }
+        public byte[] CoverData { get; set; }
         public CoverPathType CoverPathType { get; set; } = CoverPathType.NoneCover;
         public string CoverPath { get; set; }
         public ImageSource Cover { get; set; }
@@ -551,11 +596,11 @@ namespace MusicPLayerV2.Utils
             return (Id = Name.GetHashCode() ^ Artists.GetHashCode());
         }
         static double FormatSize { get; set; } = 500d;
-        private ImageSource FormatCover(byte[] data, out string base64String)
+        private ImageSource FormatCover(byte[] data, out byte[] formatteddata)
         {
             if (data == null)
             {
-                base64String = "";
+                formatteddata = null;
                 return null;
             }
             BitmapImage ret = new BitmapImage();
@@ -585,9 +630,9 @@ namespace MusicPLayerV2.Utils
                 CoverSize = new Size(bmp.Width, bmp.Height);
                 using (var newms = new MemoryStream())
                 {
-                    bmp.Save(newms, System.Drawing.Imaging.ImageFormat.Png);
+                    bmp.Save(newms, System.Drawing.Imaging.ImageFormat.Jpeg);
                     newms.Position = 0;
-                    base64String = Convert.ToBase64String(newms.GetBuffer());
+                    formatteddata = newms.GetBuffer();
                     newms.Position = 0;
                     ret.BeginInit();
                     ret.StreamSource = newms;
@@ -599,24 +644,24 @@ namespace MusicPLayerV2.Utils
         }
         public void LoadCover()
         {
-            if (!string.IsNullOrWhiteSpace(CoverBase64String))
+            if (CoverData!=null)
             {
-                Cover = FormatCover(Convert.FromBase64String(CoverBase64String), out string base64);
+                Cover = FormatCover(CoverData, out byte[] data);
             }
             else if (CoverPathType == CoverPathType.FromImageFile)
                 using (var fs = File.OpenRead(CoverPath))
                 {
                     byte[] data = new byte[fs.Length];
                     fs.Read(data, 0, (int)fs.Length);
-                    Cover = FormatCover(data, out string base64);
-                    CoverBase64String = base64;
+                    Cover = FormatCover(data, out byte[] data2);
+                    CoverData = data2;
                 }
             else if (CoverPathType == CoverPathType.FromAudioFile)
                 using(var t = TagLib.File.Create(CoverPath))
                 {
                     byte[] data = t.Tag.Pictures[0].Data.Data;
-                    Cover = FormatCover(data, out string base64);
-                    CoverBase64String = base64;
+                    Cover = FormatCover(data, out byte[] data2);
+                    CoverData = data2;
                 }
             else
                 return;

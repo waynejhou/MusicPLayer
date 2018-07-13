@@ -28,13 +28,15 @@ namespace MusicPLayerV2
         public static PlayingListViewModel PlayingList { get; set; } = new PlayingListViewModel();
         public static MainViewModel MainModel { get; set; }
         public static LibraryViewModel Library { get; set; } = new LibraryViewModel();
+        public static string ExecuteFilePath => AppDomain.CurrentDomain.BaseDirectory;
         public static string LocalAppData => $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\MusicPLayer";
         public static string MyMusic => $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}";
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Log.Info("Application Startup");
-            MusicDatabase.ImportTables(@"DB.json", Utils.ExportType.JSON);
+            MusicDatabase.ImportTables($@"{ExecuteFilePath}DB.json", Utils.ExportType.JSON);
+            //Library.LoadLibrary();
             // For catching Global uncaught exception
             AppDomain currentDomain = AppDomain.CurrentDomain;
             //currentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionOccured);

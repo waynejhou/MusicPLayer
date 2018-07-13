@@ -551,7 +551,7 @@ namespace MusicPLayerV2.ViewModels
         {
             ApplySetting();
         }, () => true);
-        public static string SaveFilePath { get; set; } = $@"{AppDomain.CurrentDomain.BaseDirectory}Setting.xml";
+        public static string SaveFilePath { get; set; } = $@"{App.ExecuteFilePath}Setting.xml";
         public void SaveSettingAsXml()
         {
             ObjectSaveToXML<SettingsViewModel>.SaveSettingAsXml(this, SaveFilePath);

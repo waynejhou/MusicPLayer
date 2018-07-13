@@ -35,7 +35,8 @@ namespace MusicPLayerV2.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Utils.MusicDatabase.ExportTables( @"DB.json", Utils.ExportType.JSON);
+            //Utils.MusicDatabase.ExportTables($@"{App.ExecuteFilePath}DB.json", Utils.ExportType.JSON);
+            //App.Library.SaveLibrary();
         }
     }
 
