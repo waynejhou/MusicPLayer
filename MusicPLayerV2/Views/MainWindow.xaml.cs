@@ -50,7 +50,6 @@ namespace MusicPLayerV2.Views
             */
             App.Settings.ApplySetting();
             App.Settings.SaveSettingAsXml();
-            MusicDatabase.ExportTables($@"{App.ExecuteFilePath}DB.json", Utils.ExportType.JSON);
             App.PlayerModel.Dispose();
             Log.Info("Closing App");
         }
@@ -224,8 +223,8 @@ namespace MusicPLayerV2.Views
                 return;
             if (NPI.Cover == null)
                 return;
-            ImageBorder.MaxHeight = NPI.CoverSize.Height;
-            ImageBorder.MaxWidth = NPI.CoverSize.Width;
+            ImageBorder.MaxHeight = NPI.CoverSizeHeight;
+            ImageBorder.MaxWidth = NPI.CoverSizeWidth;
         }
 
         private void MainWin_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -129,7 +129,7 @@ namespace MusicPLayerV2.ViewModels
                 var entities = a.Entities = new SongEntity[files.Length];
                 for (int i = 0; i < files.Length; i++)
                 {
-                    entities[i] = SongEntity.CreateFromFile(files[i]);
+                    entities[i] = MusicDatabase.CreateSongEntity(files[i]);
                     bgw.ReportProgress((int)(i / (double)(files.Length) * 100d), files[i]);
                 }
                 e.Result = a;

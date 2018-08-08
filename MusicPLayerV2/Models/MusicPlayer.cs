@@ -156,7 +156,7 @@ namespace MusicPLayerV2.Models
         /// <param name="fileName">檔案路徑</param>
         public void LoadFromPath(string fileName)
         {
-            LoadFromMusicItem(SongEntity.CreateFromFile(fileName));
+            LoadFromMusicItem(MusicDatabase.CreateSongEntity(fileName));
         }
 
         /// <summary>
@@ -170,7 +170,6 @@ namespace MusicPLayerV2.Models
             Stop();
             Dispose();
             NowPlayingItem = musicItem;
-            NowPlayingItem.LoadCover();
             _waveSource = CodecFactory.Instance.GetCodec(musicItem.Path)
                 .ToSampleSource()
                 .ToStereo()

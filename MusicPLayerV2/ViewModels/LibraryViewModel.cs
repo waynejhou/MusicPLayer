@@ -72,14 +72,14 @@ namespace MusicPLayerV2.ViewModels
                         bgw.ReportProgress((int)progress,f.FullName);
                         if (!Models.MusicPlayer.SupportCheck(f.FullName, (string)App.Current.Resources["Filter_AudioFile"]))
                             continue;
-                        SongEntity song = SongEntity.CreateFromFile(f.FullName);
+                        SongEntity song = MusicDatabase.CreateSongEntity(f.FullName);
                         songs.Add(song);
                         if (!albums.Contains(song.AlbumEntity))
                             albums.Add(song.AlbumEntity);
                         foreach (var p in song.ArtistEntities)
                             if (!performers.Contains(p))
                                 performers.Add(p);
-                        foreach (var p in song.AlbumEntity.ArtistEntities)
+                        foreach (var p in song.AlbumEntity.AlbumArtistEntities)
                             if (!performers.Contains(p))
                                 performers.Add(p);
                         if (!genres.Contains(song.GenreEntity))
@@ -107,10 +107,6 @@ namespace MusicPLayerV2.ViewModels
         {
             get
             {
-                foreach (var a in AlbumLibrary)
-                {
-                    a.LoadCover();
-                }
                 return AlbumLibrary;
             }
         }
@@ -137,13 +133,13 @@ namespace MusicPLayerV2.ViewModels
             for (int i = 0; i < strsplit.Length; i++)
             {
                 if (i == 0)
-                    SongLibrary = new ObservableCollection<SongEntity>(MusicDatabase.Songs.SplitHashesToEntity(strsplit[0]));
+                    SongLibrary = new ObservableCollection<SongEntity>(MusicDatabase.SongColle.FindAll());
                 if (i == 1)
-                    AlbumLibrary = new ObservableCollection<AlbumEntity>(MusicDatabase.Albums.SplitHashesToEntity(strsplit[1]));
+                    AlbumLibrary = new ObservableCollection<AlbumEntity>(MusicDatabase.AlbumColle.FindAll());
                 if (i == 2)
-                    PerformerLibrary = new ObservableCollection<PerformerEntity>(MusicDatabase.Performers.SplitHashesToEntity(strsplit[2]));
+                    PerformerLibrary = new ObservableCollection<PerformerEntity>(MusicDatabase.PerformerColle.FindAll());
                 if (i == 3)
-                    GenreLibrary = new ObservableCollection<GenreEntity>(MusicDatabase.Genres.SplitHashesToEntity(strsplit[3]));
+                    GenreLibrary = new ObservableCollection<GenreEntity>(MusicDatabase.GenreColle.FindAll());
             }
         }
     }

@@ -55,7 +55,7 @@ namespace MusicPLayerV2.Views.UserControls
                 L.SelectedItems = ListViewL.SelectedItems;
                 foreach(SongEntity ee in ListViewL.SelectedItems)
                 {
-                    Console.WriteLine(ee.Name);
+                    Console.WriteLine(ee.Path);
                 }
             }
             Console.WriteLine(

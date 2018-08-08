@@ -35,7 +35,6 @@ namespace MusicPLayerV2
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Log.Info("Application Startup");
-            MusicDatabase.ImportTables($@"{ExecuteFilePath}DB.json", Utils.ExportType.JSON);
             //Library.LoadLibrary();
             // For catching Global uncaught exception
             AppDomain currentDomain = AppDomain.CurrentDomain;
