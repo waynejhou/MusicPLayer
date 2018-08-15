@@ -44,8 +44,8 @@
     <String x:Key="Setting_Font">字型</String>
     <String x:Key="Setting_PrimaryFont">主題字型</String>
     <String x:Key="Setting_TextShadowColor">文本陰影色</String>
-    <String x:Key="Setting_TextMediumFontSize">文本小型字大小</String>
-    <String x:Key="Setting_TextSmallFontSize">文本中型字大小</String>
+    <String x:Key="Setting_TextMediumFontSize">文本中型字大小</String>
+    <String x:Key="Setting_TextSmallFontSize">文本小型字大小</String>
 
     <String x:Key="Setting_LyricDisplay">歌詞顯示</String>
     <String x:Key="Setting_LyricFont">歌詞字型</String>

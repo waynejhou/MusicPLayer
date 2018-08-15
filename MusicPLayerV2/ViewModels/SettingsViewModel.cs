@@ -28,12 +28,13 @@ namespace MusicPLayerV2.ViewModels
         private SongEntity NPI => App.PlayerModel.NowPlayingItem;
         private ControllerViewModel C => App.Controller;
         private PlayingListViewModel L => App.PlayingList;
-        private LibraryViewModel Lib = App.Library;
+        private LibraryViewModel Lib => App.Library;
 
         SettingList SettingList => new List<ISettingItem>()
             {
             AppLanguage,
 
+            PanelColor,
             PrimaryColor,
             SecondaryColor,
             SecondaryColorL,
@@ -55,9 +56,65 @@ namespace MusicPLayerV2.ViewModels
             MusicVolume,
             BackgroundCoverVisibility,
             MiniBackgroundCoverVisibility,
-
-            LibraryDirectories
             };
+
+        public PanelColorSetting PanelColor { get; set; }
+        public PrimaryColorSetting PrimaryColor { get; set; }
+        public ColorSetting SecondaryColor { get; set; }
+        public ColorSetting SecondaryColorL { get; set; }
+        public ColorSetting ForegroundColor { get; set; }
+        public ColorSetting LyricForegroundColor { get; set; }
+        public ColorSetting LyricHighlightColor { get; set; }
+        public ShadowColorSetting LyricShadowColor { get; set; }
+        public ShadowColorSetting TextShadowColor { get; set; }
+
+        public FontSetting PrimaryFont { get; set; }
+        public FontSetting LyricFont { get; set; }
+
+        public DoubleSetting TextMediumFontSize { get; set; }
+        public DoubleSetting TextSmallFontSize { get; set; }
+        public DoubleSetting LyricMediumFontSize { get; set; }
+        public DoubleSetting LyricSmallFontSize { get; set; }
+
+        public OpacitySetting PanelOpacity { get; set; }
+
+        public VolumeSetting MusicVolume { get; set; }
+
+        public VisibilitySetting BackgroundCoverVisibility { get; set; }
+        public VisibilitySetting MiniBackgroundCoverVisibility { get; set; }
+
+
+        public SettingsViewModel()
+        {
+
+            PanelColor = new PanelColorSetting() { Name = nameof(PanelOpacity) };
+            PrimaryColor = new PrimaryColorSetting() { Name = nameof(PrimaryColor) };
+            SecondaryColor = new ColorSetting() { Name = nameof(SecondaryColor) };
+            SecondaryColorL = new ColorSetting() { Name = nameof(SecondaryColorL) };
+            ForegroundColor = new ColorSetting() { Name = nameof(ForegroundColor) };
+            LyricForegroundColor = new ColorSetting() { Name = nameof(LyricForegroundColor) };
+            LyricHighlightColor = new ColorSetting() { Name = nameof(LyricHighlightColor) };
+            LyricShadowColor = new ShadowColorSetting() { Name = "LyricShadowEffect" };
+            TextShadowColor = new ShadowColorSetting() { Name = "TextShadowEffect" };
+
+            PrimaryFont = new FontSetting() { Name = nameof(PrimaryFont) };
+            LyricFont = new FontSetting() { Name = nameof(LyricFont) };
+
+            TextMediumFontSize = new DoubleSetting() { Name = nameof(TextMediumFontSize) };
+            TextSmallFontSize = new DoubleSetting() { Name = nameof(TextSmallFontSize) };
+            LyricMediumFontSize = new DoubleSetting() { Name = nameof(LyricMediumFontSize) };
+            LyricSmallFontSize = new DoubleSetting() { Name = nameof(LyricSmallFontSize) };
+
+            PanelOpacity = new OpacitySetting() { Name = nameof(PanelOpacity) };
+
+            MusicVolume = new VolumeSetting() { Name = nameof(MusicVolume) };
+
+            BackgroundCoverVisibility = new VisibilitySetting() { Name = nameof(BackgroundCoverVisibility) };
+            MiniBackgroundCoverVisibility = new VisibilitySetting() { Name = nameof(MiniBackgroundCoverVisibility) };
+
+        }
+
+        
 
 
 
@@ -67,36 +124,29 @@ namespace MusicPLayerV2.ViewModels
         [XmlIgnore]
         public string LanguageString => AppLanguage.Value.Value;
 
-        public ColorSetting PrimaryColor { get; set; } = new ColorSetting() { Name = nameof(PrimaryColor) };
-        public ColorSetting SecondaryColor { get; set; } = new ColorSetting() { Name = nameof(SecondaryColor) };
-        public ColorSetting SecondaryColorL { get; set; } = new ColorSetting() { Name = nameof(SecondaryColorL) };
-        public ColorSetting ForegroundColor { get; set; } = new ColorSetting() { Name = nameof(ForegroundColor) };
-        public ColorSetting LyricForegroundColor { get; set; } = new ColorSetting() { Name = nameof(LyricForegroundColor) };
-        public ColorSetting LyricHighlightColor { get; set; } = new ColorSetting() { Name = nameof(LyricHighlightColor) };
-        public ShadowColorSetting LyricShadowColor { get; set; } = new ShadowColorSetting() { Name = "LyricShadowEffect" };
-        public ShadowColorSetting TextShadowColor { get; set; } = new ShadowColorSetting() { Name = "TextShadowEffect" };
 
-        public FontSetting PrimaryFont { get; set; } = new FontSetting() { Name = nameof(PrimaryFont) };
-        public FontSetting LyricFont { get; set; } = new FontSetting() { Name = nameof(LyricFont) };
 
-        public DoubleSetting TextMediumFontSize { get; set; } = new DoubleSetting() { Name = nameof(TextMediumFontSize) };
-        public DoubleSetting TextSmallFontSize { get; set; } = new DoubleSetting() { Name = nameof(TextSmallFontSize) };
-        public DoubleSetting LyricMediumFontSize { get; set; } = new DoubleSetting() { Name = nameof(LyricMediumFontSize) };
-        public DoubleSetting LyricSmallFontSize { get; set; } = new DoubleSetting() { Name = nameof(LyricSmallFontSize) };
-
-        public OpacitySetting PanelOpacity { get; set; } = new OpacitySetting() { Name = nameof(PanelOpacity) };
-
-        public VolumeSetting MusicVolume { get; set; } = new VolumeSetting() { Name = nameof(MusicVolume) };
-
-        public VisibilitySetting BackgroundCoverVisibility { get; set; } = new VisibilitySetting() { Name = nameof(BackgroundCoverVisibility) };
-        public VisibilitySetting MiniBackgroundCoverVisibility { get; set; } = new VisibilitySetting() { Name = nameof(MiniBackgroundCoverVisibility) };
-
-        public DirectoriesSetting LibraryDirectories { get; set; } = new DirectoriesSetting() { Name = nameof(LibraryDirectories) };
         public ICommand AddDirectoryCmd => new RelayCommand(AddDirectory, () => true);
         public ICommand RemoveDirectoryCmd => new RelayCommand(RemoveDirectory, () => DirectorySelectedIndex >= 0);
         public ICommand ScanDirectories => new RelayCommand(Lib.ScanDirectory, () => true);
         [XmlIgnore]
         public int DirectorySelectedIndex { get; set; } = 0;
+
+
+        [XmlIgnore]
+        ObservableCollection<LibraryEntity> _LibraryDirectories;
+        [XmlIgnore]
+        public ObservableCollection<LibraryEntity> LibraryDirectories {
+            get
+            {
+                if (_LibraryDirectories == null)
+                    _LibraryDirectories = new ObservableCollection<LibraryEntity>(MusicDatabase.LibraryColle.FindAll().ToList());
+                return _LibraryDirectories;
+            }
+            set => _LibraryDirectories = value; }
+        [XmlIgnore]
+        List<LibraryEntity> _WaitToRemovedDirectories = new List<LibraryEntity>();
+
         public void AddDirectory()
         {
             var settings = new MvvmDialogs.FrameworkDialogs.FolderBrowser.FolderBrowserDialogSettings()
@@ -106,16 +156,29 @@ namespace MusicPLayerV2.ViewModels
             var success = new MvvmDialogs.DialogService().ShowFolderBrowserDialog(this, settings);
             if (success == true)
             {
-                LibraryDirectories.Value.Add(new ScannedDirectoryInfo(settings.SelectedPath));
-                NotifyPropertyChanged(nameof(LibraryDirectories.Value));
-                LibraryDirectories.ApplyChange();
+                LibraryEntity lib = new LibraryEntity() { Path = settings.SelectedPath };
+                LibraryDirectories.Add(lib);
+                NotifyPropertyChanged(nameof(LibraryDirectories));
             }
         }
         public void RemoveDirectory()
         {
-            LibraryDirectories.Value.RemoveAt(DirectorySelectedIndex);
-            NotifyPropertyChanged(nameof(LibraryDirectories.Value));
-            LibraryDirectories.ApplyChange();
+            int droppedId = LibraryDirectories[DirectorySelectedIndex].Id;
+            _WaitToRemovedDirectories.Add(MusicDatabase.LibraryColle.FindById(droppedId));
+            LibraryDirectories.RemoveAt(DirectorySelectedIndex);
+            NotifyPropertyChanged(nameof(LibraryDirectories));
+        }
+        public void ApplyDirectoriesChange()
+        {
+            foreach(var l in LibraryDirectories)
+            {
+                MusicDatabase.LibraryColle.Upsert(l);
+            }
+            foreach (var l in _WaitToRemovedDirectories)
+            {
+                MusicDatabase.LibraryColle.Delete(l.Id);
+                MusicDatabase.LibrarySongColle.Delete(x => x.LibraryId == l.Id);
+            }
         }
         public void ApplySetting()
         {
@@ -125,6 +188,7 @@ namespace MusicPLayerV2.ViewModels
             NotifyPropertyChanged(nameof(AppLanguage));
             NotifyPropertyChanged(nameof(LanguagePair));
             NotifyPropertyChanged(nameof(LanguageString));
+            ApplyDirectoriesChange();
         }
     }
 
@@ -253,6 +317,53 @@ namespace MusicPLayerV2.ViewModels
             return value.ToString();
         }
     }
+
+    public class PrimaryColorSetting : SettingItemStruct<Color>
+    {
+        [XmlIgnore]
+        public PanelColorSetting PanelColor => App.Settings?.PanelColor;
+
+        public override Color GetValue()
+        {
+            return (R[Name] as SolidColorBrush).Color;
+        }
+        public override void SetValue(Color value)
+        {
+            R[Name] = new SolidColorBrush() { Color = value };
+            var gray = (byte)(255 - (((int)value.R + (int)value.G + (int)value.B) / 3));
+            Console.WriteLine(PanelColor+""+gray);
+            if (PanelColor != null)
+                PanelColor.Value = Color.FromRgb(gray, gray, gray);
+        }
+        public override Color ConvertFromString(string valueString)
+        {
+            return (Color)ColorConverter.ConvertFromString(valueString);
+        }
+        public override string ConvertToString(Color value)
+        {
+            return value.ToString();
+        }
+    }
+    public class PanelColorSetting: SettingItemStruct<Color>
+    {
+        public override Color GetValue()
+        {
+            return (R[Name] as SolidColorBrush).Color;
+        }
+        public override void SetValue(Color value)
+        {
+            R[Name] = new SolidColorBrush(value) { Opacity = (R[Name] as SolidColorBrush).Opacity };
+        }
+        public override Color ConvertFromString(string valueString)
+        {
+            return (Color)ColorConverter.ConvertFromString(valueString);
+        }
+        public override string ConvertToString(Color value)
+        {
+            return value.ToString();
+        }
+    }
+
 
     public class ShadowColorSetting:SettingItemStruct<Color>
     {
@@ -502,41 +613,6 @@ namespace MusicPLayerV2.ViewModels
     }
     #endregion
 
-    #region Directories Setting Class
-    public class DirectoriesSetting : SettingItemClass<ObservableCollection<ScannedDirectoryInfo>>
-    {
-        [XmlIgnore]
-        protected LibraryViewModel L => App.Library;
-
-        public override ObservableCollection<ScannedDirectoryInfo> ConvertFromString(string valueString)
-        {
-            return new ObservableCollection<ScannedDirectoryInfo>(
-                valueString.Split(';').ToList().ConvertAll(
-                    x =>
-                    {
-                        var xsp = x.Split(new string[] { "::" }, StringSplitOptions.RemoveEmptyEntries);
-                        return new ScannedDirectoryInfo(
-                            xsp[0],
-                            bool.Parse(xsp[1]));
-                    }));
-        }
-
-        public override string ConvertToString(ObservableCollection<ScannedDirectoryInfo> value)
-        {
-            return string.Concat(value.Select(x => $"; {x.ToString()}::{x.IsScanAllSubDirectories.ToString()}")).Trim("; ".ToCharArray());
-        }
-
-        public override ObservableCollection<ScannedDirectoryInfo> GetValue()
-        {
-            return new ObservableCollection<ScannedDirectoryInfo>(L.ScannedDirectoryInfo);
-        }
-
-        public override void SetValue(ObservableCollection<ScannedDirectoryInfo> newValue)
-        {
-            L.ScannedDirectoryInfo = newValue.ToList();
-        }
-    }
-    #endregion
 
     public partial class SettingsViewModel
     {

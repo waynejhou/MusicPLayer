@@ -39,7 +39,6 @@ namespace MusicPLayerV2
             // For catching Global uncaught exception
             AppDomain currentDomain = AppDomain.CurrentDomain;
             //currentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionOccured);
-
             Log.Info("Starting App");
             LogMachineDetails();
             MainWin = new MainWindow();
@@ -47,7 +46,6 @@ namespace MusicPLayerV2
             Settings = SettingsViewModel.LoadOrNew();
             Settings.SaveSettingAsXml();
             MainWin.Show();
-
             if (e.Args.Length > 0)
             {
                 MainModel.LoadingFiles(new MainViewModel.LoadFileToEntitiesArgsAndResult
@@ -101,7 +99,6 @@ namespace MusicPLayerV2
                 SingleInstance<App>.Cleanup();
             }
         }
-
         public bool SignalExternalCommandLineArgs(IList<string> args)
         {
             args.RemoveAt(0);
@@ -118,5 +115,6 @@ namespace MusicPLayerV2
             }
             return true;
         }
+
     }
 }

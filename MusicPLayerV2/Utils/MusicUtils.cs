@@ -67,19 +67,25 @@ namespace MusicPLayerV2.Utils
         [BsonField("title")]
         public string Title { get; set; }
 
-        [BsonRef("AlbumEntity")]
-        public AlbumEntity AlbumEntity { get; set; }
+        [BsonField("album_id")]
+        public int AlbumId { get; set; }
+
+        [BsonIgnore]
+        public AlbumEntity AlbumEntity => MusicDatabase.AlbumColle.FindById(AlbumId);
 
         [BsonIgnore]
         public string Album => AlbumEntity.Name;
 
         [BsonIgnore]
-        public IEnumerable<PerformerEntity> ArtistEntities => MusicDatabase.SongArtistColle.Find(x => x.Song == this).Select(x=>x.Performer);
+        public IEnumerable<PerformerEntity> ArtistEntities => MusicDatabase.SongArtistColle.Find(x => x.SongId == Id).Select(x=>x.PerformerEntity);
         [BsonIgnore]
-        public string Artists => string.Join(", ", ArtistEntities);
+        public string Artists => string.Join(", ", ArtistEntities.Select(x=>x.Name));
 
-        [BsonRef("GenreEntity")]
-        public GenreEntity GenreEntity { get; set; }
+
+        [BsonField("genre_id")]
+        public int GenreId { get; set; }
+        [BsonIgnore]
+        public GenreEntity GenreEntity => MusicDatabase.GenreColle.FindById(GenreId);
         [BsonIgnore]
         public string Genre => GenreEntity.Name;
 
@@ -101,7 +107,7 @@ namespace MusicPLayerV2.Utils
         public int CoverSizeWidth { get; set; } = 0;
         [BsonField("cover_size_height")]
         public int CoverSizeHeight { get; set; } = 0;
-        [BsonField("cover_data")]
+        [BsonIgnore]
         public byte[] CoverData { get; set; } = null;
 
         [BsonIgnore]
@@ -109,6 +115,8 @@ namespace MusicPLayerV2.Utils
         {
             get
             {
+                if (CoverPathType == CoverPathType.NoneCover)
+                    return null;
                 BitmapImage ret = new BitmapImage();
                 if (CoverData == null)
                 {
@@ -144,9 +152,18 @@ namespace MusicPLayerV2.Utils
                 NotifyPropertyChanged(nameof(IsNowPlaying));
             }
         }
+
+        public void Cat()
+        {
+            Console.WriteLine(
+                $"[{Path}\n" +
+                $" {Title}\n" +
+                $" {AlbumEntity.Id}: {AlbumEntity.Name}\n" +
+                $" {Artists}\n" +
+                $" {GenreEntity.Id}: {GenreEntity.Name}]");
+        }
     }
     public enum CoverPathType { NoneCover, FromAudioFile, FromImageFile };
-
     public class AlbumEntity : ICover
     {
         [BsonId(true)]
@@ -156,9 +173,9 @@ namespace MusicPLayerV2.Utils
         public string Name { get; set; }
 
         [BsonIgnore]
-        public IEnumerable<PerformerEntity> AlbumArtistEntities => MusicDatabase.AlbumArtistColle.Find(x => x.Album == this).Select(x => x.Performer);
+        public IEnumerable<PerformerEntity> AlbumArtistEntities => MusicDatabase.AlbumArtistColle.Find(x => x.AlbumId == Id).Select(x => x.PerformerEntity);
         [BsonIgnore]
-        public string AlbumArtists => string.Join(", ", AlbumArtistEntities);
+        public string Artists => string.Join(", ", AlbumArtistEntities.Select(x=>x.Name));
 
         [BsonField("cover_path")]
         public string CoverPath { get; set; } = null;
@@ -178,6 +195,8 @@ namespace MusicPLayerV2.Utils
         {
             get
             {
+                if (CoverPathType == CoverPathType.NoneCover)
+                    return App.Current.Resources["UnknowImage"] as BitmapImage;
                 BitmapImage ret = new BitmapImage();
                 if (CoverData == null)
                 {
@@ -209,6 +228,11 @@ namespace MusicPLayerV2.Utils
 
         [BsonField("name")]
         public string Name { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class AlbumArtistRelationShip
@@ -219,11 +243,23 @@ namespace MusicPLayerV2.Utils
         [BsonField("name")]
         public string Name { get; set; }
 
-        [BsonRef("AlbumEntity")]
-        public AlbumEntity Album { get; set ; }
+        [BsonField("album_id")]
+        public int AlbumId { get; set; }
 
-        [BsonRef("PerformerEntity")]
-        public PerformerEntity Performer { get; set; }
+        [BsonIgnore]
+        public AlbumEntity AlbumEntity => MusicDatabase.AlbumColle.FindById(AlbumId);
+
+        [BsonIgnore]
+        public string Album => AlbumEntity.Name;
+
+        [BsonField("performer_id")]
+        public int PerformerId { get; set; }
+
+        [BsonIgnore]
+        public PerformerEntity PerformerEntity => MusicDatabase.PerformerColle.FindById(PerformerId);
+
+        [BsonIgnore]
+        public string Performer => PerformerEntity.Name;
     }
     public class SongArtistRelationShip
     {
@@ -233,11 +269,85 @@ namespace MusicPLayerV2.Utils
         [BsonField("name")]
         public string Name { get; set; }
 
-        [BsonRef("SongEntity")]
-        public SongEntity Song { get; set; }
+        [BsonField("song_id")]
+        public int SongId { get; set; }
 
-        [BsonRef("PerformerEntity")]
-        public  PerformerEntity Performer { get; set; }
+        [BsonIgnore]
+        public SongEntity SongEntity => MusicDatabase.SongColle.FindById(SongId);
+
+        [BsonIgnore]
+        public string Song => SongEntity.Path;
+
+        [BsonField("performer_id")]
+        public int PerformerId { get; set; }
+
+        [BsonIgnore]
+        public PerformerEntity PerformerEntity => MusicDatabase.PerformerColle.FindById(PerformerId);
+
+        [BsonIgnore]
+        public string Performer => PerformerEntity.Name;
+    }
+
+    public class LibraryEntity
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
+
+        [BsonField("path")]
+        public string Path { get; set; }
+
+        [BsonField("scan_all_sub")]
+        public bool IsScanAllSubDirectories { get; set; } = true;
+    }
+    public class LibrarySongRelationship
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
+
+        [BsonField("name")]
+        public string Name { get; set; }
+
+        [BsonField("lib_id")]
+        public int LibraryId { get; set; }
+
+        [BsonIgnore]
+        public LibraryEntity LibraryEntity => MusicDatabase.LibraryColle.FindById(LibraryId);
+
+        [BsonField("song_id")]
+        public int SongId { get; set; }
+
+        [BsonIgnore]
+        public SongEntity Song => MusicDatabase.SongColle.FindById(SongId);
+    }
+
+
+
+    public class SongCompareAlbum : IEqualityComparer<SongEntity>
+    {
+        public static SongCompareAlbum New => new SongCompareAlbum();
+        public bool Equals(SongEntity x, SongEntity y)
+        {
+            return x.AlbumId == y.AlbumId;
+        }
+
+        public int GetHashCode(SongEntity obj)
+        {
+            return obj.AlbumId;
+        }
+    }
+
+    public class AlbumComapreId : IEqualityComparer<AlbumEntity>
+    {
+        public static AlbumComapreId New => new AlbumComapreId();
+        public bool Equals(AlbumEntity x, AlbumEntity y)
+        {
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(AlbumEntity obj)
+        {
+            return obj.Id;
+        }
     }
 
 
@@ -304,23 +414,4 @@ namespace MusicPLayerV2.Utils
         }
     }
 
-    public class ScannedDirectoryInfo
-    {
-        public readonly DirectoryInfo DirectoryInfo;
-        public string FullName => DirectoryInfo.FullName;
-        public bool IsScanAllSubDirectories { get; set; } = true;
-        public ScannedDirectoryInfo(string path)
-        {
-            DirectoryInfo = new DirectoryInfo(path);
-        }
-        public ScannedDirectoryInfo(string path, bool ScanAllSubDirectories )
-        {
-            DirectoryInfo = new DirectoryInfo(path);
-            IsScanAllSubDirectories = ScanAllSubDirectories;
-        }
-        public override string ToString()
-        {
-            return FullName;
-        }
-    }
 }

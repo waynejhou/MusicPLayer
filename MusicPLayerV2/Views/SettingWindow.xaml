@@ -250,7 +250,7 @@
                                     <Button Content="-" Width="20" Height="20" Margin="2" Command="{Binding RemoveDirectoryCmd}"/>
                                     <Button Content="Scan Folder" Height="20" Margin="2" Padding="2" Command="{Binding ScanDirectories}"/>
                                 </StackPanel>
-                                <ListView ItemsSource="{Binding LibraryDirectories.Value}"
+                                <ListView ItemsSource="{Binding LibraryDirectories}"
                                           BorderThickness="0"
                                           SelectedIndex="{Binding DirectorySelectedIndex, Mode=TwoWay}">
                                     <ListView.ItemTemplate>
@@ -258,7 +258,7 @@
                                             <Label>
                                                 <StackPanel Orientation="Horizontal">
                                                     <CheckBox IsChecked="{Binding IsScanAllSubDirectories, Mode=TwoWay}" Command=""/>
-                                                    <TextBlock Text="{Binding FullName}"/>
+                                                    <TextBlock Text="{Binding Path}"/>
                                                 </StackPanel>
 
                                             </Label>

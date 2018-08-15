@@ -54,4 +54,5 @@
     <sys:String x:Key="SymbolCode_ChromeRestore">&#xe923;</sys:String>
     <sys:String x:Key="SymbolCode_ChromeClose">&#xe8bb;</sys:String>
     <BitmapImage x:Key="NoImage" UriSource="/MusicPlayerV2;component/Resources/Image/Ellipses.png"/>
+    <BitmapImage x:Key="UnknowImage" UriSource="/MusicPlayerV2;component/Resources/Image/EllipsesUnknow.png"/>
 </ResourceDictionary>

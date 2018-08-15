@@ -170,6 +170,7 @@ namespace MusicPLayerV2.Models
             Stop();
             Dispose();
             NowPlayingItem = musicItem;
+            musicItem.Cat();
             _waveSource = CodecFactory.Instance.GetCodec(musicItem.Path)
                 .ToSampleSource()
                 .ToStereo()

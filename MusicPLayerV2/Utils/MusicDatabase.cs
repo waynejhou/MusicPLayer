@@ -13,7 +13,7 @@ namespace MusicPLayerV2.Utils
 {
     public static class MusicDatabase
     {
-        static string _name = @"MusicDatabase.db";
+        static string _name = App.ExecuteFilePath+@"MusicDatabase.db";
         public static string Name { get => _name; set
             {
                 if (value == _name)
@@ -29,6 +29,8 @@ namespace MusicPLayerV2.Utils
         public static LiteCollection<GenreEntity> GenreColle { get; set; }
         public static LiteCollection<AlbumArtistRelationShip> AlbumArtistColle { get; set; }
         public static LiteCollection<SongArtistRelationShip> SongArtistColle { get; set; }
+        public static LiteCollection<LibraryEntity> LibraryColle { get; set; }
+        public static LiteCollection<LibrarySongRelationship> LibrarySongColle { get; set; }
 
         static MusicDatabase()
         {
@@ -45,12 +47,16 @@ namespace MusicPLayerV2.Utils
             GenreColle = Database.GetCollection<GenreEntity>();
             AlbumArtistColle = Database.GetCollection<AlbumArtistRelationShip>();
             SongArtistColle = Database.GetCollection<SongArtistRelationShip>();
+            LibraryColle = Database.GetCollection<LibraryEntity>();
+            LibrarySongColle = Database.GetCollection<LibrarySongRelationship>();
             SongColle.EnsureIndex(x => x.Path, true);
             AlbumColle.EnsureIndex(x => x.Name, true);
             PerformerColle.EnsureIndex(x => x.Name, true);
             GenreColle.EnsureIndex(x => x.Name, true);
             AlbumArtistColle.EnsureIndex(x => x.Name, true);
             SongArtistColle.EnsureIndex(x => x.Name, true);
+            LibraryColle.EnsureIndex(x => x.Path, true);
+            LibrarySongColle.EnsureIndex(x => x.Name, true);
         }
         static void Dispose()
         {
@@ -64,7 +70,7 @@ namespace MusicPLayerV2.Utils
             var f = new FileInfo(fileName);
             if ((ret = SongColle.FindOne(x => x.Path == fileName)) != null)
             {
-                if (ret.FileLastModded >= f.LastWriteTimeUtc)
+                if (ret.FileLastModded >= f.LastWriteTime)
                 {
                     Console.WriteLine("No");
                     return ret;
@@ -98,7 +104,7 @@ namespace MusicPLayerV2.Utils
                     genre = new GenreEntity() { Name = genreString };
                     GenreColle.Insert(genre);
                 }
-                ret.GenreEntity = genre;
+                ret.GenreId = genre.Id;
 
                 if (tag.Pictures.Length >= 1)
                 {
@@ -136,7 +142,7 @@ namespace MusicPLayerV2.Utils
                     AlbumColle.Update(album);
                 }
                 SplitPerformersToAlbumColle(album, tag.FirstAlbumArtist ?? "Unknown Performer");
-                ret.AlbumEntity = album;
+                ret.AlbumId = album.Id;
                 if (isNewOne)
                     SongColle.Insert(ret);
                 else
@@ -162,7 +168,7 @@ namespace MusicPLayerV2.Utils
                 AlbumArtistRelationShip R;
                 if ((R = AlbumArtistColle.FindOne(x => x.Name == entity.Name+"-"+performer.Name)) == null)
                 {
-                    R = new AlbumArtistRelationShip() { Name= entity.Name + "-" + performer.Name , Album=entity,Performer=performer};
+                    R = new AlbumArtistRelationShip() { Name = entity.Name + "-" + performer.Name, AlbumId = entity.Id, PerformerId = performer.Id };
                     AlbumArtistColle.Insert(R);
                 }
             }
@@ -182,7 +188,7 @@ namespace MusicPLayerV2.Utils
                 SongArtistRelationShip R;
                 if ((R = SongArtistColle.FindOne(x => x.Name == entity.Path + "-" + performer.Name)) == null)
                 {
-                    R = new SongArtistRelationShip() { Name = entity.Path + "-" + performer.Name, Song = entity, Performer = performer };
+                    R = new SongArtistRelationShip() { Name = entity.Path + "-" + performer.Name, SongId = entity.Id, PerformerId = performer.Id };
                     SongArtistColle.Insert(R);
                 }
             }
@@ -250,22 +256,22 @@ namespace MusicPLayerV2.Utils
         }
         public static void UpdateCover(SongEntity song)
         {
-            LoadCover(song);
+            LoadCover(song, 500);
             SongColle.Update(song);
         }
         public static void UpdateCover(AlbumEntity album)
         {
-            LoadCover(album);
+            LoadCover(album, 150);
             AlbumColle.Update(album);
         }
-        static void LoadCover(ICover cover)
+        static void LoadCover(ICover cover, int formattedSize)
         {
             if (cover.CoverPathType == CoverPathType.FromImageFile)
                 using (var fs = File.OpenRead(cover.CoverPath))
                 {
                     byte[] data = new byte[fs.Length];
                     fs.Read(data, 0, (int)fs.Length);
-                    cover.CoverData = FormatCover(data, 500, out Size s);
+                    cover.CoverData = FormatCover(data, formattedSize, out Size s);
                     cover.CoverSizeHeight = (int)s.Height;
                     cover.CoverSizeWidth = (int)s.Width;
                 }
@@ -273,7 +279,7 @@ namespace MusicPLayerV2.Utils
                 using (var t = TagLib.File.Create(cover.CoverPath))
                 {
                     byte[] data = t.Tag.Pictures[0].Data.Data;
-                    cover.CoverData = FormatCover(data, 500, out Size s);
+                    cover.CoverData = FormatCover(data, formattedSize, out Size s);
                     cover.CoverSizeHeight = (int)s.Height;
                     cover.CoverSizeWidth = (int)s.Width;
                 }
