@@ -27,7 +27,8 @@
         <Style TargetType="{x:Type local:MainWindow}">
             <Setter Property="WindowChrome.WindowChrome">
                 <Setter.Value>
-                    <WindowChrome GlassFrameThickness="3,30,3,3" CaptionHeight="30" CornerRadius="20"/>
+                    <WindowChrome GlassFrameThickness="3,30,3,3" CaptionHeight="30" CornerRadius="20">
+                    </WindowChrome>
                 </Setter.Value>
             </Setter>
             <Setter Property="Template">

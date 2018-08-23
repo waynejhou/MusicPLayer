@@ -178,6 +178,7 @@ namespace MusicPLayerV2.Views.UserControls
         {
             if (LyricsItem.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
                 CalcLinesHeight();
+            timer.AutoReset = false;
             timer.Interval = 500;
             timer.Start();
         }
