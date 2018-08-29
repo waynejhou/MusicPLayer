@@ -415,14 +415,14 @@
     <DockPanel>
         <Border DockPanel.Dock="Top" Style="{DynamicResource CardBorderStyle}">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Style: " Margin="5" FontSize="{DynamicResource TextMediumFontSize}"
+                <TextBlock Text="{DynamicResource Library_AskStyle}" Margin="5" FontSize="{DynamicResource TextMediumFontSize}"
                            Effect="{DynamicResource TextShadowEffect}"/>
                 <ComboBox ItemsSource="{Binding StyleList}"
                           SelectedIndex="{Binding SelectedStyle, Mode=TwoWay}"
                           SelectionChanged="ComboBox_SelectionChanged"
                           Style="{DynamicResource ComboBoxStyle}"
                           Effect="{DynamicResource TextShadowEffect}"/>
-                <TextBlock Text="Genre: " Margin="5" FontSize="{DynamicResource TextMediumFontSize}"
+                <TextBlock Text="{DynamicResource Library_AskGenre}" Margin="5" FontSize="{DynamicResource TextMediumFontSize}"
                            Effect="{DynamicResource TextShadowEffect}"/>
                 <ComboBox ItemsSource="{Binding GenreList}"
                           SelectedIndex="{Binding SelectedGenreIndex, Mode=TwoWay}"

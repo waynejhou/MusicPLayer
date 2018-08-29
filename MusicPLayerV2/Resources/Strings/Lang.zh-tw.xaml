@@ -33,6 +33,13 @@
     <String x:Key="LrcEditor_ReplaceTimeTag">取代時間標籤</String>
     <String x:Key="LrcEditor_NewLineTimeTag">換行時間標籤</String>
 
+    <String x:Key="Library_AskStyle">顯示種類：</String>
+    <String x:Key="Library_AskGenre">內容類型：</String>
+    <String x:Key="Library_AlbumGrid">專輯格子</String>
+    <String x:Key="Library_AlbumList">專輯清單</String>
+    <String x:Key="Library_AlbumCoverFlow">專輯清流</String>
+    <String x:Key="Library_ArtistList">歌手清單</String>
+
     <String x:Key="Setting_UISettings">介面設定調整</String>
     <String x:Key="Setting_Colors">顏色</String>
     <String x:Key="Setting_PrimaryColor">主題色</String>
@@ -66,6 +73,12 @@
     <String x:Key="Setting_Language_en-us">English - US (英文 - 美國)</String>
     
     <String x:Key="Setting_PlayerSettings">撥放器設定調整</String>
+
+    <String x:Key="Setting_Library">媒體庫設定</String>
+    <String x:Key="Setting_Library_Directories">媒體庫資料夾</String>
+    <String x:Key="Setting_Library_Add">新增</String>
+    <String x:Key="Setting_Library_Remove">移除</String>
+    <String x:Key="Setting_Library_Scan">掃描資料夾</String>
 
     <String x:Key="Setting_Apply">套用</String>
     <String x:Key="Setting_ApplyAndSave">套用並存檔</String>

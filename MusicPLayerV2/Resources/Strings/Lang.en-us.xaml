@@ -33,6 +33,13 @@
     <String x:Key="LrcEditor_ReplaceTimeTag">Replace Time Tag</String>
     <String x:Key="LrcEditor_NewLineTimeTag">New Line With Time Tag</String>
 
+    <String x:Key="Library_AskStyle">Style:&#x20;</String>
+    <String x:Key="Library_AskGenre">Genre:&#x20;</String>
+    <String x:Key="Library_AlbumGrid">Album Grid</String>
+    <String x:Key="Library_AlbumList">Album List</String>
+    <String x:Key="Library_AlbumCoverFlow">Album CoverFlow</String>
+    <String x:Key="Library_ArtistList">Artist List</String>
+
     <String x:Key="Setting_UISettings">User Interface Settings</String>
     <String x:Key="Setting_Colors">Color</String>
     <String x:Key="Setting_PrimaryColor">Primary Color</String>
@@ -66,6 +73,12 @@
     <String x:Key="Setting_Language_zh-tw">繁體中文-臺灣 (Traditional Chinese - Taiwan)</String>
 
     <String x:Key="Setting_PlayerSettings">Music Player Settings</String>
+
+    <String x:Key="Setting_Library">Library Settings</String>
+    <String x:Key="Setting_Library_Directories">Library Directories</String>
+    <String x:Key="Setting_Library_Add">Add</String>
+    <String x:Key="Setting_Library_Remove">Remove</String>
+    <String x:Key="Setting_Library_Scan">Scan Folder</String>
 
     <String x:Key="Setting_Apply">Apply</String>
     <String x:Key="Setting_ApplyAndSave">Apply And Save</String>

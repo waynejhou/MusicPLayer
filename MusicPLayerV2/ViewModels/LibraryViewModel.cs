@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using static MusicPLayerV2.Utils.MusicDatabase;
 
@@ -18,6 +19,7 @@ namespace MusicPLayerV2.ViewModels
     {
         private PlayingListViewModel L => App.PlayingList;
         private MusicPlayer PM => App.PlayerModel;
+        private ResourceDictionary R => App.Current.Resources;
         private GenreEntity AllGenre = new GenreEntity() { Id = -1, Name = "All Genre" };
 
         public LibraryViewModel()
@@ -25,8 +27,8 @@ namespace MusicPLayerV2.ViewModels
             ResetGenreList();
         }
 
-        public IEnumerable<string> StyleList => Enum.GetValues(typeof(LibraryStyle)).Cast<LibraryStyle>().Select(x => x.ToString().Replace('_', ' '));
-        public LibraryStyle Style { get; private set; } = LibraryStyle.Album_Grid;
+        public IEnumerable<string> StyleList => Enum.GetValues(typeof(LibraryStyle)).Cast<LibraryStyle>().Select(x => R[$"Library_{x.ToString()}"]as string);
+        public LibraryStyle Style { get; private set; } = LibraryStyle.AlbumGrid;
         public int SelectedStyle
         {
             get => (int)Style;
@@ -80,14 +82,13 @@ namespace MusicPLayerV2.ViewModels
         {
             get
             {
+                if (SelectedGenreIndex == -1)
+                    return GenreList.ElementAt(0);
                 if (GenreList.Count() > 2)
                     return GenreList.ElementAt(SelectedGenreIndex);
                 else
                 {
-                    if(SelectedGenreIndex==-1)
-                        return GenreList.ElementAt(0);
-                    else
-                        return GenreList.ElementAt(SelectedGenreIndex);
+                    return GenreList.ElementAt(0);
                 }
 
             }
@@ -106,7 +107,7 @@ namespace MusicPLayerV2.ViewModels
 
         public IEnumerable<SongEntity> SongList => LibrarySongColle.FindAll().Select(x => x.Song);
 
-        public enum LibraryStyle { Album_Grid, Album_List/*, Album_CoverFlow, Artist_List*/ }
+        public enum LibraryStyle { AlbumGrid, AlbumList/*, Album_CoverFlow, Artist_List*/ }
 
         public ICommand PlayCmd => new RelayCommand<int?>((albumId) =>
         {

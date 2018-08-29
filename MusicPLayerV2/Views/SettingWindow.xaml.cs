@@ -38,6 +38,11 @@ namespace MusicPLayerV2.Views
             //Utils.MusicDatabase.ExportTables($@"{App.ExecuteFilePath}DB.json", Utils.ExportType.JSON);
             //App.Library.SaveLibrary();
         }
+
+        private void SettingWin_Closed(object sender, EventArgs e)
+        {
+            App.MainWin.Activate();
+        }
     }
 
 }

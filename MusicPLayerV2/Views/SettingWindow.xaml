@@ -12,7 +12,8 @@
         mc:Ignorable="d"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         md:DialogServiceViews.IsRegistered="True"
-        Title="SettingWindow" Height="450" Width="800">
+        Title="SettingWindow" Height="450" Width="800"
+    Closed="SettingWin_Closed">
     <Window.Resources>
         <DataTemplate x:Key="LeftPanelItemTemplate">
             <Label Content="{Binding}"/>
@@ -116,7 +117,7 @@
                       SelectionChanged="LeftPanel_SelectionChanged">
                 <TextBlock Text="{DynamicResource Setting_UISettings}"/>
                 <TextBlock Text="{DynamicResource Setting_PlayerSettings}"/>
-                <TextBlock Text="LibrarySetting"/>
+                <TextBlock Text="{DynamicResource Setting_Library}"/>
                 <TextBlock Text="{DynamicResource Setting_Language}"/>
             </ListView>
         </Border>
@@ -128,7 +129,7 @@
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="1"  Orientation="Horizontal">
-                        <Button Content="SaveDB" FontSize="15" Margin="5" Padding="10 0 10 0" Click="Button_Click"/>
+                        <!--<Button Content="SaveDB" FontSize="15" Margin="5" Padding="10 0 10 0" Click="Button_Click"/>-->
                         <Button Content="{DynamicResource Setting_Apply}" FontSize="15" Margin="5" Padding="10 0 10 0" Command="{Binding ApplySettingsCmd}"/>
                         <Button Content="{DynamicResource Setting_ApplyAndSave}" FontSize="15" Margin="5" Padding="10 0 10 0" Command="{Binding SaveSettingsCmd}"/>
                     </StackPanel>
@@ -249,14 +250,15 @@
                     <TabItem>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                <Label Content="Library Directories" Style="{DynamicResource Separator}"/>
+                                <Label Content="{DynamicResource Setting_Library_Directories}" Style="{DynamicResource Separator}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="+" Width="20" Height="20" Margin="2" Command="{Binding AddDirectoryCmd}"/>
-                                    <Button Content="-" Width="20" Height="20" Margin="2" Command="{Binding RemoveDirectoryCmd}"/>
-                                    <Button Content="Scan Folder" Height="20" Margin="2" Padding="2" Command="{Binding ScanDirectories}"/>
+                                    <Button Content="{DynamicResource Setting_Library_Add}" Margin="2" Command="{Binding AddDirectoryCmd}"/>
+                                    <Button Content="{DynamicResource Setting_Library_Remove}" Margin="2" Command="{Binding RemoveDirectoryCmd}"/>
+                                    <Button Content="{DynamicResource Setting_Library_Scan}" Height="20" Margin="2" Padding="2" Command="{Binding ScanDirectories}"/>
                                 </StackPanel>
                                 <ListView ItemsSource="{Binding LibraryDirectories}"
-                                          BorderThickness="0"
+                                          Margin="5,0,5,0"
+                                          BorderThickness="1"
                                           SelectedIndex="{Binding DirectorySelectedIndex, Mode=TwoWay}">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
