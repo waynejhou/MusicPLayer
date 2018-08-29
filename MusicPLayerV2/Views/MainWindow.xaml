@@ -50,6 +50,7 @@
                                            Foreground="{DynamicResource ForegroundColor}"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
+                                           SnapsToDevicePixels="True"
                                            Effect="{DynamicResource TextShadowEffect}"/>
                             </Border>
 

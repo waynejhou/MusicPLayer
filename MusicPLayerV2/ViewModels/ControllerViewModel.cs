@@ -29,7 +29,7 @@ namespace MusicPLayerV2.ViewModels
         private PlayingListViewModel L => App.PlayingList;
 
         public string MusicTitle => NPI == null ? "unknown" : PM.NowPlayingItem.Title;
-        public string MusicArtistAlbum => NPI == null ? "unknown" : $"{NPI.Artists}\n{NPI.Album}";
+        public string MusicArtistAlbum => NPI == null ? "unknown" : $"{NPI.Artists}\n{NPI.Album}\n{NPI.AlbumEntity.Artists}";
         public string MusicPlayPauseBtnStr =>
             (PM.PlaybackState == CSCore.SoundOut.PlaybackState.Playing) ? (string)R["SymbolCode_Pause"] : (string)R["SymbolCode_Play"];
         public TimeSpan MusicPosition

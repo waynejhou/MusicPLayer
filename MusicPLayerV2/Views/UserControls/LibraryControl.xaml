@@ -6,6 +6,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MusicPLayerV2.Views.UserControls"
              xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="MusicPLayerV2.Views.UserControls.LibraryControl"
+             xmlns:uc="clr-namespace:MusicPLayerV2.Views.UserControls"
+             xmlns:u="clr-namespace:MusicPLayerV2.Utils"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Background="Transparent" Foreground="{DynamicResource ForegroundColor}">
     <UserControl.Resources>
@@ -179,13 +181,17 @@
                         <Border x:Name="dropDownBorder"
                                 BorderBrush="{DynamicResource PanelOpacity}"
                                 BorderThickness="1"
-                                Background="{DynamicResource PrimaryColor}">
+                                Background="{DynamicResource PanelOpacity}">
                             <ScrollViewer x:Name="DropDownScrollViewer">
                                 <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
                                     <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
                                         <Rectangle x:Name="opaqueRect" Fill="{Binding Background, ElementName=dropDownBorder}" Height="{Binding ActualHeight, ElementName=dropDownBorder}" Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
                                     </Canvas>
-                                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    <ItemsPresenter x:Name="ItemsPresenter"
+                                                    KeyboardNavigation.DirectionalNavigation="Contained"
+                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                    Effect="{DynamicResource TextShadowEffect}"
+                                                    />
                                 </Grid>
                             </ScrollViewer>
                         </Border>
@@ -323,130 +329,249 @@
             </Style.Triggers>
         </Style>
 
-        <DataTemplate x:Key="ImageDataTemplate">
-            <Border ToolTip="{Binding Artists}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-                    <Label Grid.Row="1"
-                           FontSize="{DynamicResource TextSmallFontSize}"
-                           Foreground="{DynamicResource ForegroundColor}"
-                           Effect="{DynamicResource TextShadowEffect}"
-                           Width="150"
-                           Height="36">
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock 
-                                TextWrapping="WrapWithOverflow"
-                                Text="{Binding Name}"/>
-                            <TextBlock 
-                                TextWrapping="WrapWithOverflow"
-                                Text="{Binding Artists}"/>
-                        </StackPanel>
-                    </Label>
-
-                    <Image Grid.Row="0" x:Name="AlbumImg" Height="150" Width="150" Source="{Binding Cover}"/>
-                    <StackPanel x:Name="BtnPanel" Grid.Row="0" Height="50"
-                                VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Visibility="Collapsed">
-                        <Button x:Name="PlayBtn" Width="50" Background="#7FDDDDDD" BorderBrush="{x:Null}"
-                                Command="{Binding DataContext.PlayCmd, ElementName=userControl}" CommandParameter="{Binding Id}">
-                            <Label FontSize="20">
-                                <Label.Effect>
-                                    <DropShadowEffect Color="White" BlurRadius="10"/>
-                                </Label.Effect> play
-                            </Label>
-                        </Button>
-                        <Button x:Name="AddBtn" Width="50" Background="#7FDDDDDD" BorderBrush="{x:Null}"
-                                Command="{Binding DataContext.AddCmd, ElementName=userControl}" CommandParameter="{Binding Id}">
-                            <Label FontSize="20">
-                                <Label.Effect>
-                                    <DropShadowEffect Color="White" BlurRadius="10"/>
-                                </Label.Effect> add
-                            </Label>
-                        </Button>
-                    </StackPanel>
-                </Grid>
-            </Border>
-            <DataTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter TargetName="AlbumImg" Property="Effect">
-                        <Setter.Value>
-                            <BlurEffect/>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter TargetName="BtnPanel" Property="Visibility" Value="Visible"/>
-                </Trigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
-        <Style x:Key="FileItemStyle" TargetType="{x:Type ListViewItem}">
-            <Setter Property="Margin" Value="5,5,5,5"/>
-            <Setter Property="Padding" Value="0,0,0,0"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Style x:Key="CircleButtonOnImageStyle" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="FontSize" Value="{DynamicResource ControlBtnMediusFontSize}"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="#cc646464"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate  TargetType="{x:Type ListViewItem}">
-                        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" >
-                            <Border x:Name="border"
-                                        BorderBrush="{x:Null}" BorderThickness="0" HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" CornerRadius="2.5"/>
-                            <StackPanel HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
-                                <ContentPresenter/>
-                            </StackPanel>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Ellipse x:Name="border"  Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}"/>
+                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
                         </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Fill" TargetName="border" Value="{DynamicResource SecondaryColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                            <SkewTransform/>
+                                            <RotateTransform/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Background" Value="{DynamicResource SecondaryColorL}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <ItemsPanelTemplate x:Key="WrapPanel">
-            <WrapPanel/>
-        </ItemsPanelTemplate>
+        <Style x:Key="CircleButtonOnListStyle" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource SymbolFont}"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="FontSize" Value="{DynamicResource ControlBtnMediusFontSize}"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="{DynamicResource PanelOpacity}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Ellipse x:Name="border"  Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}"/>
+                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Fill" TargetName="border" Value="{DynamicResource SecondaryColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                            <SkewTransform/>
+                                            <RotateTransform/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Background" Value="{DynamicResource SecondaryColorL}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <DockPanel>
         <Border DockPanel.Dock="Top" Style="{DynamicResource CardBorderStyle}">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Style: " Margin="5" FontSize="{DynamicResource TextMediumFontSize}"/>
+                <TextBlock Text="Style: " Margin="5" FontSize="{DynamicResource TextMediumFontSize}"
+                           Effect="{DynamicResource TextShadowEffect}"/>
                 <ComboBox ItemsSource="{Binding StyleList}"
-                          SelectedIndex="{Binding SelectedStyleIndex, Mode=TwoWay}"
-                          Style="{DynamicResource ComboBoxStyle}"/>
-                <TextBlock Text="Genre: " Margin="5" FontSize="{DynamicResource TextMediumFontSize}"/>
+                          SelectedIndex="{Binding SelectedStyle, Mode=TwoWay}"
+                          SelectionChanged="ComboBox_SelectionChanged"
+                          Style="{DynamicResource ComboBoxStyle}"
+                          Effect="{DynamicResource TextShadowEffect}"/>
+                <TextBlock Text="Genre: " Margin="5" FontSize="{DynamicResource TextMediumFontSize}"
+                           Effect="{DynamicResource TextShadowEffect}"/>
                 <ComboBox ItemsSource="{Binding GenreList}"
                           SelectedIndex="{Binding SelectedGenreIndex, Mode=TwoWay}"
-                          Style="{DynamicResource ComboBoxStyle}"/>
+                          Style="{DynamicResource ComboBoxStyle}"
+                          Effect="{DynamicResource TextShadowEffect}"/>
             </StackPanel>
         </Border>
 
         <Border Style="{DynamicResource CardBorderStyle}">
-            <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                   Foreground="{DynamicResource ForegroundColor}">
-                <Label.Style>
-                    <Style TargetType="Label">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <ListView x:Name="AlbumListView"
-                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                          ItemContainerStyle="{StaticResource FileItemStyle}"
-                                          SelectionMode="Single"
-                                          BorderThickness="0" BorderBrush="{x:Null}"
-                                          ItemTemplate="{DynamicResource ImageDataTemplate}"
-                                          ItemsSource="{Binding AlbumList}"
-                                          ItemsPanel="{DynamicResource WrapPanel}"
-                                          Background="Transparent">
-                                </ListView>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding SongLibraryCount}" Value="0">
-                                <Setter Property="Content">
-                                    <Setter.Value>
-                                        <TextBlock FontSize="{DynamicResource TextMediumFontSize}">NoItem</TextBlock>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
+            <TabControl Background="{Binding Background, ElementName=userControl}"
+                        SelectedIndex="{Binding TabIndex, Mode=TwoWay}"
+                        BorderThickness="0">
+                <TabControl.ItemContainerStyle>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
                     </Style>
-                </Label.Style>
-            </Label>
+                </TabControl.ItemContainerStyle>
+                <TabItem>
+                    <ListView ItemsSource="{Binding AlbumList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          BorderThickness="0"
+                          Background="{Binding Background, ElementName=userControl}"
+                          >
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate DataType="{x:Type u:AlbumEntity}">
+                                <Border Width="150">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Image x:Name="backimg" VerticalAlignment="Center" Height="150"
+                                                   Source="{Binding Cover}" Margin="0 -30 0 0" Visibility="Hidden"/>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="150"/>
+                                                    <RowDefinition Height="auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid Height="150" Grid.Row="0">
+                                                    <Image Source="{Binding Cover}"/>
+                                                    <StackPanel x:Name="_Btns" Visibility="Hidden" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Button Height="40" Content="{DynamicResource SymbolCode_Play}" Style="{DynamicResource CircleButtonOnImageStyle}"
+                                                                Command="{Binding DataContext.PlayCmd, ElementName=userControl}" CommandParameter="{Binding Id}"/>
+                                                        <Button Height="40" Content="{DynamicResource SymbolCode_Add}" Style="{DynamicResource CircleButtonOnImageStyle}"
+                                                                Command="{Binding DataContext.AddCmd, ElementName=userControl}" CommandParameter="{Binding Id}"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                                <Label Grid.Row="1" Margin=" 0 10 0 0" Effect="{DynamicResource TextShadowEffect}">
+                                                    <StackPanel>
+                                                        <AccessText Text="{Binding Name}" TextWrapping="Wrap"
+                                                            MaxHeight="32"
+                                                            FontSize="14"
+                                                            Foreground="{Binding Foreground, ElementName=userControl}"/>
+                                                        <AccessText Text="{Binding Artists}" TextWrapping="WrapWithOverflow"
+                                                            MaxHeight="15"
+                                                            FontSize="12"
+                                                            Foreground="{DynamicResource ForegroundColorL}"/>
+                                                    </StackPanel>
+                                                </Label>
+                                            </Grid>
+                                        </Grid>
+
+                                    </StackPanel>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter TargetName="_Btns" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="backimg" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="backimg" Property="Effect">
+                                            <Setter.Value>
+                                                <BlurEffect Radius="20" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Style.Triggers>
+                                <Trigger Property="ItemsControl.AlternationIndex"  Value="0">
+                                    <Setter Property="Background" Value="{Binding Background, ElementName=userControl}" />
+                                </Trigger>
+                                <Trigger Property="ItemsControl.AlternationIndex"  Value="1">
+                                    <Setter Property="Background" Value="{DynamicResource PanelOpacity}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TabItem.Resources>
+                    <ListView ItemsSource="{Binding AlbumList}"
+                              BorderThickness="0"
+                              Background="{Binding Background, ElementName=userControl}"
+                              AlternationCount="2"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              >
+                        <ListView.ItemTemplate>
+                            <DataTemplate DataType="{x:Type u:AlbumEntity}">
+                                <Label FontSize="16"
+                                       Foreground="{Binding Foreground, ElementName=userControl}"
+                                       HorizontalContentAlignment="Stretch">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="300"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image MaxHeight="40" Grid.Column="1"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               Source="{Binding Cover}" Stretch="UniformToFill" ClipToBounds="True" SnapsToDevicePixels="True">
+                                            <Image.OpacityMask>
+                                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                    <LinearGradientBrush.RelativeTransform>
+                                                        <TransformGroup>
+                                                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                                                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                                                            <RotateTransform Angle="270" CenterY="0.5" CenterX="0.5"/>
+                                                            <TranslateTransform/>
+                                                        </TransformGroup>
+                                                    </LinearGradientBrush.RelativeTransform>
+                                                    <GradientStop Color="#00000000" Offset="0"/>
+                                                    <GradientStop Color="White" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Image.OpacityMask>
+                                        </Image>
+                                        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" VerticalAlignment="Center" Effect="{DynamicResource TextShadowEffect}"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding Artists}" VerticalAlignment="Center" Effect="{DynamicResource TextShadowEffect}"/>
+                                        <StackPanel Grid.Column="2" x:Name="_Btns" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Button Height="30" Content="{DynamicResource SymbolCode_Play}" Style="{DynamicResource CircleButtonOnListStyle}"
+                                                                Command="{Binding DataContext.PlayCmd, ElementName=userControl}" CommandParameter="{Binding Id}"/>
+                                            <Button Height="30" Content="{DynamicResource SymbolCode_Add}" Style="{DynamicResource CircleButtonOnListStyle}"
+                                                                Command="{Binding DataContext.AddCmd, ElementName=userControl}" CommandParameter="{Binding Id}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Label>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </TabItem>
+
+            </TabControl>
+
         </Border>
     </DockPanel>
 </UserControl>

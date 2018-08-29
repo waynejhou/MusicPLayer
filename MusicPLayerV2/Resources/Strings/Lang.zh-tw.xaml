@@ -39,6 +39,7 @@
     <String x:Key="Setting_SecondaryColor">點綴色</String>
     <String x:Key="Setting_SecondaryColorL">強調點綴色</String>
     <String x:Key="Setting_ForegroundColor">前景色</String>
+    <String x:Key="Setting_ForegroundColorL">強調前景色</String>
     <String x:Key="Setting_PanelOpacity">面板透明度</String>
 
     <String x:Key="Setting_Font">字型</String>

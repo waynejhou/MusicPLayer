@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static MusicPLayerV2.Utils.MusicDatabase;
 
 namespace MusicPLayerV2.ViewModels
 {
@@ -17,90 +18,52 @@ namespace MusicPLayerV2.ViewModels
     {
         private PlayingListViewModel L => App.PlayingList;
         private MusicPlayer PM => App.PlayerModel;
+        private GenreEntity AllGenre = new GenreEntity() { Id = -1, Name = "All Genre" };
+
         public LibraryViewModel()
         {
-            FeaturedDatabase();
+            ResetGenreList();
         }
 
-        public IEnumerable<string> StyleList => Enum.GetValues(typeof(LibraryStyle)).Cast<LibraryStyle>().Select(x=>x.ToString().Replace('_',' '));
-        public int SelectedStyleIndex { get; set; } = 0;
-        public LibraryStyle Style => Enum.GetValues(typeof(LibraryStyle)).Cast<LibraryStyle>().ElementAt(SelectedStyleIndex);
-
-        public void ScanDirectory()
+        public IEnumerable<string> StyleList => Enum.GetValues(typeof(LibraryStyle)).Cast<LibraryStyle>().Select(x => x.ToString().Replace('_', ' '));
+        public LibraryStyle Style { get; private set; } = LibraryStyle.Album_Grid;
+        public int SelectedStyle
         {
-            var LoadingFileVM = new LoadingViewModel<IEnumerable<LibraryEntity>>()
+            get => (int)Style;
+            set
             {
-                Min = 0,
-                Max = 100,
-                Title = "Loading",
-                Value = 0
-            };
-            LoadingFileVM.DoWork += (bgw, vm, libs, e) =>
-            {
-                Dictionary<int, IEnumerable<string>> dirs = new Dictionary<int, IEnumerable<string>>();
-                foreach (var dir in libs)
-                {
-                    dirs.Add(dir.Id, Directory.EnumerateFiles(dir.Path, "*",
-                        dir.IsScanAllSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
-                        ).Where(x => MusicDatabase.CheckFileSupported(new FileInfo(x).Extension)));
-                }
-                int count = 0;
-                int allfile = dirs.Select(x => x.Value).Select(x => x.Count()).Sum();
-                foreach (var dir in dirs)
-                {
-                    foreach (var file in dir.Value)
-                    {
-                        Console.WriteLine($"Scanning {dir.Key} {file}");
-                        var entity = MusicDatabase.CreateSongEntity(file);
-                        if (MusicDatabase.LibrarySongColle.FindOne(x => x.Name == dir.Key + "-" + entity.Id) == null)
-                            MusicDatabase.LibrarySongColle.Insert(new LibrarySongRelationship()
-                            {
-                                Name = dir.Key + "-" + entity.Id,
-                                LibraryId = dir.Key,
-                                SongId = entity.Id
-                            });
-                        bgw.ReportProgress((int)(count / (double)(allfile) * 100d), file);
-                        count += 1;
-                    }
-                }
-            };
-            LoadingFileVM.RunWorkerCompleted += (bgw, vm, result, e) =>
-            {
-                vm.Value = vm.Max;
-                FeaturedDatabase();
-                NotifyPropertyChanged(nameof(AlbumList));
-                NotifyPropertyChanged(nameof(GenreList));
-            };
-            LoadingFileVM.RunWorkerAsync(MusicDatabase.LibraryColle.FindAll(), x => true);
+                Console.WriteLine(value);
+                Style = (LibraryStyle)value;
+                NotifyPropertyChanged(nameof(SelectedStyle));
+                NotifyPropertyChanged(nameof(TabIndex));
+            }
         }
-
-        Dictionary<int, IEnumerable<int>> _GenreAlbumMap;
-        Dictionary<int, IEnumerable<int>> _AlbumSongMap;
-
-        public void FeaturedDatabase()
+        public int TabIndex
         {
-            var allLibSong = MusicDatabase.LibrarySongColle.FindAll().Select(x => x.Song).ToList();
-            _GenreAlbumMap =
-                allLibSong
-                .GroupBy(x => x.GenreId)
-                .ToDictionary(
-                    group => group.Key,
-                    members => members
-                        .OrderByDescending(y => y.Year).Select(y => y.AlbumId).Distinct()
-                );
-            _AlbumSongMap =
-                allLibSong
-                .GroupBy(x => x.AlbumId)
-                .ToDictionary(
-                    group => group.Key,
-                    members => members
-                        .OrderBy(x => x.Track).Select(y => y.Id)
-                );
+            get => (int)Style; set
+            {
+                Console.WriteLine(value);
+                Style = (LibraryStyle)value;
+                NotifyPropertyChanged(nameof(SelectedStyle));
+                NotifyPropertyChanged(nameof(TabIndex));
+            }
         }
 
 
-        public IEnumerable<GenreEntity> GenreList => _GenreAlbumMap.Keys.Select(x=>MusicDatabase.GenreColle.FindById(x));
-        int _SelectedGenreIndex = 0;
+        public IEnumerable<GenreEntity> GenreList { get; set; }
+        public void ResetGenreList()
+        {
+            var list = new List<GenreEntity>() { AllGenre };
+            list.AddRange(LibraryGenreColle.FindAll().Select(x => x.Genre).OrderBy(x=>x.Name));
+            GenreList = list;
+            if (GenreList.Count() > 2)
+                SelectedGenreIndex = 1;
+            else
+                SelectedGenreIndex = 0;
+            NotifyPropertyChanged(nameof(SelectedGenreIndex));
+            NotifyPropertyChanged(nameof(GenreList));
+        }
+        int _SelectedGenreIndex = 1;
         public int SelectedGenreIndex
         {
             get
@@ -113,22 +76,48 @@ namespace MusicPLayerV2.ViewModels
                 NotifyPropertyChanged(nameof(AlbumList));
             }
         }
-        public GenreEntity SelectedGenre => GenreList.ElementAt(SelectedGenreIndex == -1 ? 0 : SelectedGenreIndex);
+        public GenreEntity SelectedGenre
+        {
+            get
+            {
+                if (GenreList.Count() > 2)
+                    return GenreList.ElementAt(SelectedGenreIndex);
+                else
+                {
+                    if(SelectedGenreIndex==-1)
+                        return GenreList.ElementAt(0);
+                    else
+                        return GenreList.ElementAt(SelectedGenreIndex);
+                }
 
-        public IEnumerable<AlbumEntity> AlbumList => _GenreAlbumMap[SelectedGenre.Id].Select(x=>MusicDatabase.AlbumColle.FindById(x));
+            }
+        }
 
-        public enum LibraryStyle { Album_Grid, Album_List, Album_CoverFlow, Artist_List }
+
+        public IEnumerable<AlbumEntity> AlbumList
+        {
+            get
+            {
+                var list = GenreAlbumColle.Find(x => SelectedGenre.Id == -1 || x.GenreId == SelectedGenre.Id).Select(x => x.Album);
+                return list;
+            }
+        }
+        
+
+        public IEnumerable<SongEntity> SongList => LibrarySongColle.FindAll().Select(x => x.Song);
+
+        public enum LibraryStyle { Album_Grid, Album_List/*, Album_CoverFlow, Artist_List*/ }
 
         public ICommand PlayCmd => new RelayCommand<int?>((albumId) =>
         {
             L.PlayingList.Clear();
-            L.AddEntityToList(_AlbumSongMap[albumId.Value].Select(x => MusicDatabase.SongColle.FindById(x)).ToArray());
+            L.AddEntityToList(AlbumSongColle.Find(x => x.AlbumId == albumId).Select(x => x.Song).OrderBy(x=>x.Track).ToArray());
             PM.LoadFromMusicItem(L.PlayingList[0]);
             PM.Play();
         }, (x) => true);
         public ICommand AddCmd => new RelayCommand<int?>((albumId) =>
         {
-            L.AddEntityToList(_AlbumSongMap[albumId.Value].Select(x => MusicDatabase.SongColle.FindById(x)).ToArray());
+            L.AddEntityToList(AlbumSongColle.Find(x => x.AlbumId == albumId).Select(x => x.Song).OrderBy(x => x.Track).ToArray());
         }, (x) => true);
 
 

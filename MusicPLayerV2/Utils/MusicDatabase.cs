@@ -8,6 +8,7 @@ using System.Windows;
 using CSCore;
 using CSCore.Codecs;
 using LiteDB;
+using MusicPLayerV2.ViewModels;
 
 namespace MusicPLayerV2.Utils
 {
@@ -27,10 +28,16 @@ namespace MusicPLayerV2.Utils
         public static LiteCollection<AlbumEntity> AlbumColle { get; set; }
         public static LiteCollection<PerformerEntity> PerformerColle { get; set; }
         public static LiteCollection<GenreEntity> GenreColle { get; set; }
+        public static LiteCollection<LibraryEntity> LibraryColle { get; set; }
         public static LiteCollection<AlbumArtistRelationShip> AlbumArtistColle { get; set; }
         public static LiteCollection<SongArtistRelationShip> SongArtistColle { get; set; }
-        public static LiteCollection<LibraryEntity> LibraryColle { get; set; }
+
         public static LiteCollection<LibrarySongRelationship> LibrarySongColle { get; set; }
+        public static LiteCollection<LibraryGenreRelationship> LibraryGenreColle { get; set; }
+        public static LiteCollection<LibraryAlbumRelationship> LibraryAlbumColle { get; set; }
+        public static LiteCollection<GenreSongRelationship> GenreSongColle { get; set; }
+        public static LiteCollection<GenreAlbumRelationship> GenreAlbumColle { get; set; }
+        public static LiteCollection<AlbumSongRelationship> AlbumSongColle { get; set; }
 
         static MusicDatabase()
         {
@@ -49,6 +56,11 @@ namespace MusicPLayerV2.Utils
             SongArtistColle = Database.GetCollection<SongArtistRelationShip>();
             LibraryColle = Database.GetCollection<LibraryEntity>();
             LibrarySongColle = Database.GetCollection<LibrarySongRelationship>();
+            LibraryGenreColle = Database.GetCollection<LibraryGenreRelationship>();
+            LibraryAlbumColle = Database.GetCollection<LibraryAlbumRelationship>();
+            GenreSongColle = Database.GetCollection<GenreSongRelationship>();
+            GenreAlbumColle = Database.GetCollection<GenreAlbumRelationship>();
+            AlbumSongColle = Database.GetCollection<AlbumSongRelationship>();
             SongColle.EnsureIndex(x => x.Path, true);
             AlbumColle.EnsureIndex(x => x.Name, true);
             PerformerColle.EnsureIndex(x => x.Name, true);
@@ -57,6 +69,11 @@ namespace MusicPLayerV2.Utils
             SongArtistColle.EnsureIndex(x => x.Name, true);
             LibraryColle.EnsureIndex(x => x.Path, true);
             LibrarySongColle.EnsureIndex(x => x.Name, true);
+            LibraryGenreColle.EnsureIndex(x => x.Name, true);
+            LibraryAlbumColle.EnsureIndex(x => x.Name, true);
+            GenreSongColle.EnsureIndex(x => x.Name, true);
+            GenreAlbumColle.EnsureIndex(x => x.Name, true);
+            AlbumSongColle.EnsureIndex(x => x.Name, true);
         }
         static void Dispose()
         {
@@ -283,6 +300,105 @@ namespace MusicPLayerV2.Utils
                     cover.CoverSizeHeight = (int)s.Height;
                     cover.CoverSizeWidth = (int)s.Width;
                 }
+        }
+
+        public static void ScanDirectory()
+        {
+            LibrarySongColle.Delete(x => true);
+            LibraryGenreColle.Delete(x => true);
+            LibraryAlbumColle.Delete(x => true);
+            GenreAlbumColle.Delete(x => true);
+            GenreSongColle.Delete(x => true);
+            AlbumSongColle.Delete(x => true);
+            var LoadingFileVM = new LoadingViewModel<IEnumerable<LibraryEntity>>()
+            {
+                Min = 0,
+                Max = 100,
+                Title = "Loading",
+                Value = 0
+            };
+            LoadingFileVM.DoWork += (bgw, vm, libs, e) =>
+            {
+                Dictionary<int, IEnumerable<string>> dirs = new Dictionary<int, IEnumerable<string>>();
+                foreach (var dir in libs)
+                {
+                    dirs.Add(dir.Id, Directory.EnumerateFiles(dir.Path, "*",
+                        dir.IsScanAllSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
+                        ).Where(x => CheckFileSupported(new FileInfo(x).Extension)));
+                }
+                int count = 0;
+                int allfile = dirs.Select(x => x.Value).Select(x => x.Count()).Sum();
+                foreach (var dir in dirs)
+                {
+                    foreach (var file in dir.Value)
+                    {
+                        Console.WriteLine($"Scanning {dir.Key} {file}");
+                        var entity = CreateSongEntity(file);
+                        if (LibrarySongColle.FindOne(x => x.Name == dir.Key + "-" + entity.Id) == null)
+                        {
+                            LibrarySongColle.Insert(new LibrarySongRelationship()
+                            {
+                                Name = dir.Key + "-" + entity.Id,
+                                LibraryId = dir.Key,
+                                SongId = entity.Id
+                            });
+                        }
+                        if (LibraryGenreColle.FindOne(x => x.Name == dir.Key + "-" + entity.GenreId) == null)
+                        {
+                            LibraryGenreColle.Insert(new LibraryGenreRelationship()
+                            {
+                                Name = dir.Key + "-" + entity.GenreId,
+                                LibraryId = dir.Key,
+                                GenreId = entity.GenreId
+                            });
+                        }
+                        if (LibraryAlbumColle.FindOne(x => x.Name == dir.Key + "-" + entity.AlbumId) == null)
+                        {
+                            LibraryAlbumColle.Insert(new LibraryAlbumRelationship()
+                            {
+                                Name = dir.Key + "-" + entity.AlbumId,
+                                LibraryId = dir.Key,
+                                AlbumId = entity.AlbumId
+                            });
+                        }
+
+                        if (GenreSongColle.FindOne(x => x.Name == entity.GenreId + "-" + entity.Id) == null)
+                        {
+                            GenreSongColle.Insert(new GenreSongRelationship()
+                            {
+                                Name = entity.GenreId + "-" + entity.Id,
+                                GenreId = entity.GenreId,
+                                SongId = entity.Id
+                            });
+                        }
+                        if (GenreAlbumColle.FindOne(x => x.Name == entity.GenreId + "-" + entity.AlbumId) == null)
+                        {
+                            GenreAlbumColle.Insert(new GenreAlbumRelationship()
+                            {
+                                Name = entity.GenreId + "-" + entity.AlbumId,
+                                GenreId = entity.GenreId,
+                                AlbumId = entity.AlbumId
+                            });
+                        }
+                        if (AlbumSongColle.FindOne(x => x.Name == entity.AlbumId + "-" + entity.Id) == null)
+                        {
+                            AlbumSongColle.Insert(new AlbumSongRelationship()
+                            {
+                                Name = entity.AlbumId + "-" + entity.Id,
+                                AlbumId = entity.AlbumId,
+                                SongId = entity.Id
+                            });
+                        }
+                        bgw.ReportProgress((int)(count / (double)(allfile) * 100d), file);
+                        count += 1;
+                    }
+                }
+            };
+            LoadingFileVM.RunWorkerCompleted += (bgw, vm, result, e) =>
+            {
+                vm.Value = vm.Max;
+            };
+            LoadingFileVM.RunWorkerAsync(MusicDatabase.LibraryColle.FindAll(), x => true);
         }
     }
 }

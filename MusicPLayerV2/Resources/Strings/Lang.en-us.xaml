@@ -39,6 +39,7 @@
     <String x:Key="Setting_SecondaryColor">Secondary Color</String>
     <String x:Key="Setting_SecondaryColorL">Secondary Color Ex</String>
     <String x:Key="Setting_ForegroundColor">Foreground Color</String>
+    <String x:Key="Setting_ForegroundColorL">Foreground Color Ex</String>
     <String x:Key="Setting_PanelOpaticy">Panel Opaticy</String>
 
     <String x:Key="Setting_Font">Font</String>

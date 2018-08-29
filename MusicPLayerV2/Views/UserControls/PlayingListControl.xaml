@@ -26,13 +26,26 @@
         </Style>
     </UserControl.Resources>
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Style.Triggers>
+                    <Trigger Property="ItemsControl.AlternationIndex"  Value="0">
+                        <Setter Property="Background" Value="{Binding Background, ElementName=UserControl}" />
+                    </Trigger>
+                    <Trigger Property="ItemsControl.AlternationIndex"  Value="1">
+                        <Setter Property="Background" Value="{DynamicResource PanelOpacity}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
         <ListView BorderThickness="0" x:Name="ListViewL"
                   Width="{Binding ElementName=UserControl, Path=ActualWidth}"
                   Background="{Binding ElementName=UserControl, Path=Background, FallbackValue=White}"
                   ItemsSource="{Binding PlayingList, Mode=TwoWay}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   SelectionChanged="ListViewL_SelectionChanged"
-                  
+                  AlternationCount="2"
                   >
             <ListView.ContextMenu>
                 <ContextMenu>

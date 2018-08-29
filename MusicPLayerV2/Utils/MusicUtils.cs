@@ -163,7 +163,6 @@ namespace MusicPLayerV2.Utils
                 $" {GenreEntity.Id}: {GenreEntity.Name}]");
         }
     }
-    public enum CoverPathType { NoneCover, FromAudioFile, FromImageFile };
     public class AlbumEntity : ICover
     {
         [BsonId(true)]
@@ -234,6 +233,18 @@ namespace MusicPLayerV2.Utils
             return Name;
         }
     }
+    public class LibraryEntity
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
+
+        [BsonField("path")]
+        public string Path { get; set; }
+
+        [BsonField("scan_all_sub")]
+        public bool IsScanAllSubDirectories { get; set; } = true;
+    }
+
 
     public class AlbumArtistRelationShip
     {
@@ -288,17 +299,6 @@ namespace MusicPLayerV2.Utils
         public string Performer => PerformerEntity.Name;
     }
 
-    public class LibraryEntity
-    {
-        [BsonId(true)]
-        public int Id { get; set; }
-
-        [BsonField("path")]
-        public string Path { get; set; }
-
-        [BsonField("scan_all_sub")]
-        public bool IsScanAllSubDirectories { get; set; } = true;
-    }
     public class LibrarySongRelationship
     {
         [BsonId(true)]
@@ -319,8 +319,148 @@ namespace MusicPLayerV2.Utils
         [BsonIgnore]
         public SongEntity Song => MusicDatabase.SongColle.FindById(SongId);
     }
+    public class LibraryAlbumRelationship
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
 
+        [BsonField("name")]
+        public string Name { get; set; }
 
+        [BsonField("lib_id")]
+        public int LibraryId { get; set; }
+
+        [BsonIgnore]
+        public LibraryEntity LibraryEntity => MusicDatabase.LibraryColle.FindById(LibraryId);
+
+        [BsonField("album_id")]
+        public int AlbumId { get; set; }
+
+        [BsonIgnore]
+        public AlbumEntity Album => MusicDatabase.AlbumColle.FindById(AlbumId);
+    }
+    public class LibraryPerformerRelationship
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
+
+        [BsonField("name")]
+        public string Name { get; set; }
+
+        [BsonField("lib_id")]
+        public int LibraryId { get; set; }
+
+        [BsonIgnore]
+        public LibraryEntity LibraryEntity => MusicDatabase.LibraryColle.FindById(LibraryId);
+
+        [BsonField("performer_id")]
+        public int PerformerId { get; set; }
+
+        [BsonIgnore]
+        public PerformerEntity Performer => MusicDatabase.PerformerColle.FindById(PerformerId);
+    }
+    public class LibraryGenreRelationship
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
+
+        [BsonField("name")]
+        public string Name { get; set; }
+
+        [BsonField("lib_id")]
+        public int LibraryId { get; set; }
+
+        [BsonIgnore]
+        public LibraryEntity LibraryEntity => MusicDatabase.LibraryColle.FindById(LibraryId);
+
+        [BsonField("genre_id")]
+        public int GenreId { get; set; }
+
+        [BsonIgnore]
+        public GenreEntity Genre => MusicDatabase.GenreColle.FindById(GenreId);
+    }
+    public class GenreSongRelationship
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
+
+        [BsonField("name")]
+        public string Name { get; set; }
+
+        [BsonField("genre_id")]
+        public int GenreId { get; set; }
+
+        [BsonIgnore]
+        public GenreEntity GenreEntity => MusicDatabase.GenreColle.FindById(GenreId);
+
+        [BsonField("song_id")]
+        public int SongId { get; set; }
+
+        [BsonIgnore]
+        public SongEntity Song => MusicDatabase.SongColle.FindById(SongId);
+    }
+    public class GenreAlbumRelationship
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
+
+        [BsonField("name")]
+        public string Name { get; set; }
+
+        [BsonField("genre_id")]
+        public int GenreId { get; set; }
+
+        [BsonIgnore]
+        public GenreEntity GenreEntity => MusicDatabase.GenreColle.FindById(GenreId);
+
+        [BsonField("album_id")]
+        public int AlbumId { get; set; }
+
+        [BsonIgnore]
+        public AlbumEntity Album => MusicDatabase.AlbumColle.FindById(AlbumId);
+    }
+    public class GenrePerformerRelationship
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
+
+        [BsonField("name")]
+        public string Name { get; set; }
+
+        [BsonField("genre_id")]
+        public int GenreId { get; set; }
+
+        [BsonIgnore]
+        public GenreEntity GenreEntity => MusicDatabase.GenreColle.FindById(GenreId);
+
+        [BsonField("performer_id")]
+        public int PerformerId { get; set; }
+
+        [BsonIgnore]
+        public PerformerEntity Performer => MusicDatabase.PerformerColle.FindById(PerformerId);
+    }
+    public class AlbumSongRelationship
+    {
+        [BsonId(true)]
+        public int Id { get; set; }
+
+        [BsonField("name")]
+        public string Name { get; set; }
+
+        [BsonField("album_id")]
+        public int AlbumId { get; set; }
+
+        [BsonIgnore]
+        public AlbumEntity AlbumEntity => MusicDatabase.AlbumColle.FindById(AlbumId);
+
+        [BsonField("song_id")]
+        public int SongId { get; set; }
+
+        [BsonIgnore]
+        public SongEntity Song => MusicDatabase.SongColle.FindById(SongId);
+    }
+
+    public enum CoverPathType { NoneCover, FromAudioFile, FromImageFile };
 
     public class SongCompareAlbum : IEqualityComparer<SongEntity>
     {

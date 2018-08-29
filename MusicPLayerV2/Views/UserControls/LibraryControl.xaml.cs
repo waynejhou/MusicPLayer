@@ -24,5 +24,10 @@ namespace MusicPLayerV2.Views.UserControls
         {
             InitializeComponent();
         }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //_LayerCotrol.PresentingIndex = (sender as ComboBox).SelectedIndex+1;
+        }
     }
 }

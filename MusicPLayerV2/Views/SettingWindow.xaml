@@ -163,6 +163,11 @@
                                    Style="{DynamicResource ColorPickerStyle}"
                                    SelectedColor="{Binding ForegroundColor.Value}"/>
                                     </Label>
+                                    <Label AutomationProperties.Name="{DynamicResource Setting_ForegroundColorL}" Style="{DynamicResource LabelStyle}">
+                                        <xctk:ColorPicker
+                                   Style="{DynamicResource ColorPickerStyle}"
+                                   SelectedColor="{Binding ForegroundColorL.Value}"/>
+                                    </Label>
                                     <Label AutomationProperties.Name="{DynamicResource Setting_PanelOpacity}" Style="{DynamicResource LabelStyle}">
                                         <xctk:DoubleUpDown Style="{DynamicResource DoubleUpDownStyle}"
                                                    Value="{Binding PanelOpacity.Value}"

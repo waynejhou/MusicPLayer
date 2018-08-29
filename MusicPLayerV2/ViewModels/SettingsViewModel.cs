@@ -39,6 +39,7 @@ namespace MusicPLayerV2.ViewModels
             SecondaryColor,
             SecondaryColorL,
             ForegroundColor,
+            ForegroundColorL,
             LyricForegroundColor,
             LyricHighlightColor,
             LyricShadowColor,
@@ -63,6 +64,7 @@ namespace MusicPLayerV2.ViewModels
         public ColorSetting SecondaryColor { get; set; }
         public ColorSetting SecondaryColorL { get; set; }
         public ColorSetting ForegroundColor { get; set; }
+        public ColorSetting ForegroundColorL { get; set; }
         public ColorSetting LyricForegroundColor { get; set; }
         public ColorSetting LyricHighlightColor { get; set; }
         public ShadowColorSetting LyricShadowColor { get; set; }
@@ -92,6 +94,7 @@ namespace MusicPLayerV2.ViewModels
             SecondaryColor = new ColorSetting() { Name = nameof(SecondaryColor) };
             SecondaryColorL = new ColorSetting() { Name = nameof(SecondaryColorL) };
             ForegroundColor = new ColorSetting() { Name = nameof(ForegroundColor) };
+            ForegroundColorL = new ColorSetting() { Name = nameof(ForegroundColorL) };
             LyricForegroundColor = new ColorSetting() { Name = nameof(LyricForegroundColor) };
             LyricHighlightColor = new ColorSetting() { Name = nameof(LyricHighlightColor) };
             LyricShadowColor = new ShadowColorSetting() { Name = "LyricShadowEffect" };
@@ -128,7 +131,11 @@ namespace MusicPLayerV2.ViewModels
 
         public ICommand AddDirectoryCmd => new RelayCommand(AddDirectory, () => true);
         public ICommand RemoveDirectoryCmd => new RelayCommand(RemoveDirectory, () => DirectorySelectedIndex >= 0);
-        public ICommand ScanDirectories => new RelayCommand(Lib.ScanDirectory, () => true);
+        public ICommand ScanDirectories => new RelayCommand(()=> {
+            ApplySetting();
+            MusicDatabase.ScanDirectory();
+            App.Library.ResetGenreList();
+        }, () => true);
         [XmlIgnore]
         public int DirectorySelectedIndex { get; set; } = 0;
 
@@ -170,7 +177,7 @@ namespace MusicPLayerV2.ViewModels
         }
         public void ApplyDirectoriesChange()
         {
-            foreach(var l in LibraryDirectories)
+            foreach (var l in LibraryDirectories)
             {
                 MusicDatabase.LibraryColle.Upsert(l);
             }
@@ -178,6 +185,8 @@ namespace MusicPLayerV2.ViewModels
             {
                 MusicDatabase.LibraryColle.Delete(l.Id);
                 MusicDatabase.LibrarySongColle.Delete(x => x.LibraryId == l.Id);
+                MusicDatabase.LibraryGenreColle.Delete(x => x.LibraryId == l.Id);
+                MusicDatabase.LibraryAlbumColle.Delete(x => x.LibraryId == l.Id);
             }
         }
         public void ApplySetting()
@@ -293,6 +302,7 @@ namespace MusicPLayerV2.ViewModels
         public void ApplyChange()
         {
             SetValue(Value);
+            IsValueChanged = false;
         }
     }
     #endregion

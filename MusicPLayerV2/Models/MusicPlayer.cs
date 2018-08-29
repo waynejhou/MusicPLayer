@@ -190,7 +190,9 @@ namespace MusicPLayerV2.Models
                     if (newone != last)
                         WavePositionChangedEvent?.Invoke(this, newone);
                     while (_soundOut.PlaybackState != PlaybackState.Playing) { Thread.Sleep(1); }
-                    Thread.Sleep(1);
+
+                    Thread.Sleep(33);
+                    
                 }
             });
             _wavePostionUpdThd.Start();

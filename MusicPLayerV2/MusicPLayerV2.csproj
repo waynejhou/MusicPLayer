@@ -141,6 +141,9 @@
     <Compile Include="Views\UserControls\ControllerControl.xaml.cs">
       <DependentUpon>ControllerControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserControls\LayerControl.xaml.cs">
+      <DependentUpon>LayerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\LibraryControl.xaml.cs">
       <DependentUpon>LibraryControl.xaml</DependentUpon>
     </Compile>
@@ -204,6 +207,10 @@
     <Page Include="Views\UserControls\ControllerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\LayerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\UserControls\LibraryControl.xaml">
       <SubType>Designer</SubType>

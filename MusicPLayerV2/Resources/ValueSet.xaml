@@ -5,6 +5,7 @@
     <SolidColorBrush x:Key="SecondaryColor" Color="#CC80FF80"/>
     <SolidColorBrush x:Key="SecondaryColorL" Color="#CC96CF80"/>
     <SolidColorBrush x:Key="ForegroundColor" Color="White"/>
+    <SolidColorBrush x:Key="ForegroundColorL" Color="LightGray"/>
     <SolidColorBrush x:Key="PanelOpacity" Color="White" Opacity="0.10"/>
     <SolidColorBrush x:Key="PanelOpacityL" Color="White" Opacity="0.50"/>
 
@@ -37,6 +38,7 @@
     <sys:String x:Key="SymbolCode_Play">&#xE768;</sys:String>
     <sys:String x:Key="SymbolCode_PlayBadge">&#xEDB5;</sys:String>
     <sys:String x:Key="SymbolCode_Pause">&#xE769;</sys:String>
+    <sys:String x:Key="SymbolCode_Add">&#xE948;</sys:String>
     <sys:String x:Key="SymbolCode_Volume">&#xE767;</sys:String>
     <sys:String x:Key="SymbolCode_Next">&#xE893;</sys:String>
     <sys:String x:Key="SymbolCode_Previous">&#xE892;</sys:String>
