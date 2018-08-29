@@ -47,6 +47,10 @@ Here's the picture
   - [x] Setting
     - [x] Basic Setting
     - [x] Change Theme
-  - [ ] Music Library
-    - [ ] Basic Music Library
+  - [x] Music Library
+    - [x] Basic Music Library
+    - [x] Album Grid
+    - [x] Album List
+    - [ ] Album CoverFlow
+    - [ ] Artist List
 
