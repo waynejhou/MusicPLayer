@@ -175,6 +175,8 @@ namespace MusicPLayerV2.Models
                 .ToSampleSource()
                 .ToStereo()
                 .ToWaveSource();
+            musicItem.Length = _waveSource.GetLength();
+            MusicDatabase.SongColle.Update(musicItem);
             _soundOut = new WasapiOut() { Latency = 100 };
             _soundOut.Initialize(_waveSource);
             _soundOut.Volume = _volume;

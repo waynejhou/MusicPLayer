@@ -89,30 +89,25 @@ namespace MusicPLayerV2.Utils
             {
                 if (ret.FileLastModded >= f.LastWriteTime)
                 {
-                    Console.WriteLine("No");
                     return ret;
                 }
                 else
                 {
-                    Console.WriteLine("Update");
                     isNewOne = false;
                 }
             }
             else
             {
-                Console.WriteLine("insert");
                 ret = new SongEntity();
                 isNewOne = true;
             }
             ret.Path = fileName;
-            using (var w = CodecFactory.Instance.GetCodec(fileName))
             using (var t = TagLib.File.Create(fileName, TagLib.ReadStyle.None))
             {
                 var tag = t.Tag;
                 ret.Title = string.IsNullOrEmpty(tag.Title) ? f.Name : tag.Title;
                 ret.Track = tag.Track;
                 ret.Year = tag.Year;
-                ret.Length = w.GetLength();
                 ret.FileLastModded = f.LastWriteTimeUtc;
                 string genreString = tag.FirstGenre ?? "Unknown Genre";
                 GenreEntity genre;

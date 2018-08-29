@@ -93,8 +93,15 @@ namespace MusicPLayerV2.Utils
         public uint Track { get; set; }
         [BsonField("year")]
         public uint Year { get; set; }
+        private TimeSpan _Length = TimeSpan.Zero;
         [BsonField("length")]
-        public TimeSpan Length { get; set; }
+        public TimeSpan Length { get => _Length; set
+            {
+                _Length = value;
+                NotifyPropertyChanged(nameof(Length));
+                NotifyPropertyChanged(nameof(LengthString));
+            }
+        }
         [BsonIgnore]
         public string LengthString => Length.ToString(@"mm\:ss");
         [BsonField("file_last_modded")]
